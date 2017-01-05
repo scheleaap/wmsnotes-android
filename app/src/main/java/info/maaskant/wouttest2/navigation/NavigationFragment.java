@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import info.maaskant.wouttest2.R;
 import info.maaskant.wouttest2.WoutTest2App;
 import info.maaskant.wouttest2.utils.ApplicationInstrumentation;
+import timber.log.Timber;
 
 /**
  * Displays a list of nodes using a {@link NodeListView}.
@@ -28,6 +29,7 @@ public class NavigationFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.v("onCreate (hash: %s, savedInstanceState: %s)", System.identityHashCode(this), savedInstanceState);
 
         ((WoutTest2App) getActivity().getApplication()).getGraph().inject(this);
     }
@@ -37,23 +39,29 @@ public class NavigationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.node_list_fragment, container, false);
-
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Timber.v("onViewCreated");
         nodeListViewBinder = new NodeListView.ViewBinder(
                 (NodeListView) view.findViewById(R.id.node_list_view),
                 navigationViewModel);
         navigationViewModel.subscribeToDataStore();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Timber.v("onStart");
+    }
 
     @Override
     public void onResume() {
         super.onResume();
+        Timber.v("onResume");
         nodeListViewBinder.bind();
 
         navigationViewModel.navigateTo("/storage/emulated/0/");
@@ -62,18 +70,27 @@ public class NavigationFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Timber.v("onPause");
         nodeListViewBinder.unbind();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Timber.v("onStop");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Timber.v("onDestroyView");
         navigationViewModel.unsubscribeFromDataStore();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Timber.v("onDestroy");
         navigationViewModel.dispose();
         instrumentation.getLeakTracing().traceLeakage(this);
     }
