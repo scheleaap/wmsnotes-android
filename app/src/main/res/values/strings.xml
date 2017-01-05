@@ -6,7 +6,7 @@
 
     <!-- Activities -->
     <string name="title_activity_main" translatable="false">MainActivity</string>
-    <string name="title_activity_markdown" translatable="false">MarkdownActivity</string>
+    <string name="title_activity_detail" translatable="false">DetailActivity</string>
     <string name="title_activity_settings" translatable="false">Settings</string>
 
     <!-- Navigation drawer -->

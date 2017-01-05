@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package info.maaskant.wouttest2.viewmodels;
+package info.maaskant.wouttest2.navigation;
 
 import static io.reark.reark.utils.Preconditions.checkNotNull;
 import static io.reark.reark.utils.Preconditions.get;
@@ -33,7 +33,7 @@ import java.util.List;
 import android.support.annotation.NonNull;
 
 import info.maaskant.wouttest2.data.DataFunctions;
-import info.maaskant.wouttest2.pojo.Node;
+import info.maaskant.wouttest2.model.Node;
 import io.reark.reark.data.DataStreamNotification;
 import io.reark.reark.utils.Log;
 import io.reark.reark.viewmodels.AbstractViewModel;
@@ -43,16 +43,19 @@ import rx.observables.ConnectableObservable;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
+import timber.log.Timber;
 
 public class NavigationViewModel extends AbstractViewModel {
 
-    private static final String TAG = NavigationViewModel.class.getSimpleName();
     @NonNull
     private final DataFunctions.GetChildNodes getChildNodes;
+
     @NonNull
     private final PublishSubject<String> currentParentNodeId = PublishSubject.create();
+
     @NonNull
     private final BehaviorSubject<List<Node>> nodes = BehaviorSubject.create();
+
     @NonNull
     private final BehaviorSubject<ProgressStatus> progressStatus = BehaviorSubject.create();
 
@@ -81,26 +84,26 @@ public class NavigationViewModel extends AbstractViewModel {
     public void setCurrentParentNodeId(@NonNull final String currentParentNodeId) {
         checkNotNull(currentParentNodeId);
 
+        Timber.d("Changing current parent node to %s", currentParentNodeId);
         this.currentParentNodeId.onNext(currentParentNodeId);
     }
 
     @Override
-    public void subscribeToDataStoreInternal(@NonNull final CompositeSubscription compositeSubscription) {
+    public void subscribeToDataStoreInternal(
+            @NonNull final CompositeSubscription compositeSubscription) {
         checkNotNull(compositeSubscription);
-        Log.v(TAG, "subscribeToDataStoreInternal");
+        Timber.v("subscribeToDataStoreInternal");
 
-        ConnectableObservable<DataStreamNotification<List<Node>>> getChildNodesSource =
-                this.currentParentNodeId.distinctUntilChanged().
-                        switchMap(getChildNodes::call).publish();
+        ConnectableObservable<DataStreamNotification<List<Node>>> getChildNodesSource = this.currentParentNodeId
+                .distinctUntilChanged().switchMap(getChildNodes::call).publish();
 
-        compositeSubscription.add(getChildNodesSource
-                .map(toProgressStatus())
-                .doOnNext(progressStatus -> Log.d(TAG, "Progress status: " + progressStatus.name()))
+        compositeSubscription.add(getChildNodesSource.map(toProgressStatus())
+                .doOnNext(progressStatus -> Timber.d("Progress status: %s", progressStatus.name()))
                 .subscribe(this::setProgressStatus));
 
-        compositeSubscription
-                .add(getChildNodesSource.map(DataStreamNotification::getValue).
-                        subscribe(nodes));
+        compositeSubscription.add(getChildNodesSource.map(DataStreamNotification::getValue)
+                .doOnNext(nodes -> Timber.d("%s child nodes available", nodes.size()))
+                .subscribe(nodes));
 
         compositeSubscription.add(getChildNodesSource.connect());
     }

@@ -31,11 +31,10 @@ import android.app.Application;
 
 import dagger.Component;
 import info.maaskant.wouttest2.MainActivity;
-import info.maaskant.wouttest2.MainActivityFragment;
+import info.maaskant.wouttest2.navigation.NodeListFragment;
 import info.maaskant.wouttest2.WoutTest2App;
 import info.maaskant.wouttest2.data.DataModule;
-import info.maaskant.wouttest2.viewmodels.NavigationViewModel;
-import info.maaskant.wouttest2.viewmodels.ViewModelModule;
+import info.maaskant.wouttest2.navigation.NavigationViewModel;
 
 @Singleton
 @Component(modules = {ApplicationModule.class,
@@ -46,7 +45,7 @@ import info.maaskant.wouttest2.viewmodels.ViewModelModule;
 public interface Graph {
 
     void inject(MainActivity mainActivity);
-    void inject(MainActivityFragment mainActivityFragment);
+    void inject(NodeListFragment nodeListFragment);
     void inject(NavigationViewModel navigationViewModel);
     void inject(WoutTest2App application);
 

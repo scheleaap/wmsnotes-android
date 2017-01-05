@@ -30,8 +30,8 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
-import info.maaskant.wouttest2.pojo.Node;
-import info.maaskant.wouttest2.pojo.UserSettings;
+import info.maaskant.wouttest2.model.Node;
+import info.maaskant.wouttest2.model.UserSettings;
 import io.reark.reark.data.DataStreamNotification;
 import rx.Observable;
 

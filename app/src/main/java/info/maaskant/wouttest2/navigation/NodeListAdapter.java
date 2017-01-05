@@ -1,4 +1,4 @@
-package info.maaskant.wouttest2.view;
+package info.maaskant.wouttest2.navigation;
 
 import static android.view.View.OnClickListener;
 
@@ -15,7 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import info.maaskant.wouttest2.R;
-import info.maaskant.wouttest2.pojo.Node;
+import info.maaskant.wouttest2.model.Node;
+import timber.log.Timber;
 
 public class NodeListAdapter extends Adapter<NodeListAdapter.NodeViewHolder> {
 
@@ -57,6 +58,7 @@ public class NodeListAdapter extends Adapter<NodeListAdapter.NodeViewHolder> {
     }
 
     public void set(List<Node> nodes) {
+        Timber.v("Replacing current %s nodes with %s new ones", this.nodes.size(), nodes.size());
         this.nodes.clear();
         this.nodes.addAll(nodes);
 

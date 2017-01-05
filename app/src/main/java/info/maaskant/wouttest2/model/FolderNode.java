@@ -23,44 +23,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package info.maaskant.wouttest2.data;
+package info.maaskant.wouttest2.model;
 
-import static io.reark.reark.utils.Preconditions.checkNotNull;
-import static io.reark.reark.utils.Preconditions.get;
+import com.google.common.base.MoreObjects;
 
 import android.support.annotation.NonNull;
 
-import info.maaskant.wouttest2.data.stores.UserSettingsStore;
-import info.maaskant.wouttest2.model.UserSettings;
-import io.reark.reark.data.stores.interfaces.StoreInterface;
-import rx.Observable;
+public class FolderNode extends Node<FolderNode> {
 
-public class DataLayer  {
-    private static final String TAG = DataLayer.class.getSimpleName();
-
-    public static final int DEFAULT_USER_ID = 0;
-
-    @NonNull
-    protected final StoreInterface<Integer, UserSettings, UserSettings> userSettingsStore;
-
-
-    public DataLayer(
-            @NonNull final UserSettingsStore userSettingsStore) {
-        this.userSettingsStore = get(userSettingsStore);
+    public FolderNode(String id, @NonNull final String name) {
+        super(id, name);
     }
 
-
-    @NonNull
-    public Observable<UserSettings> getUserSettings() {
-        return userSettingsStore
-                .getOnceAndStream(DEFAULT_USER_ID)
-                .filter(UserSettings::isSome);
+    public FolderNode(@NonNull final FolderNode other) {
+        this(other.getId(), other.getName());
     }
 
-    public void setUserSettings(@NonNull final UserSettings userSettings) {
-        checkNotNull(userSettings);
+    @NonNull
+    public static FolderNode none() {
+        return new FolderNode(null, null);
+    }
 
-        userSettingsStore.put(userSettings);
+    @NonNull
+    @Override
+    protected Class<FolderNode> getTypeParameterClass() {
+        return FolderNode.class;
+    }
+
+    @Override
+    public void accept(NodeVisitor visitor) {
+        visitor.visit(this);
     }
 
 }

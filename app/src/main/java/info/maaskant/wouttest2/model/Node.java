@@ -23,23 +23,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package info.maaskant.wouttest2.pojo;
+package info.maaskant.wouttest2.model;
 
 import static io.reark.reark.utils.Preconditions.get;
 
-import java.lang.reflect.Field;
-
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
 
 import android.support.annotation.NonNull;
 
 import io.reark.reark.pojo.OverwritablePojo;
-import io.reark.reark.utils.Log;
 
-public class Node extends OverwritablePojo<Node> {
-
-    private static final String TAG = Node.class.getSimpleName();
+public abstract class Node<T extends Node<T>> extends OverwritablePojo<T> {
 
     private final String id;
 
@@ -52,7 +47,7 @@ public class Node extends OverwritablePojo<Node> {
     // @SerializedName("forks_count")
     // private int forksCount;
 
-    public Node(String id, @NonNull final String name
+    Node(String id, @NonNull final String name
     // ,
     // int stargazersCount,
     // int forksCount
@@ -63,7 +58,7 @@ public class Node extends OverwritablePojo<Node> {
         // this.forksCount = forksCount;
     }
 
-    public Node(@NonNull final Node other) {
+    Node(@NonNull final Node other) {
         this(other.getId(), other.getName()
         // ,
         // other.getStargazersCount(),
@@ -71,36 +66,23 @@ public class Node extends OverwritablePojo<Node> {
         );
     }
 
-    @NonNull
-    public static Node none() {
-        return new Node(null, null
-        // , -1, -1
-        );
-    }
-
     public boolean isSome() {
         return id != null;
     }
 
-    @NonNull
-    @Override
-    protected Class<Node> getTypeParameterClass() {
-        return Node.class;
-    }
-
-//    @Override
-//    protected boolean isEmpty(@NonNull final Field field,
-//            @NonNull final OverwritablePojo<Node> pojo) {
-//        try {
-//            if (field.get(pojo) instanceof GitHubOwner) {
-//                return false;
-//            }
-//        } catch (IllegalAccessException e) {
-//            Log.e(TAG, "Failed get at " + field.getName(), e);
-//        }
-//
-//        return super.isEmpty(field, pojo);
-//    }
+    // @Override
+    // protected boolean isEmpty(@NonNull final Field field,
+    // @NonNull final OverwritablePojo<Node> pojo) {
+    // try {
+    // if (field.get(pojo) instanceof GitHubOwner) {
+    // return false;
+    // }
+    // } catch (IllegalAccessException e) {
+    // Log.e(TAG, "Failed get at " + field.getName(), e);
+    // }
+    //
+    // return super.isEmpty(field, pojo);
+    // }
 
     public String getId() {
         return id;
@@ -111,30 +93,37 @@ public class Node extends OverwritablePojo<Node> {
         return name;
     }
 
-//    public int getStargazersCount() {
-//        return stargazersCount;
-//    }
+    // public int getStargazersCount() {
+    // return stargazersCount;
+    // }
 
-//    public int getForksCount() {
-//        return forksCount;
-//    }
+    // public int getForksCount() {
+    // return forksCount;
+    // }
+
+    /**
+     * Visit a visitor with this node.
+     *
+     * @param visitor
+     *            The {@link NodeVisitor} to call.
+     */
+    public abstract void accept(NodeVisitor visitor);
 
     @Override
     public String toString() {
-        return "Node{" + "id=" + id + ", name='" + name + '\'' +
-        // ", stargazersCount=" + stargazersCount +
-        // ", forksCount=" + forksCount +
-                '}';
+        return MoreObjects.toStringHelper(this).add("id", id).add("name", name).toString();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        if (!super.equals(o))
+            return false;
         Node node = (Node) o;
-        return Objects.equal(id, node.id) &&
-                Objects.equal(name, node.name);
+        return Objects.equal(id, node.id) && Objects.equal(name, node.name);
     }
 
     @Override

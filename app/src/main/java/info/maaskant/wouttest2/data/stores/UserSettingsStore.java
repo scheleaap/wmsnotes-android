@@ -25,7 +25,7 @@
  */
 package info.maaskant.wouttest2.data.stores;
 
-import info.maaskant.wouttest2.pojo.UserSettings;
+import info.maaskant.wouttest2.model.UserSettings;
 import io.reark.reark.data.stores.MemoryStore;
 
 public class UserSettingsStore

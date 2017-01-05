@@ -23,47 +23,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package info.maaskant.wouttest2.pojo;
+package info.maaskant.wouttest2.model;
+
+import com.google.common.base.MoreObjects;
 
 import android.support.annotation.NonNull;
 
-public class UserSettings {
+public class ContentNode extends Node<ContentNode> {
 
-    @Deprecated // TODO: Wout: Unused
-    private final String currentParentNodeId;
+    public ContentNode(String id, @NonNull final String name) {
+        super(id, name);
+    }
 
-    public UserSettings(String currentParentNodeId) {
-        this.currentParentNodeId = currentParentNodeId;
+    public ContentNode(@NonNull final ContentNode other) {
+        this(other.getId(), other.getName());
     }
 
     @NonNull
-    public static UserSettings none() {
-        return new UserSettings(null);
+    public static ContentNode none() {
+        return new ContentNode(null, null);
     }
 
-    public boolean isSome() {
-        return currentParentNodeId != null;
-    }
-
-    public boolean isNone() {
-        return !isSome();
-    }
-
-    public String getCurrentParentNodeId() {
-        return currentParentNodeId;
+    @NonNull
+    @Override
+    protected Class<ContentNode> getTypeParameterClass() {
+        return ContentNode.class;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserSettings that = (UserSettings) o;
-        return currentParentNodeId == that.currentParentNodeId;
-    }
-
-    @Override
-    public int hashCode() {
-        return com.google.common.base.Objects.hashCode(currentParentNodeId);
+    public void accept(NodeVisitor visitor) {
+        visitor.visit(this);
     }
 
 }

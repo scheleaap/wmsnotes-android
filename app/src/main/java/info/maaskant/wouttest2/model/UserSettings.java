@@ -23,44 +23,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package info.maaskant.wouttest2.data;
-
-import static io.reark.reark.utils.Preconditions.checkNotNull;
-import static io.reark.reark.utils.Preconditions.get;
+package info.maaskant.wouttest2.model;
 
 import android.support.annotation.NonNull;
 
-import info.maaskant.wouttest2.data.stores.UserSettingsStore;
-import info.maaskant.wouttest2.model.UserSettings;
-import io.reark.reark.data.stores.interfaces.StoreInterface;
-import rx.Observable;
+public class UserSettings {
 
-public class DataLayer  {
-    private static final String TAG = DataLayer.class.getSimpleName();
+    @Deprecated // TODO: Wout: Unused
+    private final String currentParentNodeId;
 
-    public static final int DEFAULT_USER_ID = 0;
-
-    @NonNull
-    protected final StoreInterface<Integer, UserSettings, UserSettings> userSettingsStore;
-
-
-    public DataLayer(
-            @NonNull final UserSettingsStore userSettingsStore) {
-        this.userSettingsStore = get(userSettingsStore);
+    public UserSettings(String currentParentNodeId) {
+        this.currentParentNodeId = currentParentNodeId;
     }
 
-
     @NonNull
-    public Observable<UserSettings> getUserSettings() {
-        return userSettingsStore
-                .getOnceAndStream(DEFAULT_USER_ID)
-                .filter(UserSettings::isSome);
+    public static UserSettings none() {
+        return new UserSettings(null);
     }
 
-    public void setUserSettings(@NonNull final UserSettings userSettings) {
-        checkNotNull(userSettings);
+    public boolean isSome() {
+        return currentParentNodeId != null;
+    }
 
-        userSettingsStore.put(userSettings);
+    public boolean isNone() {
+        return !isSome();
+    }
+
+    public String getCurrentParentNodeId() {
+        return currentParentNodeId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserSettings that = (UserSettings) o;
+        return currentParentNodeId == that.currentParentNodeId;
+    }
+
+    @Override
+    public int hashCode() {
+        return com.google.common.base.Objects.hashCode(currentParentNodeId);
     }
 
 }

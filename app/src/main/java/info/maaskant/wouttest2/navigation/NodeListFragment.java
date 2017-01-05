@@ -1,4 +1,4 @@
-package info.maaskant.wouttest2;
+package info.maaskant.wouttest2.navigation;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -8,14 +8,14 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
+import info.maaskant.wouttest2.R;
+import info.maaskant.wouttest2.WoutTest2App;
 import info.maaskant.wouttest2.utils.ApplicationInstrumentation;
-import info.maaskant.wouttest2.view.NodeListView;
-import info.maaskant.wouttest2.viewmodels.NavigationViewModel;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Displays a list of nodes using a {@link NodeListView}.
  */
-public class MainActivityFragment extends Fragment {
+public class NodeListFragment extends Fragment {
 
     @Inject
     NavigationViewModel navigationViewModel;

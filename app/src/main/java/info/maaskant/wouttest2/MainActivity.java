@@ -9,14 +9,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import javax.inject.Inject;
 
 import info.maaskant.wouttest2.data.DataFunctions;
+import info.maaskant.wouttest2.navigation.NodeListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,11 +69,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Creates a {@link MainActivityFragment} and adds it to the activity.
+     * Creates a {@link NodeListFragment} and adds it to the activity.
      */
     private void createNavigationFragment() {
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.content_main, new MainActivityFragment())
+                .add(R.id.content_main, new NodeListFragment())
                 .commit();
     }
 
