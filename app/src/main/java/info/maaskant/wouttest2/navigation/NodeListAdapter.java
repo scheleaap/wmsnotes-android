@@ -14,7 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import info.maaskant.wouttest2.R;
+import info.maaskant.wouttest2.model.ContentNode;
+import info.maaskant.wouttest2.model.FolderNode;
 import info.maaskant.wouttest2.model.Node;
+import info.maaskant.wouttest2.model.NodeVisitor;
 import timber.log.Timber;
 
 class NodeListAdapter extends RecyclerView.Adapter<NodeListAdapter.NodeViewHolder> {
@@ -45,11 +48,19 @@ class NodeListAdapter extends RecyclerView.Adapter<NodeListAdapter.NodeViewHolde
 
     @Override
     public void onBindViewHolder(NodeViewHolder holder, int position) {
-        holder.titleTextView.setText(nodes.get(position).getName());
-        // Glide.with(holder.avatarImageView.getContext())
-        // .load(gitHubRepositories.get(position).getOwner().getAvatarUrl())
-        // .fitCenter()
-        // .into(holder.avatarImageView);
+        Node node = nodes.get(position);
+        holder.titleTextView.setText(node.getName());
+        node.accept(new NodeVisitor() {
+            @Override
+            public void visit(@NonNull ContentNode node) {
+                holder.iconImageView.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
+            }
+
+            @Override
+            public void visit(@NonNull FolderNode node) {
+                holder.iconImageView.setImageResource(R.drawable.ic_folder_black_24dp);
+            }
+        });
     }
 
     @Override
