@@ -4,6 +4,7 @@ import static com.annimon.stream.Collectors.toList;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.annimon.stream.Stream;
@@ -19,14 +20,25 @@ import timber.log.Timber;
 
 public class NotebookRepository {
 
-    public NotebookRepository() {
+    private static final Comparator<File> FILE_TYPE_COMPARATOR = (f1, f2) -> {
+        if (f1.isDirectory() && !f2.isDirectory()) {
+            return -1;
+        } else if (!f1.isDirectory() && f2.isDirectory()) {
+            return 1;
+        } else {
+            return f1.getAbsolutePath().compareTo(f2.getAbsolutePath());
+        }
+    };
+
+    NotebookRepository() {
     }
 
-    public Observable<DataStreamNotification<List<Node>>> getChildNodes(String parentNodeId) {
+    Observable<DataStreamNotification<List<Node>>> getChildNodes(String parentNodeId) {
         List<Node> items = new ArrayList<>();
         File path = new File(parentNodeId);
         if (path.canRead()) {
-            items = Stream.of(path.listFiles()).sorted().map(this::createNode).collect(toList());
+            items = Stream.of(path.listFiles()).sorted(FILE_TYPE_COMPARATOR).map(this::createNode)
+                    .collect(toList());
         } else {
             Timber.d("Cannot read path %s", path);
         }
