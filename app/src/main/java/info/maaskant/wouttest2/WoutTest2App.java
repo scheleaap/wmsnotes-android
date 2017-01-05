@@ -44,7 +44,7 @@ public class WoutTest2App extends Application {
         String content = "# test\n" + "\n" + "a|b\n" + "---|---\n" + "c|d\n" + "\n"
                 + "http://www.google.com/";
         try {
-            File path = new File("/storage/emulated/0/DCIM", fileName);
+            File path = new File("/storage/emulated/0/Download", fileName);
             Timber.i("Writing test data to %s", path);
             Files.write(content, path, Charsets.UTF_8);
         } catch (FileNotFoundException e) {

@@ -63,7 +63,7 @@ import timber.log.Timber;
  * {@link NodeListAdapter}.
  * </p>
  */
-public class NodeListView extends FrameLayout {
+class NodeListView extends FrameLayout {
 
     private RecyclerView recyclerView;
 
@@ -111,7 +111,7 @@ public class NodeListView extends FrameLayout {
      * called.</li>
      * <li>If a {@link android.support.v7.widget.RecyclerView.ViewHolder}'s
      * {@link android.view.View.OnClickListener} is called and the clicked {@link Node} is a
-     * {@link FolderNode}, {@link NavigationViewModel#setCurrentParentNodeId(String)} is
+     * {@link FolderNode}, {@link NavigationViewModel#navigateTo(String)} is
      * called.</li>
      * <li>If the clicked {@link Node} is a {@link ContentNode}, TODO</li>
      * </ul>
@@ -145,7 +145,7 @@ public class NodeListView extends FrameLayout {
             node.accept(new NodeVisitor() {
                 @Override
                 public void visit(@NonNull ContentNode node) {
-                    // TODO refactor
+                    // TODO refactor and update Javadoc
                     Timber.v("%s clicked", node);
                     Intent intent = new Intent(view.getContext(), DetailActivity.class);
                     intent.putExtra(DetailActivity.PATH_KEY, node.getId());
@@ -154,7 +154,7 @@ public class NodeListView extends FrameLayout {
 
                 @Override
                 public void visit(@NonNull FolderNode node) {
-                    viewModel.setCurrentParentNodeId(node.getId());
+                    viewModel.navigateTo(node.getId());
                 }
             });
         }

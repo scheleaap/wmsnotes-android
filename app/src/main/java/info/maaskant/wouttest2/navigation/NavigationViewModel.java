@@ -1,41 +1,20 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2013-2016 reark project contributors
- *
- * https://github.com/reark/reark/graphs/contributors
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package info.maaskant.wouttest2.navigation;
 
 import static io.reark.reark.utils.Preconditions.checkNotNull;
 import static io.reark.reark.utils.Preconditions.get;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.base.Optional;
 
 import android.support.annotation.NonNull;
 
 import info.maaskant.wouttest2.data.DataFunctions;
 import info.maaskant.wouttest2.model.Node;
 import io.reark.reark.data.DataStreamNotification;
-import io.reark.reark.utils.Log;
 import io.reark.reark.viewmodels.AbstractViewModel;
 import rx.Observable;
 import rx.functions.Func1;
@@ -51,20 +30,24 @@ public class NavigationViewModel extends AbstractViewModel {
     private final DataFunctions.GetChildNodes getChildNodes;
 
     @NonNull
-    private final PublishSubject<String> currentParentNodeId = PublishSubject.create();
+    private final PublishSubject<String> currentParentNodeIdObservable = PublishSubject.create();
 
     @NonNull
     private final BehaviorSubject<List<Node>> nodes = BehaviorSubject.create();
 
     @NonNull
     private final BehaviorSubject<ProgressStatus> progressStatus = BehaviorSubject.create();
+    @NonNull
+    private final LinkedList<String> parentNodeIdHistory = new LinkedList<>();
+    @NonNull
+    private Optional<String> currentParentNodeId = Optional.absent();
 
     public NavigationViewModel(@NonNull final DataFunctions.GetChildNodes getChildNodes) {
         this.getChildNodes = get(getChildNodes);
     }
 
     @NonNull
-    static Func1<DataStreamNotification<List<Node>>, ProgressStatus> toProgressStatus() {
+    private static Func1<DataStreamNotification<List<Node>>, ProgressStatus> toProgressStatus() {
         return notification -> {
             if (notification.isFetchingStart()) {
                 return ProgressStatus.LOADING;
@@ -81,11 +64,29 @@ public class NavigationViewModel extends AbstractViewModel {
         return nodes.asObservable();
     }
 
-    public void setCurrentParentNodeId(@NonNull final String currentParentNodeId) {
-        checkNotNull(currentParentNodeId);
+    private void navigateTo(@NonNull final String parentNodeId, boolean addToHistory) {
+        checkNotNull(parentNodeId);
 
-        Timber.d("Changing current parent node to %s", currentParentNodeId);
-        this.currentParentNodeId.onNext(currentParentNodeId);
+        Timber.d("Navigating to %s", parentNodeId);
+        this.currentParentNodeIdObservable.onNext(parentNodeId);
+        if (addToHistory && this.currentParentNodeId.isPresent()) {
+            this.parentNodeIdHistory.push(this.currentParentNodeId.get());
+        }
+        this.currentParentNodeId = Optional.of(parentNodeId);
+    }
+
+
+    public void navigateTo(@NonNull final String parentNodeId) {
+        navigateTo(parentNodeId, true);
+    }
+
+    public boolean navigateBack() {
+        if (!this.parentNodeIdHistory.isEmpty()) {
+            this.navigateTo(this.parentNodeIdHistory.pop(), false);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -94,7 +95,7 @@ public class NavigationViewModel extends AbstractViewModel {
         checkNotNull(compositeSubscription);
         Timber.v("subscribeToDataStoreInternal");
 
-        ConnectableObservable<DataStreamNotification<List<Node>>> getChildNodesSource = this.currentParentNodeId
+        ConnectableObservable<DataStreamNotification<List<Node>>> getChildNodesSource = this.currentParentNodeIdObservable
                 .distinctUntilChanged().switchMap(getChildNodes::call).publish();
 
         compositeSubscription.add(getChildNodesSource.map(toProgressStatus())
@@ -113,7 +114,7 @@ public class NavigationViewModel extends AbstractViewModel {
         return progressStatus.asObservable();
     }
 
-    void setProgressStatus(@NonNull final ProgressStatus status) {
+    public void setProgressStatus(@NonNull final ProgressStatus status) {
         checkNotNull(status);
 
         progressStatus.onNext(status);

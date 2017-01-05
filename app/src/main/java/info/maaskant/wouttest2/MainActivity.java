@@ -15,12 +15,14 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import javax.inject.Inject;
 
 import info.maaskant.wouttest2.data.DataFunctions;
-import info.maaskant.wouttest2.navigation.NodeListFragment;
+import info.maaskant.wouttest2.navigation.NavigationFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     @Inject
     DataFunctions.SetUserSettings setUserSettings;
+
+    NavigationFragment navigationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Creates a navigation drawer and adds it to the activity.
      *
-     * @param toolbar The activity's {@link Toolbar}.
+     * @param toolbar
+     *            The activity's {@link Toolbar}.
      */
     private void createDrawer(Toolbar toolbar) {
         final PrimaryDrawerItem notesDrawerItem = new PrimaryDrawerItem().withIdentifier(0)
@@ -56,25 +59,28 @@ public class MainActivity extends AppCompatActivity {
                 .withName(R.string.drawer_item_settings).withSelectable(false);
         new DrawerBuilder().withActivity(this).withToolbar(toolbar)
                 .addDrawerItems(notesDrawerItem, settingsDrawerItem)
-//                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-//                    @Override
-//                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-//                        if (drawerItem == settingsDrawerItem) {
-//                            startSettingsActivity();
-//                        }
-//                        return true;
-//                    }
-//                })
-            .build();
+                // .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                // @Override
+                // public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                // if (drawerItem == settingsDrawerItem) {
+                // startSettingsActivity();
+                // }
+                // return true;
+                // }
+                // })
+                .build();
     }
 
     /**
-     * Creates a {@link NodeListFragment} and adds it to the activity.
+     * Creates a {@link NavigationFragment} and adds it to the activity.
+     *
+     * {@link #navigationFragment} will be set to the newly created {@link NavigationFragment}.
      */
     private void createNavigationFragment() {
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.content_main, new NodeListFragment())
+        NavigationFragment navigationFragment = new NavigationFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.content_main, navigationFragment)
                 .commit();
+        this.navigationFragment = navigationFragment;
     }
 
     @Override
@@ -91,11 +97,18 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!navigationFragment.onBackPressed()) {
+            super.onBackPressed();
+        }
     }
 }

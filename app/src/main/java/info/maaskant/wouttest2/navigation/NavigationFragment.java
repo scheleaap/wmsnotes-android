@@ -15,7 +15,7 @@ import info.maaskant.wouttest2.utils.ApplicationInstrumentation;
 /**
  * Displays a list of nodes using a {@link NodeListView}.
  */
-public class NodeListFragment extends Fragment {
+public class NavigationFragment extends Fragment {
 
     @Inject
     NavigationViewModel navigationViewModel;
@@ -36,7 +36,7 @@ public class NodeListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view= inflater.inflate(R.layout.node_list_fragment, container, false);
+        View view = inflater.inflate(R.layout.node_list_fragment, container, false);
 
         return view;
     }
@@ -56,7 +56,7 @@ public class NodeListFragment extends Fragment {
         super.onResume();
         nodeListViewBinder.bind();
 
-        navigationViewModel.setCurrentParentNodeId("/storage/emulated/0/");
+        navigationViewModel.navigateTo("/storage/emulated/0/");
     }
 
     @Override
@@ -76,4 +76,15 @@ public class NodeListFragment extends Fragment {
         super.onDestroy();
         navigationViewModel.dispose();
         instrumentation.getLeakTracing().traceLeakage(this);
-    }}
+    }
+
+    /**
+     * Helps finishing the {@link android.app.Activity} hosting this fragment.
+     *
+     * @return A boolean indicating whether the back press was consumed.
+     */
+    public boolean onBackPressed() {
+        return this.navigationViewModel.navigateBack();
+    }
+
+}

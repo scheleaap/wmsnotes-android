@@ -31,7 +31,7 @@ import android.app.Application;
 
 import dagger.Component;
 import info.maaskant.wouttest2.MainActivity;
-import info.maaskant.wouttest2.navigation.NodeListFragment;
+import info.maaskant.wouttest2.navigation.NavigationFragment;
 import info.maaskant.wouttest2.WoutTest2App;
 import info.maaskant.wouttest2.data.DataModule;
 import info.maaskant.wouttest2.navigation.NavigationViewModel;
@@ -45,7 +45,7 @@ import info.maaskant.wouttest2.navigation.NavigationViewModel;
 public interface Graph {
 
     void inject(MainActivity mainActivity);
-    void inject(NodeListFragment nodeListFragment);
+    void inject(NavigationFragment navigationFragment);
     void inject(NavigationViewModel navigationViewModel);
     void inject(WoutTest2App application);
 

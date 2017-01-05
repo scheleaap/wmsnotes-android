@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +17,14 @@ import info.maaskant.wouttest2.R;
 import info.maaskant.wouttest2.model.Node;
 import timber.log.Timber;
 
-public class NodeListAdapter extends Adapter<NodeListAdapter.NodeViewHolder> {
+class NodeListAdapter extends RecyclerView.Adapter<NodeListAdapter.NodeViewHolder> {
 
     private final List<Node> nodes = new ArrayList<>();
 
     private OnClickListener onClickListener;
 
     public NodeListAdapter(List<Node> nodes) {
+        setHasStableIds(true);
         this.nodes.addAll(nodes);
     }
 
@@ -53,19 +53,23 @@ public class NodeListAdapter extends Adapter<NodeListAdapter.NodeViewHolder> {
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public int getItemCount() {
         return nodes.size();
     }
 
     public void set(List<Node> nodes) {
-        Timber.v("Replacing current %s nodes with %s new ones", this.nodes.size(), nodes.size());
         this.nodes.clear();
         this.nodes.addAll(nodes);
 
         notifyDataSetChanged();
     }
 
-    public static class NodeViewHolder extends ViewHolder {
+    public static class NodeViewHolder extends RecyclerView.ViewHolder {
 
         @NonNull
         public final ImageView iconImageView;
