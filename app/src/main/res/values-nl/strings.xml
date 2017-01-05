@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wout\'s Test II</string>
+    <string name="action_settings">Instellingen</string>
+    <string name="drawer_item_notes">Notities</string>
+    <string name="drawer_item_settings">Instellingen</string>
+    <string name="pref_default_notebook_path"></string>
+    <string name="pref_header_general">Algemeen</string>
+    <string name="pref_title_notebook_path">Pad naar notitieboek</string>
+    <string name="title_activity_main"></string>
+</resources>

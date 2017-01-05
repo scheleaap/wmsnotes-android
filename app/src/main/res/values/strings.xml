@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Wout\'s Test II</string>
+
+    <!-- TODO remove -->
+    <string name="action_settings">Settings</string>
+
+    <!-- Activities -->
+    <string name="title_activity_main" translatable="false">MainActivity</string>
+    <string name="title_activity_markdown" translatable="false">MarkdownActivity</string>
+    <string name="title_activity_settings" translatable="false">Settings</string>
+
+    <!-- Navigation drawer -->
+    <string name="drawer_item_notes">Notes</string>
+    <string name="drawer_item_settings">Settings</string>
+
+    <!-- Settings -->
+    <string name="pref_header_general">General</string>
+    <string name="pref_title_notebook_path">Notebook path</string>
+    <string name="pref_default_notebook_path" translatable="false">/storage/emulated/0/Download/BitTorrent Sync/wout/notes/Koken</string>
+
+</resources>
