@@ -15,13 +15,18 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import info.maaskant.wouttest2.di.Graph;
+import info.maaskant.wouttest2.navigation.NavigationViewModel;
 import info.maaskant.wouttest2.utils.ApplicationInstrumentation;
 import timber.log.Timber;
 
 public class WoutTest2App extends Application {
 
     @Inject
-    ApplicationInstrumentation instrumentation;
+     ApplicationInstrumentation instrumentation;
+
+    @Inject
+     NavigationViewModel navigationViewModel;
+
     private Graph graph;
 
     @Override
@@ -35,6 +40,7 @@ public class WoutTest2App extends Application {
 
         instrumentation.init();
 
+        navigationViewModel.navigateTo("/storage/emulated/0/");
         writeMarkdownFile();
     }
 

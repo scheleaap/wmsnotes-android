@@ -3,8 +3,6 @@ package info.maaskant.wouttest2.navigation;
 import static io.reark.reark.utils.Preconditions.checkNotNull;
 import static io.reark.reark.utils.Preconditions.get;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,15 +28,17 @@ public class NavigationViewModel extends AbstractViewModel {
     private final DataFunctions.GetChildNodes getChildNodes;
 
     @NonNull
-    private final PublishSubject<String> currentParentNodeIdObservable = PublishSubject.create();
+    private final BehaviorSubject<String> currentParentNodeIdObservable = BehaviorSubject.create();
 
     @NonNull
     private final BehaviorSubject<List<Node>> nodes = BehaviorSubject.create();
 
     @NonNull
     private final BehaviorSubject<ProgressStatus> progressStatus = BehaviorSubject.create();
+
     @NonNull
     private final LinkedList<String> parentNodeIdHistory = new LinkedList<>();
+
     @NonNull
     private Optional<String> currentParentNodeId = Optional.absent();
 

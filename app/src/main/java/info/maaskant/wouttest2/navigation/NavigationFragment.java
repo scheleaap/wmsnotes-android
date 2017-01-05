@@ -63,8 +63,6 @@ public class NavigationFragment extends Fragment {
         super.onResume();
         Timber.v("onResume");
         nodeListViewBinder.bind();
-
-        navigationViewModel.navigateTo("/storage/emulated/0/");
     }
 
     @Override
