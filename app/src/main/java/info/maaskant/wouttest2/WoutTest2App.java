@@ -54,7 +54,7 @@ public class WoutTest2App extends Application {
     private void writeMarkdownFile() {
         // Write Markdown file
         String fileName = "test.md";
-        String content = "# test\n" + "\n" + "a|b\n" + "---|---\n" + "c|d\n" + "\n"
+        String content = "# Kruidkoek\n" + "\n" + "a|b\n" + "---|---\n" + "c|d\n" + "\n"
                 + "http://www.google.com/";
         try {
             File path = new File("/storage/emulated/0/Download", fileName);

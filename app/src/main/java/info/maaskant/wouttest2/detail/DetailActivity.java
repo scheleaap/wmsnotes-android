@@ -10,6 +10,9 @@ import org.commonmark.ext.autolink.AutolinkExtension;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
+import org.commonmark.renderer.NodeRenderer;
+import org.commonmark.renderer.html.HtmlNodeRendererContext;
+import org.commonmark.renderer.html.HtmlNodeRendererFactory;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 import com.google.common.base.Charsets;
@@ -49,21 +52,25 @@ public class DetailActivity extends AppCompatActivity {
         Timber.v("Using path " + path);
 
         String fileName = path.getName();
-        String title = fileName.substring(0,fileName.lastIndexOf("."));
+        String title = fileName.substring(0, fileName.lastIndexOf("."));
         getSupportActionBar().setTitle(title);
 
-        List<Extension> extensions = Arrays.asList(TablesExtension.create(), AutolinkExtension.create());
+        List<Extension> extensions = Arrays.asList(TablesExtension.create(),
+                AutolinkExtension.create());
         Parser parser = Parser.builder().extensions(extensions).build();
-        HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions).build();
+        HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions)
+                .nodeRendererFactory(context -> new StylesheetHtmlNodeRenderer(context)).build();
 
         try {
             String markdownContent = Files.toString(path, Charsets.UTF_8);
             Node document = parser.parse(markdownContent);
+            document.getFirstChild().insertBefore(new StylesheetNode("markdown.css"));
             String htmlContent = renderer.render(document);
+            Timber.v("Rendered HTML:\n%s", htmlContent);
 
             WebView webView = (WebView) findViewById(R.id.content);
             webView.setBackgroundColor(Color.TRANSPARENT);
-            webView.loadData(htmlContent, "text/html", "UTF-8");
+            webView.loadDataWithBaseURL("file:///android_asset/",htmlContent, "text/html", "UTF-8",null);
         } catch (IOException e) {
             Timber.e("Could not read file %s", path.toString(), e);
         }
