@@ -66,11 +66,13 @@ public class DetailActivity extends AppCompatActivity {
             Node document = parser.parse(markdownContent);
             document.getFirstChild().insertBefore(new StylesheetNode("markdown.css"));
             String htmlContent = renderer.render(document);
+
             Timber.v("Rendered HTML:\n%s", htmlContent);
 
             WebView webView = (WebView) findViewById(R.id.content);
             webView.setBackgroundColor(Color.TRANSPARENT);
-            webView.loadDataWithBaseURL("file:///android_asset/",htmlContent, "text/html", "UTF-8",null);
+            webView.loadDataWithBaseURL("file:///android_asset/", htmlContent, "text/html", "UTF-8",
+                    null);
         } catch (IOException e) {
             Timber.e("Could not read file %s", path.toString(), e);
         }

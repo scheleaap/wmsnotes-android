@@ -31,7 +31,8 @@ body {
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     color: #333333;
-    overflow: hidden;
+    /* Disabled to prevent scrolling issues */
+    /*overflow: hidden;*/
     font-family: RobotoRegular, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
     font-size: 12pt;
     line-height: 1.6;
