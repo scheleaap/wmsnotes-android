@@ -31,26 +31,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.v("onCreate (hash: %s, savedInstanceState: %s)", System.identityHashCode(this), savedInstanceState);
+        Timber.v("onCreate (hash: %s, savedInstanceState: %s)", System.identityHashCode(this),
+                savedInstanceState);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState == null) {
-            createDrawer(toolbar);
-        }
+        createDrawer(toolbar);
         this.navigationFragment = getOrCreateNavigationFragment(savedInstanceState);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+        fab.setOnClickListener(
+                view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show());
     }
 
     /**
      * Creates a navigation drawer and adds it to the activity.
      *
-     * @param toolbar The activity's {@link Toolbar}.
+     * @param toolbar
+     *            The activity's {@link Toolbar}.
      */
     private void createDrawer(Toolbar toolbar) {
         final PrimaryDrawerItem notesDrawerItem = new PrimaryDrawerItem().withIdentifier(0)
@@ -74,17 +75,20 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Retrieves a {@link NavigationFragment} from a saved instance state or creates a new instance.
      *
-     * @param savedInstanceState The {@link Bundle} to
-     * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance from {@link #getSupportFragmentManager()} otherwise.
+     * @param savedInstanceState
+     *            The {@link Bundle} to
+     * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance
+     *         from {@link #getSupportFragmentManager()} otherwise.
      */
     private NavigationFragment getOrCreateNavigationFragment(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             NavigationFragment navigationFragment = new NavigationFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.content_main, navigationFragment)
-                    .commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.content_main, navigationFragment).commit();
             return navigationFragment;
         } else {
-            return (NavigationFragment) getSupportFragmentManager().getFragment(savedInstanceState, NAVIGATION_FRAGMENT_KEY);
+            return (NavigationFragment) getSupportFragmentManager().getFragment(savedInstanceState,
+                    NAVIGATION_FRAGMENT_KEY);
         }
     }
 
@@ -120,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, NAVIGATION_FRAGMENT_KEY, this.navigationFragment);
+        getSupportFragmentManager().putFragment(outState, NAVIGATION_FRAGMENT_KEY,
+                this.navigationFragment);
     }
 }
