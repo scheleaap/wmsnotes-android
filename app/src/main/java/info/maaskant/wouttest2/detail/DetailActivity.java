@@ -48,6 +48,10 @@ public class DetailActivity extends AppCompatActivity {
         }
         Timber.v("Using path " + path);
 
+        String fileName = path.getName();
+        String title = fileName.substring(0,fileName.lastIndexOf("."));
+        getSupportActionBar().setTitle(title);
+
         List<Extension> extensions = Arrays.asList(TablesExtension.create(), AutolinkExtension.create());
         Parser parser = Parser.builder().extensions(extensions).build();
         HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions).build();
