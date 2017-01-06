@@ -1,22 +1,27 @@
 package info.maaskant.wouttest2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import javax.inject.Inject;
 
 import info.maaskant.wouttest2.data.DataFunctions;
 import info.maaskant.wouttest2.navigation.NavigationFragment;
+import info.maaskant.wouttest2.settings.SettingsActivity;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
@@ -60,16 +65,13 @@ public class MainActivity extends AppCompatActivity {
                 .withName(R.string.drawer_item_settings).withSelectable(false);
         new DrawerBuilder().withActivity(this).withToolbar(toolbar)
                 .addDrawerItems(notesDrawerItem, settingsDrawerItem)
-                // .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                // @Override
-                // public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                // if (drawerItem == settingsDrawerItem) {
-                // startSettingsActivity();
-                // }
-                // return true;
-                // }
-                // })
-                .build();
+                .withOnDrawerItemClickListener((view, position, drawerItem) -> {
+                    if (drawerItem == settingsDrawerItem) {
+                        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                        startActivity(intent);
+                    }
+                    return true;
+                }).build();
     }
 
     /**

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Wout\'s Test II</string>
+    <string name="app_name" translatable="false">WMS Notes</string>
 
     <!-- TODO remove -->
     <string name="action_settings">Settings</string>

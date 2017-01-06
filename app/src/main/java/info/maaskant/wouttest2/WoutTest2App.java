@@ -2,6 +2,8 @@ package info.maaskant.wouttest2;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.common.base.Charsets;
@@ -16,6 +18,7 @@ import javax.inject.Inject;
 
 import info.maaskant.wouttest2.di.Graph;
 import info.maaskant.wouttest2.navigation.NavigationViewModel;
+import info.maaskant.wouttest2.settings.SettingsFragment;
 import info.maaskant.wouttest2.utils.ApplicationInstrumentation;
 import timber.log.Timber;
 
@@ -40,7 +43,11 @@ public class WoutTest2App extends Application {
 
         instrumentation.init();
 
-        navigationViewModel.navigateTo("/storage/emulated/0/");
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String notebookPath = sharedPreferences.getString(SettingsFragment.NOTEBOOK_PATH_KEY,
+                getResources().getString(R.string.pref_default_notebook_path));
+        navigationViewModel.navigateTo(notebookPath);
+
         writeMarkdownFile();
     }
 

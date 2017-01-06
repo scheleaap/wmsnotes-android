@@ -33,6 +33,15 @@
                 android:value="info.maaskant.wouttest2.MainActivity" />
         </activity>
 
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="info.maaskant.wouttest2.MainActivity" />
+        </activity>
+
     </application>
 
 </manifest>
