@@ -34,6 +34,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -86,7 +87,7 @@ class NodeListView extends FrameLayout {
         recyclerView = (RecyclerView) findViewById(R.id.node_list_recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(nodeListAdapter);
+//        recyclerView.setAdapter(nodeListAdapter);
     }
 
     /**
@@ -100,6 +101,13 @@ class NodeListView extends FrameLayout {
         checkNotNull(nodeListAdapter);
 
         nodeListAdapter.set(nodes);
+        setAdapterIfNotSet();
+    }
+
+    private void setAdapterIfNotSet() {
+        if (this.recyclerView.getAdapter() == null) {
+            recyclerView.setAdapter(nodeListAdapter);
+        }
     }
 
     /**
