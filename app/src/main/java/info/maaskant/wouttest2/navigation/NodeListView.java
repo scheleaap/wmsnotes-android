@@ -31,10 +31,12 @@ import static io.reark.reark.utils.Preconditions.get;
 import java.util.Collections;
 import java.util.List;
 
-import android.app.Activity;
+import com.google.common.base.Optional;
+import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
+import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
+
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -66,9 +68,13 @@ import timber.log.Timber;
  */
 class NodeListView extends FrameLayout {
 
+    private NodeListAdapter nodeListAdapter;
+
+    private LinearLayoutManager linearLayoutManager;
+
     private RecyclerView recyclerView;
 
-    private NodeListAdapter nodeListAdapter;
+    private Observable<RecyclerViewScrollEvent> recyclerViewScrollEventObservable;
 
     public NodeListView(Context context) {
         super(context, null);
@@ -84,10 +90,14 @@ class NodeListView extends FrameLayout {
 
         nodeListAdapter = new NodeListAdapter(Collections.emptyList());
 
+        linearLayoutManager = new LinearLayoutManager(getContext());
+
         recyclerView = (RecyclerView) findViewById(R.id.node_list_recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        recyclerView.setAdapter(nodeListAdapter);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        // recyclerView.setAdapter(nodeListAdapter);
+
+        recyclerViewScrollEventObservable = RxRecyclerView.scrollEvents(recyclerView);
     }
 
     /**
@@ -96,12 +106,34 @@ class NodeListView extends FrameLayout {
      * @param nodes
      *            A list of {@link Node}s.
      */
+    @Deprecated
     private void setNodes(@NonNull final List<Node> nodes) {
         checkNotNull(nodes);
         checkNotNull(nodeListAdapter);
 
         nodeListAdapter.set(nodes);
         setAdapterIfNotSet();
+    }
+
+    /**
+     * Sets the navigation state.
+     *
+     * @param navigationState
+     *            The new {@link NavigationState}.
+     */
+    private void setNavigationState(@NonNull final NavigationState navigationState) {
+        checkNotNull(navigationState);
+        checkNotNull(nodeListAdapter);
+
+        nodeListAdapter.set(navigationState.getNodes());
+        setAdapterIfNotSet();
+        if (navigationState.getScrollPosition().isPresent()) {
+            ScrollPosition scrollPosition = navigationState.getScrollPosition().get();
+            int position = nodeListAdapter.getPosition(scrollPosition.getReference());
+            linearLayoutManager.scrollToPositionWithOffset(position, scrollPosition.getOffset());
+        } else {
+            recyclerView.scrollToPosition(0);
+        }
     }
 
     private void setAdapterIfNotSet() {
@@ -117,10 +149,11 @@ class NodeListView extends FrameLayout {
      * <ul>
      * <li>If {@link NavigationViewModel#getNodes()} changes, {@link NodeListView#setNodes(List)} is
      * called.</li>
+     * <li>If {@link RecyclerView.OnScrollListener#onScrolled(int, int)} is called,
+     * {@link NavigationViewModel#setScrollPosition(Optional)} is called.</li>
      * <li>If a {@link android.support.v7.widget.RecyclerView.ViewHolder}'s
      * {@link android.view.View.OnClickListener} is called and the clicked {@link Node} is a
-     * {@link FolderNode}, {@link NavigationViewModel#navigateTo(String)} is
-     * called.</li>
+     * {@link FolderNode}, {@link NavigationViewModel#navigateForward(String)} is called.</li>
      * <li>If the clicked {@link Node} is a {@link ContentNode}, TODO</li>
      * </ul>
      */
@@ -137,13 +170,35 @@ class NodeListView extends FrameLayout {
 
         @Override
         protected void bindInternal(@NonNull final CompositeSubscription s) {
-            s.add(viewModel.getNodes().observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(view::setNodes));
+//            s.add(viewModel.getNodes().observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(view::setNodes));
+            s.add(viewModel.getNavigationState().observeOn(AndroidSchedulers.mainThread()).subscribe(view::setNavigationState));
+
             s.add(Observable.create(subscriber -> {
                 view.nodeListAdapter.setOnClickListener(this::nodeListAdapterOnClick);
                 subscriber.add(
                         Subscriptions.create(() -> view.nodeListAdapter.setOnClickListener(null)));
             }).subscribeOn(AndroidSchedulers.mainThread()).subscribe());
+
+            s.add(view.recyclerViewScrollEventObservable.observeOn(AndroidSchedulers.mainThread())
+                    .map(this::toScrollPosition).subscribe(viewModel::setScrollPosition));
+        }
+
+        private Optional<ScrollPosition> toScrollPosition(
+                RecyclerViewScrollEvent recyclerViewScrollEvent) {
+            // Source: http://stackoverflow.com/a/34029677
+
+            int firstVisibleItemPosition = this.view.linearLayoutManager
+                    .findFirstVisibleItemPosition();
+            if (firstVisibleItemPosition != RecyclerView.NO_POSITION) {
+                Node firstVisibleItem = this.view.nodeListAdapter.getItem(firstVisibleItemPosition);
+                View childAt0 = this.view.linearLayoutManager.getChildAt(0);
+                int offsetTop = childAt0.getTop();
+
+                return Optional.of(ImmutableScrollPosition.of(firstVisibleItem, offsetTop));
+            } else {
+                return Optional.absent();
+            }
         }
 
         private void nodeListAdapterOnClick(View clickedView) {
@@ -162,7 +217,7 @@ class NodeListView extends FrameLayout {
 
                 @Override
                 public void visit(@NonNull FolderNode node) {
-                    viewModel.navigateTo(node.getId());
+                    viewModel.navigateForward(node.getId());
                 }
             });
         }

@@ -39,6 +39,10 @@ class NodeListAdapter extends RecyclerView.Adapter<NodeListAdapter.NodeViewHolde
         return nodes.get(position);
     }
 
+    public int getPosition(Node node) {
+        return nodes.indexOf(node);
+    }
+
     @Override
     public NodeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.node_list_item, parent,

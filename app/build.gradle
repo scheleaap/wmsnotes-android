@@ -44,6 +44,8 @@ dependencies {
     compile 'com.annimon:stream:1.1.4'
     compile 'com.google.guava:guava:20.0'
     compile 'com.jakewharton.timber:timber:4.4.0'
+    annotationProcessor 'org.immutables:value:2.3.9'
+    provided 'org.immutables:value:2.3.9'
 
     // Dagger
     compile 'com.google.dagger:dagger:2.8'
@@ -57,6 +59,9 @@ dependencies {
     compile('com.mikepenz:materialdrawer:5.8.1@aar') {
         transitive = true
     }
+
+    // RxJava, RxBinding
+    compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:1.0.0'
 
     // Unit testing
     testCompile 'junit:junit:4.12'

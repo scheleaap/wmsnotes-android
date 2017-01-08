@@ -1,17 +1,14 @@
 package info.maaskant.wouttest2;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -46,7 +43,7 @@ public class WoutTest2App extends Application {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String notebookPath = sharedPreferences.getString(SettingsFragment.NOTEBOOK_PATH_KEY,
                 getResources().getString(R.string.pref_default_notebook_path));
-        navigationViewModel.navigateTo(notebookPath);
+        navigationViewModel.navigateForward(notebookPath);
 
         writeMarkdownFile();
     }
