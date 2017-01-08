@@ -49,7 +49,7 @@ public class NavigationFragment extends Fragment {
         nodeListViewBinder = new NodeListView.ViewBinder(
                 (NodeListView) view.findViewById(R.id.node_list_view),
                 navigationViewModel);
-        navigationViewModel.subscribeToDataStore();
+//        navigationViewModel.subscribeToDataStore();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class NavigationFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         Timber.v("onDestroyView");
-        navigationViewModel.unsubscribeFromDataStore();
+//        navigationViewModel.unsubscribeFromDataStore();
     }
 
     @Override

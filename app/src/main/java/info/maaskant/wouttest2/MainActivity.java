@@ -1,5 +1,7 @@
 package info.maaskant.wouttest2;
 
+import static io.reark.reark.utils.Preconditions.get;
+
 import javax.inject.Inject;
 
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -7,8 +9,8 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -16,7 +18,11 @@ import android.view.MenuItem;
 
 import info.maaskant.wouttest2.data.DataFunctions;
 import info.maaskant.wouttest2.navigation.NavigationFragment;
+import info.maaskant.wouttest2.navigation.NavigationViewModel;
 import info.maaskant.wouttest2.settings.SettingsActivity;
+import info.maaskant.wouttest2.utils.ApplicationInstrumentation;
+import io.reark.reark.utils.RxViewBinder;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +32,15 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     DataFunctions.SetUserSettings setUserSettings;
 
-    NavigationFragment navigationFragment;
+    @Inject
+    NavigationViewModel navigationViewModel;
+
+    @Inject
+    ApplicationInstrumentation instrumentation;
+
+    private NavigationFragment navigationFragment;
+
+    // private MainToolbar.ViewBinder nodeListViewBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +48,31 @@ public class MainActivity extends AppCompatActivity {
         Timber.v("onCreate (hash: %s, savedInstanceState: %s)", System.identityHashCode(this),
                 savedInstanceState);
 
+        ((WoutTest2App) getApplication()).getGraph().inject(this);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar supportActionBar = getSupportActionBar();
 
         createDrawer(toolbar);
         this.navigationFragment = getOrCreateNavigationFragment(savedInstanceState);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(
-//                view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show());
+        // FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        // fab.setOnClickListener(
+        // view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+        // .setAction("Action", null).show());
+
+        navigationViewModel.subscribeToDataStore();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Timber.v("onDestroyView");
+        navigationViewModel.unsubscribeFromDataStore();
+        navigationViewModel.dispose();
+        instrumentation.getLeakTracing().traceLeakage(this);
     }
 
     /**
@@ -124,4 +152,39 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().putFragment(outState, NAVIGATION_FRAGMENT_KEY,
                 this.navigationFragment);
     }
+
+    /**
+     * <p>
+     * Binds a {@link NavigationViewModel} to a {@link MainActivity}.
+     * </p>
+     * <ul>
+     * <li>TODO If {@link NavigationViewModel#getNodes()} changes, {@code getSupportActionBar().setTitle()} is called.</li>
+     * </ul>
+     */
+    // TODO Implement and update documentation
+    // - Update action bar title
+    static class ViewBinder extends RxViewBinder {
+
+        private final MainActivity view;
+        private final NavigationViewModel viewModel;
+
+        public ViewBinder(@NonNull final MainActivity view,
+                @NonNull final NavigationViewModel viewModel) {
+            this.view = get(view);
+            this.viewModel = get(viewModel);
+        }
+
+        @Override
+        protected void bindInternal(@NonNull final CompositeSubscription s) {
+            // s.add(viewModel.getNodes().observeOn(AndroidSchedulers.mainThread())
+            // .subscribe(view::setNodes));
+            // s.add(Observable.create(subscriber -> {
+            // view.nodeListAdapter.setOnClickListener(this::nodeListAdapterOnClick);
+            // subscriber.add(
+            // Subscriptions.create(() -> view.nodeListAdapter.setOnClickListener(null)));
+            // }).subscribeOn(AndroidSchedulers.mainThread()).subscribe());
+        }
+
+    }
+
 }
