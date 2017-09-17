@@ -25,8 +25,6 @@
  */
 package info.maaskant.wouttest2.data;
 
-import android.provider.ContactsContract;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
