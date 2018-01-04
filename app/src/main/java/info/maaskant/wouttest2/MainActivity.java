@@ -1,6 +1,6 @@
 package info.maaskant.wouttest2;
 
-import static io.reark.reark.utils.Preconditions.get;
+import static java.util.Objects.requireNonNull;
 
 import javax.inject.Inject;
 
@@ -17,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import info.maaskant.wouttest2.data.DataFunctions;
+import info.maaskant.wouttest2.detail.DetailActivity;
+import info.maaskant.wouttest2.detail.DetailViewModel;
 import info.maaskant.wouttest2.navigation.NavigationFragment;
 import info.maaskant.wouttest2.navigation.NavigationViewModel;
 import info.maaskant.wouttest2.settings.SettingsActivity;
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private NavigationFragment navigationFragment;
 
-    // private MainToolbar.ViewBinder nodeListViewBinder;
+    private MainActivity.ViewBinder activityViewBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +65,23 @@ public class MainActivity extends AppCompatActivity {
         // view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
         // .setAction("Action", null).show());
 
+        activityViewBinder = new MainActivity.ViewBinder(this, navigationViewModel);
+        // TODO: Is this the right place to call this? It used to be called from NavigationFragment
         navigationViewModel.subscribeToDataStore();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Timber.v("onResume");
+        activityViewBinder.bind();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Timber.v("onPause");
+        activityViewBinder.unbind();
     }
 
     @Override
@@ -101,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
      * Retrieves a {@link NavigationFragment} from a saved instance state or creates a new instance.
      *
      * @param savedInstanceState
-     *            The {@link Bundle} to
+     *            The {@link Bundle} to load from.
      * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance
      *         from {@link #getSupportFragmentManager()} otherwise.
      */
@@ -153,16 +171,13 @@ public class MainActivity extends AppCompatActivity {
                 this.navigationFragment);
     }
 
+    void setSupportActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
     /**
-     * <p>
-     * Binds a {@link NavigationViewModel} to a {@link MainActivity}.
-     * </p>
-     * <ul>
-     * <li>TODO If {@link NavigationViewModel#getNodes()} changes, {@code getSupportActionBar().setTitle()} is called.</li>
-     * </ul>
+     * Binds a {@link DetailViewModel} to a {@link DetailActivity}.
      */
-    // TODO Implement and update documentation
-    // - Update action bar title
     static class ViewBinder extends RxViewBinder {
 
         private final MainActivity view;
@@ -170,19 +185,16 @@ public class MainActivity extends AppCompatActivity {
 
         public ViewBinder(@NonNull final MainActivity view,
                 @NonNull final NavigationViewModel viewModel) {
-            this.view = get(view);
-            this.viewModel = get(viewModel);
+            this.view = requireNonNull(view);
+            this.viewModel = requireNonNull(viewModel);
         }
 
         @Override
         protected void bindInternal(@NonNull final CompositeSubscription s) {
-            // s.add(viewModel.getNodes().observeOn(AndroidSchedulers.mainThread())
-            // .subscribe(view::setNodes));
-            // s.add(Observable.create(subscriber -> {
-            // view.nodeListAdapter.setOnClickListener(this::nodeListAdapterOnClick);
-            // subscriber.add(
-            // Subscriptions.create(() -> view.nodeListAdapter.setOnClickListener(null)));
-            // }).subscribeOn(AndroidSchedulers.mainThread()).subscribe());
+            // TODO Implement
+            // s.add(viewModel.getNavigationState().observeOn(AndroidSchedulers.mainThread())
+            // .map(i -> i.getParentNode().getName())
+            // .subscribe(view::setSupportActionBarTitle));
         }
 
     }

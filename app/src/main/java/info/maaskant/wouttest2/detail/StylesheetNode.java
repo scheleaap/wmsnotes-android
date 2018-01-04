@@ -1,8 +1,8 @@
 package info.maaskant.wouttest2.detail;
 
-import android.support.annotation.NonNull;
-
 import org.commonmark.node.CustomNode;
+
+import android.support.annotation.NonNull;
 
 /**
  * A {@link org.commonmark.node.Node} that represents a link to a stylesheet. Only relevant for HTML

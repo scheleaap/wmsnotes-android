@@ -35,6 +35,7 @@ import info.maaskant.wouttest2.model.UserSettings;
 import io.reark.reark.data.DataStreamNotification;
 import rx.Observable;
 
+@Deprecated
 public class DataFunctions {
     public interface GetUserSettings {
         @NonNull
@@ -45,16 +46,30 @@ public class DataFunctions {
         void call(@NonNull final UserSettings userSettings);
     }
 
-    public interface GetChildNodes {
-        /**
-         * Get the child nodes of a node.
-         *
-         * @param parentNodeId
-         *            The identifier of the parent of the children, {@code null} to get the root node.
-         * @return An {@link Observable} of {@link DataStreamNotification} of {@link List} of {@link Node}.
-         */
-        @NonNull
-        Observable<DataStreamNotification<List<Node>>> call(@Nullable final String parentNodeId);
-    }
+//    public interface GetChildNodes {
+//        /**
+//         * Get the child nodes of a node.
+//         *
+//         * @param parentNodeId
+//         *            The identifier of the parent of the children, {@code null} to get the root
+//         *            node.
+//         * @return An {@link Observable} of {@link DataStreamNotification} of {@link List} of
+//         *         {@link Node}.
+//         */
+//        @NonNull
+//        Observable<DataStreamNotification<List<Node>>> call(@Nullable final String parentNodeId);
+//    }
+
+//    public interface GetNodeContent {
+//        /**
+//         * Get the content of a node.
+//         *
+//         * @param nodeId
+//         *            The identifier of the node.
+//         * @return An {@link Observable} of {@link DataStreamNotification} of {@link String}.
+//         */
+//        @NonNull
+//        Observable<DataStreamNotification<String>> call(final String nodeId);
+//    }
 
 }

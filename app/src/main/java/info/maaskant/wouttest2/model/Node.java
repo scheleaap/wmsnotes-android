@@ -25,14 +25,14 @@
  */
 package info.maaskant.wouttest2.model;
 
-import static io.reark.reark.utils.Preconditions.get;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import android.support.annotation.NonNull;
 
 import io.reark.reark.pojo.OverwritablePojo;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class Node<T extends Node<T>> extends OverwritablePojo<T> {
 
@@ -53,7 +53,7 @@ public abstract class Node<T extends Node<T>> extends OverwritablePojo<T> {
     // int forksCount
     ) {
         this.id = id;
-        this.name = get(name);
+        this.name = requireNonNull(name);
         // this.stargazersCount = stargazersCount;
         // this.forksCount = forksCount;
     }
@@ -66,9 +66,9 @@ public abstract class Node<T extends Node<T>> extends OverwritablePojo<T> {
         );
     }
 
-    public boolean isSome() {
-        return id != null;
-    }
+    // public boolean isSome() {
+    // return id != null;
+    // }
 
     // @Override
     // protected boolean isEmpty(@NonNull final Field field,

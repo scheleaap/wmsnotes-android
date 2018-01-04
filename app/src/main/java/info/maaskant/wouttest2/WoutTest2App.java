@@ -22,10 +22,10 @@ import timber.log.Timber;
 public class WoutTest2App extends Application {
 
     @Inject
-     ApplicationInstrumentation instrumentation;
+    ApplicationInstrumentation instrumentation;
 
     @Inject
-     NavigationViewModel navigationViewModel;
+    NavigationViewModel navigationViewModel;
 
     private Graph graph;
 

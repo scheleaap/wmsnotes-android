@@ -25,9 +25,6 @@
  */
 package info.maaskant.wouttest2.data;
 
-import static io.reark.reark.utils.Preconditions.checkNotNull;
-import static io.reark.reark.utils.Preconditions.get;
-
 import android.support.annotation.NonNull;
 
 import info.maaskant.wouttest2.data.stores.UserSettingsStore;
@@ -35,6 +32,9 @@ import info.maaskant.wouttest2.model.UserSettings;
 import io.reark.reark.data.stores.interfaces.StoreInterface;
 import rx.Observable;
 
+import static java.util.Objects.requireNonNull;
+
+@Deprecated
 public class DataLayer  {
     private static final String TAG = DataLayer.class.getSimpleName();
 
@@ -46,7 +46,7 @@ public class DataLayer  {
 
     public DataLayer(
             @NonNull final UserSettingsStore userSettingsStore) {
-        this.userSettingsStore = get(userSettingsStore);
+        this.userSettingsStore = requireNonNull(userSettingsStore);
     }
 
 
@@ -58,7 +58,7 @@ public class DataLayer  {
     }
 
     public void setUserSettings(@NonNull final UserSettings userSettings) {
-        checkNotNull(userSettings);
+        requireNonNull(userSettings);
 
         userSettingsStore.put(userSettings);
     }

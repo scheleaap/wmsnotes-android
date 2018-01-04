@@ -1,10 +1,8 @@
 package info.maaskant.wouttest2.navigation;
 
-import static io.reark.reark.utils.Preconditions.checkNotNull;
-import static io.reark.reark.utils.Preconditions.get;
-
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import org.immutables.value.Value;
 
@@ -13,6 +11,7 @@ import com.google.common.base.Optional;
 import android.support.annotation.NonNull;
 
 import info.maaskant.wouttest2.data.DataFunctions;
+import info.maaskant.wouttest2.data.NotebookStore;
 import info.maaskant.wouttest2.model.Node;
 import io.reark.reark.data.DataStreamNotification;
 import io.reark.reark.viewmodels.AbstractViewModel;
@@ -24,10 +23,12 @@ import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
+import static java.util.Objects.requireNonNull;
+
 public class NavigationViewModel extends AbstractViewModel {
 
     @NonNull
-    private final DataFunctions.GetChildNodes getChildNodes;
+    private final NotebookStore notebookStore;
 
     @NonNull
     private final BehaviorSubject<String> currentParentNodeIdObservable = BehaviorSubject.create();
@@ -54,8 +55,8 @@ public class NavigationViewModel extends AbstractViewModel {
 
     private Optional<ScrollPosition> currentScrollPosition = Optional.absent();
 
-    public NavigationViewModel(@NonNull final DataFunctions.GetChildNodes getChildNodes) {
-        this.getChildNodes = get(getChildNodes);
+    public NavigationViewModel(@NonNull final NotebookStore notebookStore) {
+        this.notebookStore = requireNonNull(notebookStore);
     }
 
     @NonNull
@@ -82,7 +83,7 @@ public class NavigationViewModel extends AbstractViewModel {
     }
 
     public void navigateForward(@NonNull final String parentNodeId) {
-        checkNotNull(parentNodeId);
+        requireNonNull(parentNodeId);
 
         Timber.d("Navigating to %s", parentNodeId);
         if (this.currentParentNodeId.isPresent()) {
@@ -119,23 +120,24 @@ public class NavigationViewModel extends AbstractViewModel {
     @Override
     public void subscribeToDataStoreInternal(
             @NonNull final CompositeSubscription compositeSubscription) {
-        checkNotNull(compositeSubscription);
+        requireNonNull(compositeSubscription);
         Timber.v("subscribeToDataStoreInternal");
 
         ConnectableObservable<DataStreamNotification<List<Node>>> getChildNodesSource = this.currentParentNodeIdObservable
-                .distinctUntilChanged().observeOn(Schedulers.io()).switchMap(getChildNodes::call)
-                .publish();
+                .distinctUntilChanged().observeOn(Schedulers.io())
+                .switchMap(this.notebookStore::getChildNodes).publish();
 
         compositeSubscription.add(getChildNodesSource.map(toProgressStatus())
                 .doOnNext(progressStatus -> Timber.d("Progress status: %s", progressStatus.name()))
                 .subscribe(this::setProgressStatus));
 
-        compositeSubscription.add(getChildNodesSource.map(DataStreamNotification::getValue)
+        compositeSubscription.add(getChildNodesSource //
+                .filter(DataStreamNotification::isOnNext) //
+                .map(DataStreamNotification::getValue)
                 .doOnNext(nodes -> Timber.d("%s child nodes available", nodes.size()))
                 .map(this::createNavigationState)
                 .doOnNext(navigationState -> Timber.v("New navigation state: %s", navigationState))
                 .subscribe(this.navigationState)
-        // .subscribe(nodes)
         );
 
         compositeSubscription.add(getChildNodesSource.connect());
@@ -160,7 +162,7 @@ public class NavigationViewModel extends AbstractViewModel {
     }
 
     public void setProgressStatus(@NonNull final ProgressStatus status) {
-        checkNotNull(status);
+        requireNonNull(status);
 
         progressStatus.onNext(status);
     }

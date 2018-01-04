@@ -35,10 +35,11 @@ import info.maaskant.wouttest2.data.stores.UserSettingsStore;
 @Module(includes = { StoreModule.class })
 public final class DataModule {
 
-    @Provides
-    public DataFunctions.GetChildNodes provideGetChildNodes(NotebookRepository notebookRepository) {
-        return notebookRepository::getChildNodes;
-    }
+    // @Provides
+    // public DataFunctions.GetChildNodes provideGetChildNodes(NotebookRepository
+    // notebookRepository) {
+    // return notebookRepository::getChildNodes;
+    // }
 
     @Provides
     public DataFunctions.GetUserSettings provideGetUserSettings(DataLayer dataLayer) {
@@ -60,6 +61,12 @@ public final class DataModule {
     @Singleton
     public NotebookRepository provideNotebookRepository() {
         return new NotebookRepository();
+    }
+
+    @Provides
+    @Singleton
+    public NotebookStore provideNotebookStore(NotebookRepository notebookRepository) {
+        return new NotebookStore(notebookRepository);
     }
 
 }

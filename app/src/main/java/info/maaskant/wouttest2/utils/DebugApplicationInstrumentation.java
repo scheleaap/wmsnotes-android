@@ -25,7 +25,7 @@
  */
 package info.maaskant.wouttest2.utils;
 
-import static io.reark.reark.utils.Preconditions.get;
+import static java.util.Objects.requireNonNull;
 
 import android.support.annotation.NonNull;
 
@@ -37,7 +37,7 @@ public class DebugApplicationInstrumentation implements ApplicationInstrumentati
 
     public DebugApplicationInstrumentation(@NonNull final LeakTracing leakTracing
     ) {
-        this.leakTracing = get(leakTracing);
+        this.leakTracing = requireNonNull(leakTracing);
     }
 
     @Override

@@ -25,9 +25,6 @@
  */
 package info.maaskant.wouttest2.navigation;
 
-import static io.reark.reark.utils.Preconditions.checkNotNull;
-import static io.reark.reark.utils.Preconditions.get;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -56,6 +53,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * <p>
@@ -108,8 +107,8 @@ class NodeListView extends FrameLayout {
      */
     @Deprecated
     private void setNodes(@NonNull final List<Node> nodes) {
-        checkNotNull(nodes);
-        checkNotNull(nodeListAdapter);
+        requireNonNull(nodes);
+        requireNonNull(nodeListAdapter);
 
         nodeListAdapter.set(nodes);
         setAdapterIfNotSet();
@@ -122,8 +121,8 @@ class NodeListView extends FrameLayout {
      *            The new {@link NavigationState}.
      */
     private void setNavigationState(@NonNull final NavigationState navigationState) {
-        checkNotNull(navigationState);
-        checkNotNull(nodeListAdapter);
+        requireNonNull(navigationState);
+        requireNonNull(nodeListAdapter);
 
         nodeListAdapter.set(navigationState.getNodes());
         setAdapterIfNotSet();
@@ -164,15 +163,14 @@ class NodeListView extends FrameLayout {
 
         public ViewBinder(@NonNull final NodeListView view,
                 @NonNull final NavigationViewModel viewModel) {
-            this.view = get(view);
-            this.viewModel = get(viewModel);
+            this.view = requireNonNull(view);
+            this.viewModel = requireNonNull(viewModel);
         }
 
         @Override
         protected void bindInternal(@NonNull final CompositeSubscription s) {
-//            s.add(viewModel.getNodes().observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(view::setNodes));
-            s.add(viewModel.getNavigationState().observeOn(AndroidSchedulers.mainThread()).subscribe(view::setNavigationState));
+            s.add(viewModel.getNavigationState().observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(view::setNavigationState));
 
             s.add(Observable.create(subscriber -> {
                 view.nodeListAdapter.setOnClickListener(this::nodeListAdapterOnClick);
@@ -211,7 +209,7 @@ class NodeListView extends FrameLayout {
                     // TODO refactor and update Javadoc
                     Timber.v("%s clicked", node);
                     Intent intent = new Intent(view.getContext(), DetailActivity.class);
-                    intent.putExtra(DetailActivity.PATH_KEY, node.getId());
+                    intent.putExtra(DetailActivity.NODE_ID_KEY, node.getId());
                     view.getContext().startActivity(intent);
                 }
 

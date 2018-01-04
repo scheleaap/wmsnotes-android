@@ -31,30 +31,37 @@ import android.app.Application;
 
 import dagger.Component;
 import info.maaskant.wouttest2.MainActivity;
+import info.maaskant.wouttest2.detail.DetailActivity;
+import info.maaskant.wouttest2.detail.DetailModule;
+import info.maaskant.wouttest2.detail.ViewerFragment;
 import info.maaskant.wouttest2.navigation.NavigationFragment;
 import info.maaskant.wouttest2.WoutTest2App;
 import info.maaskant.wouttest2.data.DataModule;
+import info.maaskant.wouttest2.navigation.NavigationModule;
 import info.maaskant.wouttest2.navigation.NavigationViewModel;
 
 @Singleton
-@Component(modules = {ApplicationModule.class,
-                      DataModule.class,
-                      ViewModelModule.class,
-                      InstrumentationModule.class
-})
+@Component(modules = { ApplicationModule.class, DataModule.class, NavigationModule.class,
+        DetailModule.class, InstrumentationModule.class })
 public interface Graph {
 
+    void inject(DetailActivity detailActivity);
+
     void inject(MainActivity mainActivity);
+
     void inject(NavigationFragment navigationFragment);
+
     void inject(NavigationViewModel navigationViewModel);
+
+    void inject(ViewerFragment viewerFragment);
+
     void inject(WoutTest2App application);
 
     final class Initializer {
 
         public static Graph init(Application application) {
-            return DaggerGraph.builder()
-                              .applicationModule(new ApplicationModule(application))
-                              .build();
+            return DaggerGraph.builder().applicationModule(new ApplicationModule(application))
+                    .build();
         }
     }
 }
