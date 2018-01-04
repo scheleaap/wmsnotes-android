@@ -13,7 +13,7 @@ import info.maaskant.wouttest2.WoutTest2App;
 import info.maaskant.wouttest2.utils.ApplicationInstrumentation;
 import timber.log.Timber;
 
-public class ViewerFragment extends Fragment {
+public class EditorFragment extends Fragment {
 
     @Inject
     DetailViewModel detailViewModel;
@@ -21,7 +21,7 @@ public class ViewerFragment extends Fragment {
     @Inject
     ApplicationInstrumentation instrumentation;
 
-    private ViewerView.ViewBinder viewerViewBinder;
+    private EditorView.ViewBinder editorViewBinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,16 +33,16 @@ public class ViewerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.viewer_fragment, container, false);
+        View view = inflater.inflate(R.layout.editor_fragment, container, false);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewerViewBinder = new ViewerView.ViewBinder(
-                (ViewerView) view.findViewById(R.id.viewer_fragment), detailViewModel);
-//        detailViewModel.subscribeToDataStore();
+        editorViewBinder = new EditorView.ViewBinder(
+                (EditorView) view.findViewById(R.id.editor_fragment), detailViewModel);
+        detailViewModel.subscribeToDataStore();
     }
 
     @Override
@@ -55,14 +55,14 @@ public class ViewerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Timber.v("onResume");
-        viewerViewBinder.bind();
+        editorViewBinder.bind();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Timber.v("onPause");
-        viewerViewBinder.unbind();
+        editorViewBinder.unbind();
     }
 
     @Override

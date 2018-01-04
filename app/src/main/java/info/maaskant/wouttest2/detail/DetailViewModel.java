@@ -34,6 +34,9 @@ public class DetailViewModel extends AbstractViewModel {
     private final BehaviorSubject<String> contentNodeId = BehaviorSubject.create();
 
     @NonNull
+    private final BehaviorSubject<String> markdown = BehaviorSubject.create();
+
+    @NonNull
     private final BehaviorSubject<String> html = BehaviorSubject.create();
 
     @NonNull
@@ -60,6 +63,11 @@ public class DetailViewModel extends AbstractViewModel {
         return html;
     }
 
+    @NonNull
+    public BehaviorSubject<String> getMarkdown() {
+        return markdown;
+    }
+
     @Override
     public void subscribeToDataStoreInternal(
             @NonNull final CompositeSubscription compositeSubscription) {
@@ -74,16 +82,14 @@ public class DetailViewModel extends AbstractViewModel {
                 .distinctUntilChanged().observeOn(Schedulers.io())
                 .switchMap(this.notebookStore::getNodeContent).publish();
 
-        compositeSubscription.add(getContentNodeSource //
-                .filter(DataStreamNotification::isOnNext) //
-                .map(DataStreamNotification::getValue) //
-                .subscribe(this.contentNode));
+        compositeSubscription.add(getContentNodeSource.filter(DataStreamNotification::isOnNext)
+                .map(DataStreamNotification::getValue).subscribe(this.contentNode));
 
-        compositeSubscription.add(getMarkdownContentSource //
-                .filter(DataStreamNotification::isOnNext).map(DataStreamNotification::getValue)
-                .doOnNext(i -> Timber.d("Markdown content loaded")) //
-                .map(this::convertToHtml) //
-                .doOnNext(i -> Timber.v("HTML content rendered")) //
+        compositeSubscription.add(getMarkdownContentSource.filter(DataStreamNotification::isOnNext)
+                .map(DataStreamNotification::getValue).subscribe(this.markdown));
+
+        compositeSubscription.add(getMarkdownContentSource.filter(DataStreamNotification::isOnNext)
+                .map(DataStreamNotification::getValue).map(this::convertToHtml)
                 .subscribe(this.html));
 
         compositeSubscription.add(getContentNodeSource.connect());

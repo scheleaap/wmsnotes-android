@@ -2,10 +2,13 @@ package info.maaskant.wouttest2.detail;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Arrays;
+
 import javax.inject.Inject;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -60,14 +63,17 @@ public class DetailActivity extends AppCompatActivity {
         }
         Timber.v("Using node identifier " + nodeId);
 
-        this.viewerFragment = getOrCreateViewerFragment(savedInstanceState);
+        // TODO: Support restoring from bundle again (see commented-out code)
+//        this.viewerFragment = getOrCreateViewerFragment(savedInstanceState);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.detail_view_pager);
+        viewPager.setAdapter(
+                new DetailPagerAdapter(getSupportFragmentManager(), Arrays.asList(new ViewerFragment(), new EditorFragment())));
 
         activityViewBinder = new DetailActivity.ViewBinder(this, detailViewModel);
         // TODO: Is this the right place to call this? It used to be called from ViewerFragment
         detailViewModel.subscribeToDataStore();
 
         detailViewModel.setContentNodeId(nodeId);
-
     }
 
     @Override
@@ -93,47 +99,25 @@ public class DetailActivity extends AppCompatActivity {
         instrumentation.getLeakTracing().traceLeakage(this);
     }
 
-    /**
-     * Retrieves a {@link ViewerFragment} from a saved instance state or creates a new instance.
-     *
-     * @param savedInstanceState
-     *            The {@link Bundle} to load from.
-     * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance
-     *         from {@link #getSupportFragmentManager()} otherwise.
-     */
-    private ViewerFragment getOrCreateViewerFragment(Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            ViewerFragment viewerFragment = new ViewerFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.viewer_fragment, viewerFragment)
-                    .commit();
-            return viewerFragment;
-        } else {
-            return (ViewerFragment) getSupportFragmentManager().getFragment(savedInstanceState,
-                    VIEWER_FRAGMENT_KEY);
-        }
-    }
-
-    // @Override
-    // public boolean onCreateOptionsMenu(Menu menu) {
-    // // Inflate the menu; this adds items to the action bar if it is present.
-    // getMenuInflater().inflate(R.menu.menu_main, menu);
-    // return true;
-    // }
-
-    // @Override
-    // public boolean onOptionsItemSelected(MenuItem item) {
-    // // Handle action bar item clicks here. The action bar will
-    // // automatically handle clicks on the Home/Up button, so long
-    // // as you specify a parent activity in AndroidManifest.xml.
-    // int id = item.getItemId();
-    //
-    // // noinspection SimplifiableIfStatement
-    // if (id == R.id.action_settings) {
-    // return true;
-    // }
-    //
-    // return super.onOptionsItemSelected(item);
-    // }
+//    /**
+//     * Retrieves a {@link ViewerFragment} from a saved instance state or creates a new instance.
+//     *
+//     * @param savedInstanceState
+//     *            The {@link Bundle} to load from.
+//     * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance
+//     *         from {@link #getSupportFragmentManager()} otherwise.
+//     */
+//    private ViewerFragment getOrCreateViewerFragment(Bundle savedInstanceState) {
+//        if (savedInstanceState == null) {
+//            ViewerFragment viewerFragment = new ViewerFragment();
+//            getSupportFragmentManager().beginTransaction().add(R.id.viewer_fragment, viewerFragment)
+//                    .commit();
+//            return viewerFragment;
+//        } else {
+//            return (ViewerFragment) getSupportFragmentManager().getFragment(savedInstanceState,
+//                    VIEWER_FRAGMENT_KEY);
+//        }
+//    }
 
     // @Override
     // public void onBackPressed() {

@@ -33,6 +33,7 @@ import dagger.Component;
 import info.maaskant.wouttest2.MainActivity;
 import info.maaskant.wouttest2.detail.DetailActivity;
 import info.maaskant.wouttest2.detail.DetailModule;
+import info.maaskant.wouttest2.detail.EditorFragment;
 import info.maaskant.wouttest2.detail.ViewerFragment;
 import info.maaskant.wouttest2.navigation.NavigationFragment;
 import info.maaskant.wouttest2.WoutTest2App;
@@ -46,6 +47,8 @@ import info.maaskant.wouttest2.navigation.NavigationViewModel;
 public interface Graph {
 
     void inject(DetailActivity detailActivity);
+
+    void inject(EditorFragment editorFragment);
 
     void inject(MainActivity mainActivity);
 

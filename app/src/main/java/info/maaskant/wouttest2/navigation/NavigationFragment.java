@@ -88,7 +88,7 @@ public class NavigationFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Timber.v("onDestroy");
-        navigationViewModel.dispose();
+//        navigationViewModel.dispose();
         instrumentation.getLeakTracing().traceLeakage(this);
     }
 
