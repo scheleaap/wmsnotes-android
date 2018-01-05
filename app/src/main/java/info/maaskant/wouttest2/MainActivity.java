@@ -1,5 +1,6 @@
 package info.maaskant.wouttest2;
 
+import static info.maaskant.wouttest2.MemoryUtil.fixInputMethod;
 import static java.util.Objects.requireNonNull;
 
 import javax.inject.Inject;
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         Timber.v("onDestroyView");
         navigationViewModel.unsubscribeFromDataStore();
         navigationViewModel.dispose();
+        fixInputMethod(this);
         instrumentation.getLeakTracing().traceLeakage(this);
     }
 
