@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 
 import javax.inject.Inject;
 
+import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     ApplicationInstrumentation instrumentation;
 
+    private Drawer drawer;
+
     private NavigationFragment navigationFragment;
 
     private MainActivity.ViewBinder activityViewBinder;
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar supportActionBar = getSupportActionBar();
 
-        createDrawer(toolbar);
+        createAndAddDrawer(toolbar);
         this.navigationFragment = getOrCreateNavigationFragment(savedInstanceState);
 
         // FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -101,12 +104,12 @@ public class MainActivity extends AppCompatActivity {
      * @param toolbar
      *            The activity's {@link Toolbar}.
      */
-    private void createDrawer(Toolbar toolbar) {
+    private void createAndAddDrawer(Toolbar toolbar) {
         final PrimaryDrawerItem notesDrawerItem = new PrimaryDrawerItem().withIdentifier(0)
                 .withName(R.string.drawer_item_notes);
         final PrimaryDrawerItem settingsDrawerItem = new PrimaryDrawerItem().withIdentifier(1)
                 .withName(R.string.drawer_item_settings).withSelectable(false);
-        new DrawerBuilder().withActivity(this).withToolbar(toolbar)
+        drawer = new DrawerBuilder().withActivity(this).withToolbar(toolbar)
                 .addDrawerItems(notesDrawerItem, settingsDrawerItem)
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
                     if (drawerItem == settingsDrawerItem) {
@@ -161,8 +164,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!navigationFragment.onBackPressed()) {
-            super.onBackPressed();
+        if (drawer.isDrawerOpen()) {
+            drawer.closeDrawer();
+        } else {
+            if (!navigationFragment.onBackPressed()) {
+                super.onBackPressed();
+            }
         }
     }
 
