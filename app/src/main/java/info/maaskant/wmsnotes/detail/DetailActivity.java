@@ -6,12 +6,14 @@ import java.util.Arrays;
 
 import javax.inject.Inject;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import info.maaskant.wmsnotes.R;
@@ -145,6 +147,15 @@ public class DetailActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(title);
     }
 
+    void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     /**
      * Binds a {@link DetailViewModel} to a {@link DetailActivity}.
      */
@@ -170,6 +181,29 @@ public class DetailActivity extends AppCompatActivity {
                         .add(Subscriptions.create(() -> view.saveButton.setOnClickListener(null)));
             }).subscribeOn(AndroidSchedulers.mainThread()).subscribe());
 
+            s.add(Observable.create(subscriber -> {
+                view.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset,
+                            int positionOffsetPixels) {
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        if (!((DetailPagerAdapter) view.viewPager.getAdapter())
+                                .isEditorPage(position)) {
+                            view.hideKeyboard();
+                        }
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+                    }
+                });
+                // We might be causing a memory leak here by not removing the listener here.
+                // subscriber
+                // .add(Subscriptions.create(() -> view.editText.removeTextChangedListener(TODO)));
+            }).subscribeOn(AndroidSchedulers.mainThread()).subscribe());
         }
 
         private void saveButtonOnClick(View clickedView) {
