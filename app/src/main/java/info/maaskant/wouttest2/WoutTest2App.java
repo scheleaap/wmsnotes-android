@@ -1,17 +1,17 @@
 package info.maaskant.wouttest2;
 
-import android.app.Application;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.inject.Inject;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+
+import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import info.maaskant.wouttest2.di.Graph;
 import info.maaskant.wouttest2.navigation.NavigationViewModel;
@@ -51,8 +51,12 @@ public class WoutTest2App extends Application {
     private void writeMarkdownFile() {
         // Write Markdown file
         String fileName = "test.md";
-        String content = "# Kruidkoek\n" + "\n" + "a|b\n" + "---|---\n" + "c|d\n" + "\n"
-                + "http://www.google.com/";
+        String content = "# Kruidkoek\n" + "\n" + "Key | Value\n" + "---|---\n"
+                + "Nederland | Amsterdam\n" + "Duitsland | Berlijn\n" + "Frankrijk | Parijs\n"
+                + "\n" + "http://www.google.com/\n" + "\n" + "\uD83D\uDE42 \n" + "\n"
+                + "\uD83C\uDDF3\uD83C\uDDF5 \n" + "\n" + "Regel\n" + "\n" + "Regel\n" + "\n"
+                + "Regel\n" + "\n" + "Regel\n" + "\n" + "Regel\n" + "\n" + "Regel\n" + "\n"
+                + "Regel\n" + "\n" + "Regel\n";
         try {
             File path = new File("/storage/emulated/0/Download", fileName);
             Timber.i("Writing test data to %s", path);
