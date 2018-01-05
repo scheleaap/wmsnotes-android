@@ -2,7 +2,7 @@
 <info.maaskant.wouttest2.detail.EditorView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/editor_fragment"
+    android:id="@+id/editor_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -15,10 +15,10 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_margin="8dp"
         android:background="@android:color/transparent"
         android:gravity="top"
         android:inputType="textMultiLine|textNoSuggestions"
-        android:padding="8dp"
         android:textSize="18sp" />
 
 </info.maaskant.wouttest2.detail.EditorView>

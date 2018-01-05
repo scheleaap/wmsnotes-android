@@ -41,7 +41,7 @@ public class ViewerFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewerViewBinder = new ViewerView.ViewBinder(
-                (ViewerView) view.findViewById(R.id.viewer_fragment), detailViewModel);
+                (ViewerView) view.findViewById(R.id.viewer_view), detailViewModel);
 //        detailViewModel.subscribeToDataStore();
     }
 

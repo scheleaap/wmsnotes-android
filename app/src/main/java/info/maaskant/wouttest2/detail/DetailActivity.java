@@ -11,14 +11,18 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Button;
 
 import info.maaskant.wouttest2.R;
 import info.maaskant.wouttest2.WoutTest2App;
 import info.maaskant.wouttest2.model.ContentNode;
 import info.maaskant.wouttest2.utils.ApplicationInstrumentation;
 import io.reark.reark.utils.RxViewBinder;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
+import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 public class DetailActivity extends AppCompatActivity {
@@ -40,6 +44,8 @@ public class DetailActivity extends AppCompatActivity {
     private ViewerFragment viewerFragment;
 
     private DetailActivity.ViewBinder activityViewBinder;
+
+    private Button saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,16 +69,19 @@ public class DetailActivity extends AppCompatActivity {
         }
         Timber.v("Using node identifier " + nodeId);
 
+        saveButton = (Button) findViewById(R.id.detail_save_button);
+
         // TODO: Support restoring from bundle again (see commented-out code)
-//        this.viewerFragment = getOrCreateViewerFragment(savedInstanceState);
+        // this.viewerFragment = getOrCreateViewerFragment(savedInstanceState);
         ViewPager viewPager = (ViewPager) findViewById(R.id.detail_view_pager);
-        viewPager.setAdapter(
-                new DetailPagerAdapter(getSupportFragmentManager(), Arrays.asList(new ViewerFragment(), new EditorFragment())));
+        viewPager.setAdapter(new DetailPagerAdapter(getSupportFragmentManager(),
+                Arrays.asList(new ViewerFragment(), new EditorFragment())));
 
         activityViewBinder = new DetailActivity.ViewBinder(this, detailViewModel);
         // TODO: Is this the right place to call this? It used to be called from ViewerFragment
         detailViewModel.subscribeToDataStore();
 
+        // Start loading everything by setting the content node id.
         detailViewModel.setContentNodeId(nodeId);
     }
 
@@ -99,25 +108,25 @@ public class DetailActivity extends AppCompatActivity {
         instrumentation.getLeakTracing().traceLeakage(this);
     }
 
-//    /**
-//     * Retrieves a {@link ViewerFragment} from a saved instance state or creates a new instance.
-//     *
-//     * @param savedInstanceState
-//     *            The {@link Bundle} to load from.
-//     * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance
-//     *         from {@link #getSupportFragmentManager()} otherwise.
-//     */
-//    private ViewerFragment getOrCreateViewerFragment(Bundle savedInstanceState) {
-//        if (savedInstanceState == null) {
-//            ViewerFragment viewerFragment = new ViewerFragment();
-//            getSupportFragmentManager().beginTransaction().add(R.id.viewer_fragment, viewerFragment)
-//                    .commit();
-//            return viewerFragment;
-//        } else {
-//            return (ViewerFragment) getSupportFragmentManager().getFragment(savedInstanceState,
-//                    VIEWER_FRAGMENT_KEY);
-//        }
-//    }
+    // /**
+    // * Retrieves a {@link ViewerFragment} from a saved instance state or creates a new instance.
+    // *
+    // * @param savedInstanceState
+    // * The {@link Bundle} to load from.
+    // * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance
+    // * from {@link #getSupportFragmentManager()} otherwise.
+    // */
+    // private ViewerFragment getOrCreateViewerFragment(Bundle savedInstanceState) {
+    // if (savedInstanceState == null) {
+    // ViewerFragment viewerFragment = new ViewerFragment();
+    // getSupportFragmentManager().beginTransaction().add(R.id.viewer_fragment, viewerFragment)
+    // .commit();
+    // return viewerFragment;
+    // } else {
+    // return (ViewerFragment) getSupportFragmentManager().getFragment(savedInstanceState,
+    // VIEWER_FRAGMENT_KEY);
+    // }
+    // }
 
     // @Override
     // public void onBackPressed() {
@@ -154,6 +163,17 @@ public class DetailActivity extends AppCompatActivity {
         protected void bindInternal(@NonNull final CompositeSubscription s) {
             s.add(viewModel.getContentNode().observeOn(AndroidSchedulers.mainThread())
                     .map(ContentNode::getName).subscribe(view::setSupportActionBarTitle));
+
+            s.add(Observable.create(subscriber -> {
+                view.saveButton.setOnClickListener(this::saveButtonOnClick);
+                subscriber
+                        .add(Subscriptions.create(() -> view.saveButton.setOnClickListener(null)));
+            }).subscribeOn(AndroidSchedulers.mainThread()).subscribe());
+
+        }
+
+        private void saveButtonOnClick(View clickedView) {
+//            viewModel.save()
         }
 
     }

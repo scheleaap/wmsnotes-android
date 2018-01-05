@@ -1,0 +1,1 @@
+Change binding mechanism: https://github.com/apoi/quickbeer-android/commit/3bc303d2ca36c76f0d0e47db53198c1ede23d887#diff-38d00ad87ddc802f8b37273e7f2f6404

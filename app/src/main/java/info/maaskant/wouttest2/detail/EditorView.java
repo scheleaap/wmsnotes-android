@@ -3,17 +3,17 @@ package info.maaskant.wouttest2.detail;
 import static java.util.Objects.requireNonNull;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import info.maaskant.wouttest2.R;
 import io.reark.reark.utils.RxViewBinder;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
@@ -24,6 +24,8 @@ import timber.log.Timber;
 class EditorView extends RelativeLayout {
 
     private EditText editText;
+
+    private boolean listenForChanges = true;
 
     public EditorView(Context context) {
         super(context, null);
@@ -46,7 +48,9 @@ class EditorView extends RelativeLayout {
         editText.post(new Runnable() {
             @Override
             public void run() {
+                listenForChanges = false;
                 editText.setText(markdownContent);
+                listenForChanges = true;
             }
         });
 
@@ -68,8 +72,29 @@ class EditorView extends RelativeLayout {
 
         @Override
         protected void bindInternal(@NonNull final CompositeSubscription s) {
-            s.add(viewModel.getMarkdown().observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(view::setContent));
+            s.add(viewModel.getMarkdownChange().observeOn(AndroidSchedulers.mainThread())
+                    .filter(i -> !i.isFromUser()).subscribe(i -> view.setContent(i.getContent())));
+
+            s.add(Observable.create(subscriber -> {
+                view.editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if (view.listenForChanges) {
+                            viewModel.setMarkdown(view.editText.getText().toString(), true);
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                });
+                // subscriber
+                // .add(Subscriptions.create(() -> view.editText.removeTextChangedListener(TODO)));
+            }).subscribeOn(AndroidSchedulers.mainThread()).subscribe());
         }
 
     }

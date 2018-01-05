@@ -21,15 +21,31 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/detail_view_pager"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!--<include layout="@layout/editor_fragment" />-->
-        <!--<include layout="@layout/viewer_fragment" />-->
+        <Button
+            android:id="@+id/detail_save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="?attr/colorAccent"
+            android:text="@string/detail_save" />
 
-    </android.support.v4.view.ViewPager>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/detail_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/detail_save_button">
+
+            <!--<include layout="@layout/editor_fragment" />-->
+            <!--<include layout="@layout/viewer_fragment" />-->
+
+        </android.support.v4.view.ViewPager>
+
+    </RelativeLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

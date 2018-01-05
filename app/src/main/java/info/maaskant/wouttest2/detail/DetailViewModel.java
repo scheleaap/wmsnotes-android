@@ -5,12 +5,14 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.commonmark.Extension;
 import org.commonmark.ext.autolink.AutolinkExtension;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.immutables.value.Value;
 
 import android.support.annotation.NonNull;
 
@@ -34,7 +36,7 @@ public class DetailViewModel extends AbstractViewModel {
     private final BehaviorSubject<String> contentNodeId = BehaviorSubject.create();
 
     @NonNull
-    private final BehaviorSubject<String> markdown = BehaviorSubject.create();
+    private final BehaviorSubject<ContentChange<String>> markdown = BehaviorSubject.create();
 
     @NonNull
     private final BehaviorSubject<String> html = BehaviorSubject.create();
@@ -64,8 +66,12 @@ public class DetailViewModel extends AbstractViewModel {
     }
 
     @NonNull
-    public BehaviorSubject<String> getMarkdown() {
+    public BehaviorSubject<ContentChange<String>> getMarkdownChange() {
         return markdown;
+    }
+
+    public void setMarkdown(@NonNull final String newMarkdownContent, boolean fromUser) {
+        markdown.onNext(ImmutableContentChange.of(newMarkdownContent, true));
     }
 
     @Override
@@ -78,22 +84,24 @@ public class DetailViewModel extends AbstractViewModel {
                 .distinctUntilChanged().observeOn(Schedulers.io())
                 .switchMap(this.notebookStore::getContentNode).publish();
 
-        ConnectableObservable<DataStreamNotification<String>> getMarkdownContentSource = this.contentNodeId
+        ConnectableObservable<DataStreamNotification<String>> getNodeContentSource = this.contentNodeId
                 .distinctUntilChanged().observeOn(Schedulers.io())
                 .switchMap(this.notebookStore::getNodeContent).publish();
 
         compositeSubscription.add(getContentNodeSource.filter(DataStreamNotification::isOnNext)
                 .map(DataStreamNotification::getValue).subscribe(this.contentNode));
 
-        compositeSubscription.add(getMarkdownContentSource.filter(DataStreamNotification::isOnNext)
-                .map(DataStreamNotification::getValue).subscribe(this.markdown));
+        compositeSubscription.add(getNodeContentSource.filter(DataStreamNotification::isOnNext)
+                .map(DataStreamNotification::getValue)
+                .map(i -> ImmutableContentChange.of(i, false))
+                .subscribe(this.markdown));
 
-        compositeSubscription.add(getMarkdownContentSource.filter(DataStreamNotification::isOnNext)
-                .map(DataStreamNotification::getValue).map(this::convertToHtml)
-                .subscribe(this.html));
+        compositeSubscription.add(this.markdown.distinctUntilChanged()
+                .observeOn(Schedulers.computation()).throttleWithTimeout(500, TimeUnit.MILLISECONDS)
+                .map(i -> this.convertToHtml(i.getContent())).subscribe(this.html));
 
         compositeSubscription.add(getContentNodeSource.connect());
-        compositeSubscription.add(getMarkdownContentSource.connect());
+        compositeSubscription.add(getNodeContentSource.connect());
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
@@ -110,6 +118,19 @@ public class DetailViewModel extends AbstractViewModel {
         document.getFirstChild().insertBefore(new StylesheetNode("markdown.css"));
         String htmlContent = renderer.render(document);
         return htmlContent;
+    }
+
+    @Value.Immutable
+    interface ContentChange<T> {
+
+        @NonNull
+        @Value.Parameter
+        T getContent();
+
+        @NonNull
+        @Value.Parameter
+        boolean isFromUser();
+
     }
 
 }

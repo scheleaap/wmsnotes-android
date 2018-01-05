@@ -41,7 +41,7 @@ public class EditorFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         editorViewBinder = new EditorView.ViewBinder(
-                (EditorView) view.findViewById(R.id.editor_fragment), detailViewModel);
+                (EditorView) view.findViewById(R.id.editor_view), detailViewModel);
         detailViewModel.subscribeToDataStore();
     }
 
