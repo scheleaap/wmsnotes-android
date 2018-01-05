@@ -93,6 +93,7 @@ class EditorView extends RelativeLayout {
                     public void afterTextChanged(Editable s) {
                     }
                 });
+                // We might be causing a memory leak here by not removing the listener here.
                 // subscriber
                 // .add(Subscriptions.create(() -> view.editText.removeTextChangedListener(TODO)));
             }).subscribeOn(AndroidSchedulers.mainThread()).subscribe());

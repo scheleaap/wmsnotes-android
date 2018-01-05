@@ -2,8 +2,6 @@ package info.maaskant.wmsnotes.detail;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Arrays;
-
 import javax.inject.Inject;
 
 import android.content.Context;
@@ -43,11 +41,15 @@ public class DetailActivity extends AppCompatActivity {
 
     private String nodeId;
 
+    private EditorFragment editorFragment;
+
     private ViewerFragment viewerFragment;
 
     private DetailActivity.ViewBinder activityViewBinder;
 
     private Button saveButton;
+
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +75,11 @@ public class DetailActivity extends AppCompatActivity {
 
         saveButton = (Button) findViewById(R.id.detail_save_button);
 
-        // TODO: Support restoring from bundle again (see commented-out code)
-        // this.viewerFragment = getOrCreateViewerFragment(savedInstanceState);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.detail_view_pager);
+        this.editorFragment = getOrCreateEditorFragment(savedInstanceState);
+        this.viewerFragment = getOrCreateViewerFragment(savedInstanceState);
+        viewPager = (ViewPager) findViewById(R.id.detail_view_pager);
         viewPager.setAdapter(new DetailPagerAdapter(getSupportFragmentManager(),
-                Arrays.asList(new ViewerFragment(), new EditorFragment())));
+                this.editorFragment, this.viewerFragment));
 
         activityViewBinder = new DetailActivity.ViewBinder(this, detailViewModel);
         // TODO: Is this the right place to call this? It used to be called from ViewerFragment
@@ -110,25 +112,39 @@ public class DetailActivity extends AppCompatActivity {
         instrumentation.getLeakTracing().traceLeakage(this);
     }
 
-    // /**
-    // * Retrieves a {@link ViewerFragment} from a saved instance state or creates a new instance.
-    // *
-    // * @param savedInstanceState
-    // * The {@link Bundle} to load from.
-    // * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance
-    // * from {@link #getSupportFragmentManager()} otherwise.
-    // */
-    // private ViewerFragment getOrCreateViewerFragment(Bundle savedInstanceState) {
-    // if (savedInstanceState == null) {
-    // ViewerFragment viewerFragment = new ViewerFragment();
-    // getSupportFragmentManager().beginTransaction().add(R.id.viewer_fragment, viewerFragment)
-    // .commit();
-    // return viewerFragment;
-    // } else {
-    // return (ViewerFragment) getSupportFragmentManager().getFragment(savedInstanceState,
-    // VIEWER_FRAGMENT_KEY);
-    // }
-    // }
+    /**
+     * Retrieves a {@link EditorFragment} from a saved instance state or creates a new instance.
+     *
+     * @param savedInstanceState
+     *            The {@link Bundle} to load from.
+     * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance
+     *         from {@link #getSupportFragmentManager()} otherwise.
+     */
+    private EditorFragment getOrCreateEditorFragment(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return new EditorFragment();
+        } else {
+            return (EditorFragment) getSupportFragmentManager().getFragment(savedInstanceState,
+                    EDITOR_FRAGMENT_KEY);
+        }
+    }
+
+    /**
+     * Retrieves a {@link ViewerFragment} from a saved instance state or creates a new instance.
+     *
+     * @param savedInstanceState
+     *            The {@link Bundle} to load from.
+     * @return A new instance if {@code savedInstanceState} is {@code null}, a restored instance
+     *         from {@link #getSupportFragmentManager()} otherwise.
+     */
+    private ViewerFragment getOrCreateViewerFragment(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return new ViewerFragment();
+        } else {
+            return (ViewerFragment) getSupportFragmentManager().getFragment(savedInstanceState,
+                    VIEWER_FRAGMENT_KEY);
+        }
+    }
 
     // @Override
     // public void onBackPressed() {
@@ -140,6 +156,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, EDITOR_FRAGMENT_KEY, this.editorFragment);
         getSupportFragmentManager().putFragment(outState, VIEWER_FRAGMENT_KEY, this.viewerFragment);
     }
 
