@@ -73,4 +73,25 @@ public class NotebookStore {
         }
     }
 
+    /**
+     * Set the content of a node.
+     *
+     * @param nodeId
+     *            The identifier of the node.
+     * @param content
+     *            The new content.
+     * @return An {@link Observable} of {@link DataStreamNotification} of {@link Void}.
+     */
+    @NonNull
+    public Observable<DataStreamNotification<Void>> setNodeContent(@NonNull final String nodeId,
+            @NonNull final String content) {
+        try {
+            this.notebookRepository.setNodeContent(nodeId, content);
+            return Observable.just(DataStreamNotification.onNext(null));
+        } catch (Throwable t) {
+            Timber.e(t);
+            return Observable.just(DataStreamNotification.fetchingError());
+        }
+    }
+
 }

@@ -100,4 +100,17 @@ public class NotebookRepository {
             throw new RuntimeException(String.format("Could not read file %s", nodeId), e);
         }
     }
+
+    void setNodeContent(@NonNull final String nodeId, @NonNull final String content) {
+        debugDelay(CONTENT_DELAY_MILLISECONDS);
+        requireNonNull(nodeId);
+        requireNonNull(content);
+
+        File path = new File(nodeId);
+        try {
+            Files.write(content, path, Charsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Could not write file %s", nodeId), e);
+        }
+    }
 }

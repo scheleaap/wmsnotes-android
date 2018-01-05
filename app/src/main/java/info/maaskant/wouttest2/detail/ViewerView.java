@@ -97,7 +97,7 @@ class ViewerView extends RelativeLayout {
 
         @Override
         protected void bindInternal(@NonNull final CompositeSubscription s) {
-            s.add(viewModel.getHtml().observeOn(AndroidSchedulers.mainThread())
+            s.add(viewModel.getHtmlContent().observeOn(AndroidSchedulers.mainThread())
                     .subscribe(view::setContent));
         }
 

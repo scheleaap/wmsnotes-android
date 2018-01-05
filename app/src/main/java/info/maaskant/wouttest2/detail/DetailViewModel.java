@@ -36,10 +36,10 @@ public class DetailViewModel extends AbstractViewModel {
     private final BehaviorSubject<String> contentNodeId = BehaviorSubject.create();
 
     @NonNull
-    private final BehaviorSubject<ContentChange<String>> markdown = BehaviorSubject.create();
+    private final BehaviorSubject<ContentChange<String>> markdownChange = BehaviorSubject.create();
 
     @NonNull
-    private final BehaviorSubject<String> html = BehaviorSubject.create();
+    private final BehaviorSubject<String> htmlContent = BehaviorSubject.create();
 
     @NonNull
     private final NotebookStore notebookStore;
@@ -61,17 +61,24 @@ public class DetailViewModel extends AbstractViewModel {
     }
 
     @NonNull
-    public Observable<String> getHtml() {
-        return html;
+    public Observable<String> getHtmlContent() {
+        return htmlContent;
     }
 
     @NonNull
     public BehaviorSubject<ContentChange<String>> getMarkdownChange() {
-        return markdown;
+        return markdownChange;
     }
 
-    public void setMarkdown(@NonNull final String newMarkdownContent, boolean fromUser) {
-        markdown.onNext(ImmutableContentChange.of(newMarkdownContent, true));
+    public void setMarkdownContentFromUser(@NonNull final String newMarkdownContent) {
+        markdownChange.onNext(ImmutableContentChange.of(newMarkdownContent, true));
+    }
+
+    public void save() {
+        if (this.contentNodeId.hasValue() && this.markdownChange.hasValue()) {
+            this.notebookStore.setNodeContent(this.contentNodeId.getValue(),
+                    this.markdownChange.getValue().getContent());
+        }
     }
 
     @Override
@@ -92,13 +99,12 @@ public class DetailViewModel extends AbstractViewModel {
                 .map(DataStreamNotification::getValue).subscribe(this.contentNode));
 
         compositeSubscription.add(getNodeContentSource.filter(DataStreamNotification::isOnNext)
-                .map(DataStreamNotification::getValue)
-                .map(i -> ImmutableContentChange.of(i, false))
-                .subscribe(this.markdown));
+                .map(DataStreamNotification::getValue).map(i -> ImmutableContentChange.of(i, false))
+                .subscribe(this.markdownChange));
 
-        compositeSubscription.add(this.markdown.distinctUntilChanged()
+        compositeSubscription.add(this.markdownChange.distinctUntilChanged()
                 .observeOn(Schedulers.computation()).throttleWithTimeout(500, TimeUnit.MILLISECONDS)
-                .map(i -> this.convertToHtml(i.getContent())).subscribe(this.html));
+                .map(i -> this.convertToHtml(i.getContent())).subscribe(this.htmlContent));
 
         compositeSubscription.add(getContentNodeSource.connect());
         compositeSubscription.add(getNodeContentSource.connect());

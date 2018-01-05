@@ -173,7 +173,7 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         private void saveButtonOnClick(View clickedView) {
-//            viewModel.save()
+            viewModel.save();
         }
 
     }

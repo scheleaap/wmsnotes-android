@@ -84,7 +84,8 @@ class EditorView extends RelativeLayout {
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         if (view.listenForChanges) {
-                            viewModel.setMarkdown(view.editText.getText().toString(), true);
+                            viewModel
+                                    .setMarkdownContentFromUser(view.editText.getText().toString());
                         }
                     }
 
