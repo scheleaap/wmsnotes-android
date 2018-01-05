@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.maaskant.wouttest2.MainActivity">
+    tools:context="info.maaskant.wmsnotes.MainActivity">
     <!--android:fitsSystemWindows="true"-->
 
     <android.support.design.widget.AppBarLayout

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="info.maaskant.wouttest2">
+    package="info.maaskant.wmsnotes">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".WoutTest2App"
+        android:name="info.maaskant.wmsnotes.WmsNotesApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
+            android:name="info.maaskant.wmsnotes.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -24,22 +24,22 @@
         </activity>
 
         <activity
-            android:name=".detail.DetailActivity"
+            android:name="info.maaskant.wmsnotes.detail.DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="info.maaskant.wmsnotes.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="info.maaskant.wouttest2.MainActivity" />
+                android:value="info.maaskant.wmsnotes.MainActivity" />
         </activity>
 
         <activity
-            android:name=".settings.SettingsActivity"
+            android:name="info.maaskant.wmsnotes.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="info.maaskant.wmsnotes.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="info.maaskant.wouttest2.MainActivity" />
+                android:value="info.maaskant.wmsnotes.MainActivity" />
         </activity>
 
     </application>
