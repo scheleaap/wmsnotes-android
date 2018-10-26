@@ -2,19 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="info.maaskant.wmsnotes">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <application
-        android:name="info.maaskant.wmsnotes.WmsNotesApplication"
+        android:name="info.maaskant.wmsnotes.android.WmsNotesApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
-            android:name="info.maaskant.wmsnotes.MainActivity"
-            android:label="@string/app_name"
+            android:name=".android.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,26 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name="info.maaskant.wmsnotes.detail.DetailActivity"
-            android:label="@string/title_activity_detail"
-            android:parentActivityName="info.maaskant.wmsnotes.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="info.maaskant.wmsnotes.MainActivity" />
-        </activity>
-
-        <activity
-            android:name="info.maaskant.wmsnotes.settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName="info.maaskant.wmsnotes.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="info.maaskant.wmsnotes.MainActivity" />
-        </activity>
-
     </application>
 
 </manifest>

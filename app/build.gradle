@@ -1,19 +1,18 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    compileSdkVersion 28
     defaultConfig {
-        applicationId "info.maaskant.wouttest2"
+        applicationId "info.maaskant.wmsnotes"
         minSdkVersion 23
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-//        jackOptions {
-//            enabled true
-//        }
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -21,56 +20,30 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
 dependencies {
-    debugCompile project(path: ':reark', configuration: 'debug')
-    releaseCompile project(path: ':reark', configuration: 'release')
+    // Default stuff
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    // Defaults by Android Studio
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    // Infrastructure
+    implementation 'com.jakewharton.timber:timber:4.6.0'
 
-    // General
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'com.annimon:stream:1.1.4'
-    compile 'com.google.guava:guava:20.0'
-    compile 'com.jakewharton.timber:timber:4.4.0'
-    annotationProcessor 'org.immutables:value:2.3.9'
-    provided 'org.immutables:value:2.3.9'
+    // RxJava etc.
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
-    // Dagger
-    compile 'com.google.dagger:dagger:2.8'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
-//    provided 'javax.annotation:jsr250-api:1.0'
-
-    // Main dependencies
-    compile 'com.atlassian.commonmark:commonmark:0.8.0'
-    compile 'com.atlassian.commonmark:commonmark-ext-gfm-tables:0.8.0'
-    compile 'com.atlassian.commonmark:commonmark-ext-autolink:0.8.0'
-    compile('com.mikepenz:materialdrawer:5.8.1@aar') {
-        transitive = true
-    }
-
-    // RxJava, RxBinding
-    compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:1.0.0'
-
-    // Unit testing
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.assertj:assertj-core:2.6.0'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-
-    // Leak tracing
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-
+    // UI
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-reactivestreams-ktx:2.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation "com.mikepenz:materialdrawer:6.1.1"
 }

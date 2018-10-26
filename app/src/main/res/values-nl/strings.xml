@@ -7,4 +7,5 @@
     <string name="pref_title_notebook_path">Pad naar notitieboek</string>
     <string name="detail_save">Opslaan</string>
     <string name="title_activity_settings">Instellingen</string>
+    <string name="navigation_file_type">Type</string>
 </resources>
