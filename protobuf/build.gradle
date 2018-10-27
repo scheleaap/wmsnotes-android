@@ -1,0 +1,41 @@
+buildscript {
+    ext.grpcVersion = '1.16.1'
+}
+
+plugins {
+    id 'com.google.protobuf' version '0.8.6'
+}
+
+apply plugin: 'java-library'
+//apply plugin: 'com.google.protobuf'
+
+sourceSets {
+    main.java.srcDirs += "${protobuf.generatedFilesBaseDir}/main/grpc"
+    main.java.srcDirs += "${protobuf.generatedFilesBaseDir}/main/javalite"
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.google.protobuf:protobuf-lite:3.0.1'
+//    implementation 'io.grpc:grpc-okhttp:$grpcVersion'
+    implementation "io.grpc:grpc-protobuf-lite:$grpcVersion"
+    implementation "io.grpc:grpc-stub:$grpcVersion"
+}
+
+protobuf {
+    protoc { artifact = 'com.google.protobuf:protoc:3.5.1-1' }
+    plugins {
+        javalite { artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0' }
+        grpc { artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion" }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins { remove java }
+            task.plugins {
+                javalite {}
+                grpc { option 'lite' }
+            }
+        }
+    }
+}
+
