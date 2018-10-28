@@ -9,7 +9,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
+import javax.inject.Inject
 
 class NavigationFragment : Fragment() {
 
@@ -17,7 +19,8 @@ class NavigationFragment : Fragment() {
         fun newInstance() = NavigationFragment()
     }
 
-    private lateinit var viewModel: NavigationViewModel
+    @Inject
+    lateinit var viewModel: NavigationViewModel
 
     private lateinit var nodeListAdapter: NodeListAdapter
 
@@ -26,6 +29,11 @@ class NavigationFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
 
 //    private var recyclerViewScrollEventObservable: Observable<RecyclerViewScrollEvent>? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AndroidSupportInjection.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

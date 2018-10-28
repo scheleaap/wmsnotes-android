@@ -1,18 +1,16 @@
 package info.maaskant.wmsnotes.android.ui.navigation
 
-import android.view.View
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.LiveDataReactiveStreams
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.toLiveData
 import info.maaskant.wmsnotes.android.model.Node
 import info.maaskant.wmsnotes.android.model.Note
+import info.maaskant.wmsnotes.model.eventstore.EventStore
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import timber.log.Timber
 
-class NavigationViewModel : ViewModel() {
-    private lateinit var liveData : LiveData<List<Node>>
+class NavigationViewModel(private val eventStore: EventStore) : ViewModel() {
+    private lateinit var liveData: LiveData<List<Node>>
 
     fun getNotes(): LiveData<List<Node>> {
         if (!::liveData.isInitialized) {
@@ -21,7 +19,10 @@ class NavigationViewModel : ViewModel() {
         return liveData
     }
 
-    fun getReactiveStuff() : Flowable<List<Node>> {
+    fun getReactiveStuff(): Flowable<List<Node>> {
+        Timber.i("%s", eventStore)
+        val events = eventStore.getEvents().toList().blockingGet()
+        Timber.i("%s", events)
         return Flowable.just(listOf(Note("Wout"), Note("Henk"), Note("Jan")))
     }
 

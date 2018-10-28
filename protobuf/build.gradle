@@ -23,7 +23,7 @@ dependencies {
 }
 
 protobuf {
-    protoc { artifact = 'com.google.protobuf:protoc:3.5.1-1' }
+    protoc { artifact = 'com.google.protobuf:protoc:3.0.0' }
     plugins {
         javalite { artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0' }
         grpc { artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion" }
