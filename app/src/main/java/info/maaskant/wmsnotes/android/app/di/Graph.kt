@@ -2,7 +2,7 @@
 //
 //import android.app.Application
 //import dagger.Component
-//import info.maaskant.wmsnotes.android.app.WmsNotesApplication
+//import info.maaskant.wmsnotes.android.app.App
 //import info.maaskant.wmsnotes.android.ui.MainActivity
 //import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
 //import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel
@@ -36,7 +36,7 @@
 //
 ////    fun inject(viewerFragment: ViewerFragment)
 //
-//    fun inject(application: WmsNotesApplication)
+//    fun inject(application: App)
 //
 ////    object Initializer {
 ////

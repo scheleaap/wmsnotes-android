@@ -20,7 +20,7 @@ class NavigationFragment : Fragment() {
     }
 
     @Inject
-    lateinit var viewModel: NavigationViewModel
+    private lateinit var viewModel: NavigationViewModel
 
     private lateinit var nodeListAdapter: NodeListAdapter
 
@@ -57,7 +57,7 @@ class NavigationFragment : Fragment() {
         viewModel.getNotes().observe(this, Observer {
             nodeListAdapter.set(it)
         })
-        nodeListAdapter.setOnClickListener(View.OnClickListener {clickedView->
+        nodeListAdapter.setOnClickListener(View.OnClickListener { clickedView ->
             val itemPosition = recyclerView.getChildAdapterPosition(clickedView)
             val node = nodeListAdapter.getItem(itemPosition)
             viewModel.navigateTo(node)

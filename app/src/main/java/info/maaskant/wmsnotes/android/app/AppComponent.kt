@@ -1,27 +1,28 @@
-package info.maaskant.wmsnotes.android.app.di2
+package info.maaskant.wmsnotes.android.app
 
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.support.AndroidSupportInjectionModule
-import info.maaskant.wmsnotes.android.app.WmsNotesApplication
+import info.maaskant.wmsnotes.android.model.ModelModule
+import info.maaskant.wmsnotes.android.ui.UiModule
 import javax.inject.Singleton
 
 @Component(modules = [
     OtherModule::class,
-    DataModule::class,
+    ModelModule::class,
     AndroidSupportInjectionModule::class,
     UiModule::class
 ])
 @Singleton
 interface AppComponent {
 
-    fun inject(app: WmsNotesApplication)
+    fun inject(app: App)
 
     @Component.Builder
     interface Builder {
         @BindsInstance
-        fun application(app: WmsNotesApplication): Builder
+        fun application(app: App): Builder
 
         @BindsInstance
         fun context(context: Context): Builder

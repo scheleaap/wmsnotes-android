@@ -1,4 +1,4 @@
-package info.maaskant.wmsnotes.android.app.di2
+package info.maaskant.wmsnotes.android.model
 
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util.Pool
@@ -11,7 +11,7 @@ import java.io.File
 import javax.inject.Singleton
 
 @Module
-class DataModule {
+class ModelModule {
 
     @Provides
     @Singleton

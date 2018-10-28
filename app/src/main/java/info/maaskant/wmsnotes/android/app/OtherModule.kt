@@ -1,4 +1,4 @@
-package info.maaskant.wmsnotes.android.app.di2
+package info.maaskant.wmsnotes.android.app
 
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util.Pool

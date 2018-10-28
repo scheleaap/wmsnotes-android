@@ -1,19 +1,14 @@
 package info.maaskant.wmsnotes.android.app
 
-import android.app.Activity
 import android.app.Application
 import androidx.fragment.app.Fragment
-import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
 import dagger.android.support.HasSupportFragmentInjector
-import info.maaskant.wmsnotes.android.app.di2.AppComponent
-import info.maaskant.wmsnotes.android.app.di2.DaggerAppComponent
 import timber.log.Timber
 import javax.inject.Inject
 
 
-class WmsNotesApplication : Application(), HasSupportFragmentInjector {
+class App : Application(), HasSupportFragmentInjector {
 //    @Inject
 //    internal var instrumentation: ApplicationInstrumentation? = null
 //
@@ -38,7 +33,7 @@ lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
             .build()
         component.inject(this)
 
-//        DaggerWmsNotesApplicationComponent.create().inject(this)
+//        DaggerAppComponent.create().inject(this)
 //        graph = Graph.Initializer.init(this)
 //        graph!!.inject(this)
 //
