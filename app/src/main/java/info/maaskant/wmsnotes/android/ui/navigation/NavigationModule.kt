@@ -8,16 +8,22 @@ import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 import info.maaskant.wmsnotes.android.app.di2.ViewModelKey
+import info.maaskant.wmsnotes.client.indexing.NoteIndex
 import info.maaskant.wmsnotes.model.eventstore.EventStore
 
-@Module(includes = [
-    NavigationModule.ProvideViewModel::class
-])
+@Module(
+    includes = [
+        NavigationModule.ProvideViewModel::class
+    ]
+)
 abstract class NavigationModule {
 
-    @ContributesAndroidInjector(modules = [
-        InjectViewModel::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            InjectViewModel::class
+        ]
+    )
+
     abstract fun bind(): NavigationFragment
 
     @Module
@@ -26,8 +32,8 @@ abstract class NavigationModule {
         @Provides
         @IntoMap
         @ViewModelKey(NavigationViewModel::class)
-        fun provideNavigationViewModel(eventStore: EventStore): ViewModel =
-            NavigationViewModel(eventStore)
+        fun provideNavigationViewModel(eventStore: EventStore, noteIndex: NoteIndex): ViewModel =
+            NavigationViewModel(eventStore, noteIndex)
     }
 
     @Module

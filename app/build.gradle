@@ -49,7 +49,9 @@ dependencies {
     implementation group: 'info.maaskant.wmsnotes', name: 'shared', version: "$versions.wmsnotes", changing: true
 
     // Infrastructure
+//    implementation 'org.slf4j:slf4j-android:1.7.25'
     implementation "com.jakewharton.timber:timber:$versions.timber"
+    implementation "com.arcao:slf4j-timber:$versions.slf4jtimber"
     implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
     implementation "com.google.dagger:dagger-android:$versions.dagger"
@@ -58,7 +60,6 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-//    implementation 'org.slf4j:slf4j-android:1.7.25'
 
     // RxJava etc.
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'

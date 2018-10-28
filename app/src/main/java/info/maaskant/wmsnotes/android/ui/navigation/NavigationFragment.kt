@@ -20,7 +20,7 @@ class NavigationFragment : Fragment() {
     }
 
     @Inject
-    private lateinit var viewModel: NavigationViewModel
+    lateinit var viewModel: NavigationViewModel
 
     private lateinit var nodeListAdapter: NodeListAdapter
 

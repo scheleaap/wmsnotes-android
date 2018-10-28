@@ -47,6 +47,7 @@ ext {
 //            room        : "2.0.0",
 //            leakcanary  : "1.5.4",
             timber      : "4.7.1",
+            slf4jtimber : "3.0@aar",
             dagger      : "2.16",
 //            rxjava      : "2.1.7",
 //            rxandroid   : "2.0.2",
