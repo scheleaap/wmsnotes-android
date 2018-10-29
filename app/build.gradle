@@ -69,5 +69,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-reactivestreams-ktx:2.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'com.mikepenz:materialdrawer:6.1.1'
+    implementation "com.mikepenz:materialdrawer:$versions.materialdrawer"
+    implementation "com.github.baurine:permission-util:$versions.permissionutil"
 }

@@ -21,6 +21,7 @@ allprojects {
         mavenLocal()
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 
     tasks.withType(JavaCompile) {
@@ -53,5 +54,7 @@ ext {
 //            rxandroid   : "2.0.2",
 //            rxkotlin    : "2.1.0",
 //            bindadapters: "3.0.0-beta3"
+            materialdrawer: "6.1.1",
+            permissionutil: "1.0.3"
     ]
 }

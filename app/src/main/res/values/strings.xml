@@ -24,5 +24,7 @@
 
     <!-- Detail -->
     <string name="detail_save">Save</string>
+    <string name="storage_permission_request">WMS Notes stores your notes on your device. Please provide permission to store your notes.</string>
+    <string name="storage_permission_denied">WMS Notes cannot work without permission to store notes.</string>
 
 </resources>

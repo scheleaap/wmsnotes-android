@@ -1,8 +1,12 @@
 package info.maaskant.wmsnotes.android.ui
 
+import android.Manifest
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.baurine.permissionutil.PermissionUtil
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
@@ -10,12 +14,17 @@ import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.ui.main.MainFragment
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
 
+
 class MainActivity : AppCompatActivity(), MainFragment.Listener {
+
+    private val permissionRequestCode: Int = 0
 
     private var drawer: Drawer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        checkAndAskForPermissions()
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             navigateToDebug()
@@ -24,6 +33,21 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         createAndAddDrawer(toolbar)
+    }
+
+    private fun checkAndAskForPermissions() {
+        PermissionUtil.checkPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            permissionRequestCode,
+            getString(R.string.storage_permission_request),
+            getString(R.string.storage_permission_denied)
+        ) { success ->
+            if (!success) {
+                Toast.makeText(this, R.string.storage_permission_denied, Toast.LENGTH_SHORT).show()
+                this@MainActivity.moveTaskToBack(true)
+            }
+        }
     }
 
     /**
@@ -66,6 +90,14 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, NavigationFragment.newInstance())
             .commitNow()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        PermissionUtil.onRequestPermissionResult(this, requestCode, permissions, grantResults);
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        PermissionUtil.onActivityResult(this, requestCode)
     }
 
 }

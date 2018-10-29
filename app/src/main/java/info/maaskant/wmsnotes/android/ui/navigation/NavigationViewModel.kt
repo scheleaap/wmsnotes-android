@@ -57,6 +57,7 @@ class NavigationViewModel(
             .map { it.toList() }
             .observeOn(AndroidSchedulers.mainThread())
 //            .doOnSubscribe {
+//                eventStore.appendEvent(NoteCreatedEvent(0, "n1", 1, "Note 1"))
 //                eventStore.appendEvent(NoteCreatedEvent(0, "n2", 1, "Note 2"))
 //                eventStore.appendEvent(NoteDeletedEvent(0, "n1", 2))
 //            }
