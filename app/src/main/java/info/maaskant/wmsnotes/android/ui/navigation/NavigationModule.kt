@@ -7,7 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
-import info.maaskant.wmsnotes.android.app.di2.ViewModelKey
+import info.maaskant.wmsnotes.android.app.di.ViewModelKey
 import info.maaskant.wmsnotes.client.indexing.NoteIndex
 import info.maaskant.wmsnotes.model.eventstore.EventStore
 

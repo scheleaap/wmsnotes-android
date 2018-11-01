@@ -5,8 +5,8 @@
     <string name="action_settings">Settings</string>
 
     <!-- Activities -->
-    <string name="title_activity_main" translatable="false">Main Activity</string>
-    <string name="title_activity_detail" translatable="false">Detail Activity</string>
+    <!--<string name="title_activity_main" translatable="false">Main Activity</string>-->
+    <!--<string name="title_activity_detail" translatable="false">Detail Activity</string>-->
     <string name="title_activity_settings">Settings</string>
 
     <!-- Navigation drawer -->
@@ -16,6 +16,8 @@
 
     <!-- Settings -->
     <string name="pref_header_general">General</string>
+    <string name="pref_title_server_hostname">Server</string>
+    <string name="pref_default_server_hostname" translatable="false">10.0.2.2</string>
     <string name="pref_title_notebook_path">Notebook path</string>
     <string name="pref_default_notebook_path" translatable="false">/storage/emulated/0/Download/Sync/wout/notes</string>
 
@@ -24,7 +26,7 @@
 
     <!-- Detail -->
     <string name="detail_save">Save</string>
-    <string name="storage_permission_request">WMS Notes stores your notes on your device. Please provide permission to store your notes.</string>
-    <string name="storage_permission_denied">WMS Notes cannot work without permission to store notes.</string>
+    <string name="storage_permission_request" translatable="false">WMS Notes stores your notes on your device. Please provide permission to store your notes.</string>
+    <string name="storage_permission_denied" translatable="false">WMS Notes cannot work without permission to store notes.</string>
 
 </resources>

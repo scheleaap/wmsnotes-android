@@ -1,4 +1,4 @@
-package info.maaskant.wmsnotes.android.ui
+package info.maaskant.wmsnotes.android.ui.main
 
 import android.Manifest
 import android.content.Intent
@@ -10,19 +10,28 @@ import com.baurine.permissionutil.PermissionUtil
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import dagger.android.AndroidInjection
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.ui.main.MainFragment
+import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTask
+import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTaskLifecycleObserver
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
+import info.maaskant.wmsnotes.android.ui.settings.SettingsActivity
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     private val permissionRequestCode: Int = 0
 
-    private var drawer: Drawer? = null
+    private lateinit var drawer: Drawer
+
+    @Inject
+    lateinit var synchronizationTask: SynchronizationTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AndroidInjection.inject(this)
 
         checkAndAskForPermissions()
         setContentView(R.layout.main_activity)
@@ -33,6 +42,8 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         createAndAddDrawer(toolbar)
+
+        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask, this, lifecycle))
     }
 
     private fun checkAndAskForPermissions() {
@@ -69,10 +80,7 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
                 when (drawerItem) {
                     debugDrawerItem -> navigateToDebug()
                     notesDrawerItem -> navigateToNavigation()
-                    settingsDrawerItem -> {
-//                        val intent = Intent(this@MainActivity, SettingsActivity::class.java)
-//                        startActivity(intent)
-                    }
+                    settingsDrawerItem -> startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
                 }
                 false
             }.build()
@@ -99,5 +107,4 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         PermissionUtil.onActivityResult(this, requestCode)
     }
-
 }

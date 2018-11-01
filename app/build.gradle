@@ -61,9 +61,15 @@ dependencies {
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
-    // RxJava etc.
+    // RxJava and background execution.
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation("android.arch.work:work-runtime-ktx:$versions.workmanager") {
+        exclude group: 'com.google.guava', module: 'listenablefuture'
+    }
+
+    // gRPC
+    implementation "io.grpc:grpc-okhttp:$versions.grpc"
 
     // UI
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'

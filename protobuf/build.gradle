@@ -7,7 +7,6 @@ plugins {
 }
 
 apply plugin: 'java-library'
-//apply plugin: 'com.google.protobuf'
 
 sourceSets {
     main.java.srcDirs += "${protobuf.generatedFilesBaseDir}/main/grpc"

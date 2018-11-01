@@ -23,21 +23,21 @@ class IndexingModule {
     @Singleton
     @Provides
     fun noteIndexStateRepository(@OtherModule.AppDirectory appDirectory: File, kryoPool: Pool<Kryo>): StateRepository<NoteIndexState> =
-            FileStateRepository<NoteIndexState>(
-                    serializer = KryoNoteIndexStateSerializer(kryoPool),
-                    file = appDirectory.resolve("cache").resolve("note_index"),
-                    scheduler = Schedulers.io(),
-                    timeout = 1,
-                    unit = TimeUnit.SECONDS
-            )
+        FileStateRepository<NoteIndexState>(
+            serializer = KryoNoteIndexStateSerializer(kryoPool),
+            file = appDirectory.resolve("cache").resolve("note_index"),
+            scheduler = Schedulers.io(),
+            timeout = 1,
+            unit = TimeUnit.SECONDS
+        )
 
     @Singleton
     @Provides
     fun noteIndex(eventStore: EventStore, stateRepository: StateRepository<NoteIndexState>): NoteIndex {
         return NoteIndex(
-                eventStore,
-                stateRepository.load(),
-                Schedulers.io()
+            eventStore,
+            stateRepository.load(),
+            Schedulers.io()
         ).apply {
             stateRepository.connect(this)
         }
