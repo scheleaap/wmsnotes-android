@@ -8,8 +8,7 @@ import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 import info.maaskant.wmsnotes.android.app.di.ViewModelKey
-import info.maaskant.wmsnotes.client.indexing.NoteIndex
-import info.maaskant.wmsnotes.model.eventstore.EventStore
+import info.maaskant.wmsnotes.android.client.indexing.FolderIndex
 
 @Module(
     includes = [
@@ -32,8 +31,8 @@ abstract class NavigationModule {
         @Provides
         @IntoMap
         @ViewModelKey(NavigationViewModel::class)
-        fun provideNavigationViewModel(eventStore: EventStore, noteIndex: NoteIndex): ViewModel =
-            NavigationViewModel(eventStore, noteIndex)
+        fun provideNavigationViewModel(folderIndex: FolderIndex): ViewModel =
+            NavigationViewModel(folderIndex)
     }
 
     @Module

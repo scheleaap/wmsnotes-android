@@ -8,9 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.model.Folder
-import info.maaskant.wmsnotes.android.model.Node
-import info.maaskant.wmsnotes.android.model.Note
+import info.maaskant.wmsnotes.android.client.indexing.Folder
+import info.maaskant.wmsnotes.android.client.indexing.Node
+import info.maaskant.wmsnotes.android.client.indexing.Note
 
 internal class NodeListAdapter(nodes: List<Node>) : RecyclerView.Adapter<NodeListAdapter.NodeViewHolder>() {
 

@@ -22,8 +22,31 @@ class IndexingModule {
 
     @Singleton
     @Provides
+    fun folderIndexStateRepository(@OtherModule.AppDirectory appDirectory: File, kryoPool: Pool<Kryo>): StateRepository<FolderIndexState> =
+        FileStateRepository(
+            serializer = KryoFolderIndexStateSerializer(kryoPool),
+            file = appDirectory.resolve("cache").resolve("folder_index"),
+            scheduler = Schedulers.io(),
+            timeout = 1,
+            unit = TimeUnit.SECONDS
+        )
+
+    @Singleton
+    @Provides
+    fun folderIndex(eventStore: EventStore, stateRepository: StateRepository<FolderIndexState>): FolderIndex {
+        return FolderIndex(
+            eventStore,
+            stateRepository.load(),
+            Schedulers.io()
+        ).apply {
+            stateRepository.connect(this)
+        }
+    }
+
+    @Singleton
+    @Provides
     fun noteIndexStateRepository(@OtherModule.AppDirectory appDirectory: File, kryoPool: Pool<Kryo>): StateRepository<NoteIndexState> =
-        FileStateRepository<NoteIndexState>(
+        FileStateRepository(
             serializer = KryoNoteIndexStateSerializer(kryoPool),
             file = appDirectory.resolve("cache").resolve("note_index"),
             scheduler = Schedulers.io(),
@@ -42,10 +65,5 @@ class IndexingModule {
             stateRepository.connect(this)
         }
     }
-
-    @Qualifier
-    @MustBeDocumented
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class IndexDatabase
 
 }
