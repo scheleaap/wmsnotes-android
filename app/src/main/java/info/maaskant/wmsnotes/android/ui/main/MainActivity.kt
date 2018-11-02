@@ -6,16 +6,22 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.baurine.permissionutil.PermissionUtil
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import dagger.android.AndroidInjection
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTask
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTaskLifecycleObserver
+import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationWorker
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
 import info.maaskant.wmsnotes.android.ui.settings.SettingsActivity
+import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -30,10 +36,14 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!hasAllRequiredPermissions()) return
 
         AndroidInjection.inject(this)
 
-        checkAndAskForPermissions()
+        //        scheduleSynchronizationUsingWorkManager()
+        scheduleSynchronizationUsingSynchronizationTask()
+        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask, this, lifecycle))
+
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             navigateToDebug()
@@ -42,21 +52,31 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         createAndAddDrawer(toolbar)
-
-        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask, this, lifecycle))
     }
 
+    override fun onStart() {
+        super.onStart()
+        checkAndAskForPermissions()
+    }
+
+    private fun hasAllRequiredPermissions() =
+        PermissionUtil.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
     private fun checkAndAskForPermissions() {
-        PermissionUtil.checkPermission(
-            this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            permissionRequestCode,
-            getString(R.string.storage_permission_request),
-            getString(R.string.storage_permission_denied)
-        ) { success ->
-            if (!success) {
-                Toast.makeText(this, R.string.storage_permission_denied, Toast.LENGTH_SHORT).show()
-                this@MainActivity.moveTaskToBack(true)
+        if (!hasAllRequiredPermissions()) {
+            PermissionUtil.checkPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                permissionRequestCode,
+                getString(R.string.storage_permission_request),
+                getString(R.string.storage_permission_denied)
+            ) { success ->
+                if (!success) {
+                    Toast.makeText(this, R.string.storage_permission_denied, Toast.LENGTH_SHORT).show()
+                    this@MainActivity.moveTaskToBack(true)
+                } else {
+                    recreate()
+                }
             }
         }
     }
@@ -107,4 +127,24 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         PermissionUtil.onActivityResult(this, requestCode)
     }
+
+    private fun scheduleSynchronizationUsingSynchronizationTask() {
+        synchronizationTask.pause()
+        synchronizationTask.start()
+    }
+
+    private fun scheduleSynchronizationUsingWorkManager() {
+        val workRequest = PeriodicWorkRequestBuilder<SynchronizationWorker>(
+            repeatInterval = 10,
+            repeatIntervalTimeUnit = TimeUnit.SECONDS
+        )
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            )
+            .build()
+        WorkManager.getInstance().enqueue(workRequest).get()
+    }
+
 }

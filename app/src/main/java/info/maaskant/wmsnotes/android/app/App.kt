@@ -9,10 +9,7 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.android.app.di.workmanager.HasWorkerInjector
-import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTask
-import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationWorker
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -33,9 +30,6 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
     @Inject
     lateinit var workerInjector: DispatchingAndroidInjector<Worker>
 
-    @Inject
-    lateinit var synchronizationTask: SynchronizationTask
-
     lateinit var component: AppComponent
 
     override fun onCreate() {
@@ -50,8 +44,6 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
 
 //        instrumentation!!.init()
 
-//        scheduleSynchronizationUsingWorkManager()
-        scheduleSynchronizationUsingSynchronizationTask()
 
 //        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 //        val notebookPath = sharedPreferences.getString(
@@ -59,25 +51,6 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
 //            resources.getString(R.string.pref_default_notebook_path)
 //        )
 //        navigationViewModel!!.navigateForward(notebookPath)
-    }
-
-    private fun scheduleSynchronizationUsingSynchronizationTask() {
-        synchronizationTask.pause()
-        synchronizationTask.start()
-    }
-
-    private fun scheduleSynchronizationUsingWorkManager() {
-        val workRequest = PeriodicWorkRequestBuilder<SynchronizationWorker>(
-            repeatInterval = 10,
-            repeatIntervalTimeUnit = TimeUnit.SECONDS
-        )
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-            )
-            .build()
-        WorkManager.getInstance().enqueue(workRequest).get()
     }
 
     override fun activityInjector(): AndroidInjector<Activity> = activityInjector

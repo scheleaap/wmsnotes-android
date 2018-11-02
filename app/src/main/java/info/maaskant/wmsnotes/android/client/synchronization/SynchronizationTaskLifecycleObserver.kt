@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 
 class SynchronizationTaskLifecycleObserver constructor(
     private val synchronizationTask: SynchronizationTask,
