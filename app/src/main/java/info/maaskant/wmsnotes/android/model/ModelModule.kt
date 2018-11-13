@@ -44,9 +44,9 @@ class ModelModule {
 
     @Singleton
     @Provides
-    fun noteCache(noteSerializer: Serializer<info.maaskant.wmsnotes.model.projection.Note>): NoteCache =
+    fun noteCache(@OtherModule.AppDirectory appDirectory: File, noteSerializer: Serializer<info.maaskant.wmsnotes.model.projection.Note>): NoteCache =
         if (cache) {
-            FileNoteCache(File("desktop_data/cache/projected_notes"), noteSerializer)
+            FileNoteCache(appDirectory.resolve("cache").resolve("projected_notes"), noteSerializer)
         } else {
             NoopNoteCache
         }
