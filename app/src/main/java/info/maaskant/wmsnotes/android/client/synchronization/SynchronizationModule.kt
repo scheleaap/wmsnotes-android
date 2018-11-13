@@ -25,6 +25,7 @@ import info.maaskant.wmsnotes.server.command.grpc.EventServiceGrpc
 import info.maaskant.wmsnotes.utilities.persistence.FileStateRepository
 import info.maaskant.wmsnotes.utilities.persistence.StateRepository
 import info.maaskant.wmsnotes.utilities.serialization.Serializer
+import io.grpc.Deadline
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import io.reactivex.schedulers.Schedulers
@@ -49,15 +50,17 @@ class SynchronizationModule {
 
     @Singleton
     @Provides
+    fun grpcDeadline() = Deadline.after(1, TimeUnit.SECONDS)
+
+    @Singleton
+    @Provides
     fun grpcCommandService(managedChannel: ManagedChannel) =
         CommandServiceGrpc.newBlockingStub(managedChannel)!!
-            .withDeadlineAfter(1000, TimeUnit.MILLISECONDS)
 
     @Singleton
     @Provides
     fun grpcEventService(managedChannel: ManagedChannel) =
         EventServiceGrpc.newBlockingStub(managedChannel)!!
-            .withDeadlineAfter(1000, TimeUnit.MILLISECONDS)
 
     @Singleton
     @Provides
@@ -142,12 +145,14 @@ class SynchronizationModule {
     @Provides
     fun remoteEventImporter(
         grpcEventService: EventServiceGrpc.EventServiceBlockingStub,
+        grpcDeadline: Deadline,
         grpcEventMapper: GrpcEventMapper,
         @ForRemoteEvents eventRepository: ModifiableEventRepository,
         @ForLocalEvents stateRepository: StateRepository<EventImporterState>
     ) =
         RemoteEventImporter(
             grpcEventService,
+            grpcDeadline,
             eventRepository,
             grpcEventMapper,
             stateRepository.load()
@@ -172,6 +177,7 @@ class SynchronizationModule {
         @ForLocalEvents localEvents: ModifiableEventRepository,
         @ForRemoteEvents remoteEvents: ModifiableEventRepository,
         remoteCommandService: CommandServiceGrpc.CommandServiceBlockingStub,
+        grpcDeadline: Deadline,
         eventToCommandMapper: EventToCommandMapper,
         grpcCommandMapper: GrpcCommandMapper,
         commandProcessor: CommandProcessor,
@@ -181,6 +187,7 @@ class SynchronizationModule {
         localEvents,
         remoteEvents,
         remoteCommandService,
+        grpcDeadline,
         eventToCommandMapper,
         grpcCommandMapper,
         commandProcessor,
