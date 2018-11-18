@@ -1,8 +1,4 @@
-/**
- * Source: https://medium.com/chili-labs/android-viewmodel-injection-with-dagger-f0061d3402ff
- * Source: https://github.com/chili-android/viewmodel-dagger-example
- */
-package info.maaskant.wmsnotes.android.app.di
+package info.maaskant.wmsnotes.android.app.di.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

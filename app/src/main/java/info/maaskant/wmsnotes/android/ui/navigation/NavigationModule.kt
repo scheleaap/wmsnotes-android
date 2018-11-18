@@ -3,12 +3,12 @@ package info.maaskant.wmsnotes.android.ui.navigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
-import info.maaskant.wmsnotes.android.app.di.ViewModelKey
-import info.maaskant.wmsnotes.android.client.indexing.FolderIndex
+import info.maaskant.wmsnotes.android.app.di.viewmodel.ViewModelKey
 
 @Module(
     includes = [
@@ -16,28 +16,19 @@ import info.maaskant.wmsnotes.android.client.indexing.FolderIndex
     ]
 )
 abstract class NavigationModule {
-
-    @ContributesAndroidInjector(
-        modules = [
-            InjectViewModel::class
-        ]
-    )
-
-    abstract fun bind(): NavigationFragment
+    @ContributesAndroidInjector(modules = [InjectViewModel::class])
+    internal abstract fun contributeNavigationFragment(): NavigationFragment
 
     @Module
-    class ProvideViewModel {
-
-        @Provides
+    abstract class ProvideViewModel {
+        @Binds
         @IntoMap
         @ViewModelKey(NavigationViewModel::class)
-        fun provideNavigationViewModel(folderIndex: FolderIndex): ViewModel =
-            NavigationViewModel(folderIndex)
+        abstract fun provideNavigationViewModel(navigationViewModel: NavigationViewModel): ViewModel
     }
 
     @Module
     class InjectViewModel {
-
         @Provides
         fun provideNavigationViewModel(
             factory: ViewModelProvider.Factory,
@@ -45,5 +36,4 @@ abstract class NavigationModule {
         ): NavigationViewModel =
             ViewModelProviders.of(target, factory).get(NavigationViewModel::class.java)
     }
-
 }

@@ -1,3 +1,3 @@
-# wmsnotes-android
+# WMS Notes Android App
 
-This needs reark checked out.
+The Android app for WMS Notes, a hierarchical or tree-based note-taking application.

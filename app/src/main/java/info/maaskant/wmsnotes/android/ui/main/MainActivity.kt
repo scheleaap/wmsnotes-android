@@ -24,7 +24,6 @@ import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-
 class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     private val permissionRequestCode: Int = 0
@@ -38,6 +37,7 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         super.onCreate(savedInstanceState)
         if (!hasAllRequiredPermissions()) return
 
+        // TODO Move up
         AndroidInjection.inject(this)
 
         //        scheduleSynchronizationUsingWorkManager()
@@ -110,13 +110,13 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     private fun navigateToDebug() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, MainFragment.newInstance())
+            .replace(R.id.container, MainFragment())
             .commitNow()
     }
 
     private fun navigateToNavigation() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, NavigationFragment.newInstance())
+            .replace(R.id.container, NavigationFragment())
             .commitNow()
     }
 

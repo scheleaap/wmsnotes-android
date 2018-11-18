@@ -9,8 +9,9 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import timber.log.Timber
+import javax.inject.Inject
 
-class NavigationViewModel(
+class NavigationViewModel @Inject constructor(
     private val folderIndex: FolderIndex
 ) : ViewModel() {
 
@@ -21,20 +22,15 @@ class NavigationViewModel(
 
     fun getNotes(): LiveData<List<Node>> {
         if (!::liveData.isInitialized) {
-            liveData = getReactiveStuff().toLiveData()
+            liveData = getNotesInternal().toLiveData()
         }
         return liveData
     }
 
-    fun getReactiveStuff(): Flowable<List<Node>> {
+    private fun getNotesInternal(): Flowable<List<Node>> {
         return folderIndex.getNodes(FolderIndex.rootNode)
             .toFlowable(BackpressureStrategy.ERROR)
             .observeOn(AndroidSchedulers.mainThread())
-//            .doOnSubscribe {
-//                eventStore.appendEvent(NoteCreatedEvent(0, "n1", 1, "Note 1"))
-//                eventStore.appendEvent(NoteCreatedEvent(0, "n2", 1, "Note 2"))
-//                eventStore.appendEvent(NoteDeletedEvent(0, "n1", 2))
-//            }
     }
 
     fun navigateTo(node: Node) {

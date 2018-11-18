@@ -1,5 +1,6 @@
 package info.maaskant.wmsnotes.android.ui.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,13 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.client.indexing.Folder
+import info.maaskant.wmsnotes.android.client.indexing.Note
+import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import javax.inject.Inject
 
 class NavigationFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = NavigationFragment()
-    }
 
     @Inject
     lateinit var viewModel: NavigationViewModel
@@ -31,8 +31,8 @@ class NavigationFragment : Fragment() {
 //    private var recyclerViewScrollEventObservable: Observable<RecyclerViewScrollEvent>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -60,7 +60,15 @@ class NavigationFragment : Fragment() {
         nodeListAdapter.setOnClickListener(View.OnClickListener { clickedView ->
             val itemPosition = recyclerView.getChildAdapterPosition(clickedView)
             val node = nodeListAdapter.getItem(itemPosition)
-            viewModel.navigateTo(node)
+            when (node) {
+                is Folder -> viewModel.navigateTo(node)
+                is Note -> {
+                    val intent = Intent(clickedView.context, DetailActivity::class.java)
+                    intent.putExtra(DetailActivity.NODE_ID_KEY, node.nodeId)
+                    clickedView.getContext().startActivity(intent)
+
+                }
+            }
         })
     }
 

@@ -1,0 +1,3 @@
+Source:
+* https://medium.com/chili-labs/android-viewmodel-injection-with-dagger-f0061d3402ff
+* https://github.com/chili-android/viewmodel-dagger-example

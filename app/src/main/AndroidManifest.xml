@@ -26,6 +26,16 @@
         </activity>
 
         <activity
+            android:name="info.maaskant.wmsnotes.android.ui.detail.DetailActivity"
+            android:label="@string/title_activity_detail"
+            android:parentActivityName="info.maaskant.wmsnotes.android.ui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="info.maaskant.wmsnotes.android.ui.main.MainActivity" />
+        </activity>
+
+        <activity
             android:name="info.maaskant.wmsnotes.android.ui.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName="info.maaskant.wmsnotes.android.ui.main.MainActivity">
