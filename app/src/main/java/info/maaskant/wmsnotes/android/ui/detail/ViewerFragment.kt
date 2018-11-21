@@ -41,28 +41,22 @@ class ViewerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.viewer_fragment, container, false).apply {
-            val textView = findViewById<TextView>(R.id.viewer_textview)
-            lifecycle.addObserver(Renderer(detailViewModel, this.context, textView))
-        }
+        return inflater.inflate(R.layout.viewer_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        viewerViewBinder = ViewerView.ViewBinder(
-//            view.findViewById<View>(R.id.viewer_view) as ViewerView, detailViewModel
-//        )
-        //        detailViewModel.subscribeToDataStore();
+        val textView = view.findViewById<TextView>(R.id.viewer_textview)
+        lifecycle.addObserver(Renderer(detailViewModel, requireContext(), textView))
     }
 
     override fun onDestroy() {
         super.onDestroy()
         //        instrumentation.getLeakTracing().traceLeakage(this);
     }
-
 }
 
-class Renderer(
+internal class Renderer(
     private val detailViewModel: DetailViewModel,
     context: Context,
     private val textView: TextView
@@ -83,11 +77,11 @@ class Renderer(
         disposables.add(
             Observables.combineLatest(
                 isPaused,
-                detailViewModel.getText()
+                detailViewModel.getTextUpdates()
             )
                 .observeOn(Schedulers.computation())
                 .filter { (isPaused, _) -> !isPaused }
-                .map { (_, text) -> text }
+                .map { (_, textUpdate) -> textUpdate.text }
                 .map { parser.parse(it) }
                 .map { renderer.render(configuration, it) }
                 .observeOn(AndroidSchedulers.mainThread())

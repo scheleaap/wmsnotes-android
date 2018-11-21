@@ -37,13 +37,13 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 //    @Inject
     //    ApplicationInstrumentation instrumentation;
 
-    private var editorFragment: EditorFragment? = null
+    private lateinit var editorFragment: EditorFragment
 
-    private var viewerFragment: ViewerFragment? = null
+    private lateinit var viewerFragment: ViewerFragment
 
-    private var saveButton: Button? = null
+    private lateinit var saveButton: Button
 
-    private var viewPager: ViewPager? = null
+    private lateinit var viewPager: ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.v(
@@ -71,9 +71,10 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         this.editorFragment = getOrCreateEditorFragment(savedInstanceState)
         this.viewerFragment = getOrCreateViewerFragment(savedInstanceState)
         viewPager = findViewById<View>(R.id.detail_view_pager) as ViewPager
-        viewPager!!.adapter = DetailPagerAdapter(
+        viewPager.adapter = DetailPagerAdapter(
             supportFragmentManager,
-            this.editorFragment!!, this.viewerFragment!!
+            this.editorFragment,
+            this.viewerFragment
         )
 
         // Temp
@@ -141,8 +142,8 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     public override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        supportFragmentManager.putFragment(outState, EDITOR_FRAGMENT_KEY, this.editorFragment!!)
-        supportFragmentManager.putFragment(outState, VIEWER_FRAGMENT_KEY, this.viewerFragment!!)
+        supportFragmentManager.putFragment(outState, EDITOR_FRAGMENT_KEY, this.editorFragment)
+        supportFragmentManager.putFragment(outState, VIEWER_FRAGMENT_KEY, this.viewerFragment)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {

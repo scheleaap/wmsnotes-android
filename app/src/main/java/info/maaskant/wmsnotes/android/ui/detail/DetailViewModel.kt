@@ -14,6 +14,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.Subject
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -43,10 +44,9 @@ class DetailViewModel @VisibleForTesting constructor(
     }
     private var noteValue: Note? = null
     private var textValue: String = ""
-    private val textSubject: BehaviorSubject<String> = BehaviorSubject.create()
-    private val textUpdatesForEditorSubject: Subject<String> = BehaviorSubject.create()
-    val textUpdatesForEditorLiveData by lazy {
-        getTextUpdatesForEditor()
+    private val textUpdatesSubject: BehaviorSubject<TextUpdate> = BehaviorSubject.create()
+    val textUpdatesLiveData by lazy {
+        getTextUpdates()
             .toFlowable(BackpressureStrategy.ERROR)
             .observeOn(AndroidSchedulers.mainThread())
             .toLiveData()
@@ -105,7 +105,7 @@ class DetailViewModel @VisibleForTesting constructor(
     private fun setNoteInternal(note: Note) {
         if (this.noteValue == null || !isDirtyValue) {
             setDirty(false)
-            setText(note, true)
+            setTextFromNote(note)
             setTitle(note.title)
         } else if (isDirtyValue && textValue == note.content) {
             setDirty(false)
@@ -115,28 +115,26 @@ class DetailViewModel @VisibleForTesting constructor(
         this.noteSubject.onNext(note)
     }
 
-    fun getText(): Observable<String> = textSubject
-
     @Synchronized
-    fun setText(text: String) {
+    fun setTextFromUser(text: String) {
         if (text != this.textValue) {
             val isSameAsNoteContent = text == noteValue?.content
             this.textValue = text
-            this.textSubject.onNext(text)
+            this.textUpdatesSubject.onNext(TextUpdate(text, source = TextUpdate.Source.USER))
             setDirty(!isSameAsNoteContent)
+            Timber.v("Text set by user: %s", this.textValue)
+        } else {
         }
     }
 
     @Synchronized
-    private fun setText(note: Note, updateEditor: Boolean) {
+    private fun setTextFromNote(note: Note) {
         this.textValue = note.content
-        this.textSubject.onNext(note.content)
-        if (updateEditor) {
-            this.textUpdatesForEditorSubject.onNext(this.textValue)
-        }
+        this.textUpdatesSubject.onNext(TextUpdate(note.content, source = TextUpdate.Source.SYSTEM))
+        Timber.v("Text set from note: %s", this.textValue)
     }
 
-    fun getTextUpdatesForEditor(): Observable<String> = textUpdatesForEditorSubject
+    fun getTextUpdates(): Observable<TextUpdate> = textUpdatesSubject
 
     fun getTitle(): Observable<String> = titleSubject.distinctUntilChanged()
 
@@ -144,4 +142,8 @@ class DetailViewModel @VisibleForTesting constructor(
     private fun setTitle(title: String) {
         this.titleSubject.onNext(title)
     }
+}
+
+data class TextUpdate(val text: String, val source: Source) {
+    enum class Source { USER, SYSTEM }
 }

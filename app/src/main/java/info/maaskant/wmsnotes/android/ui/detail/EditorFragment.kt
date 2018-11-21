@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
+import timber.log.Timber
 import javax.inject.Inject
 
 class EditorFragment : Fragment() {
@@ -23,7 +24,7 @@ class EditorFragment : Fragment() {
 
     private lateinit var editText: EditText
 
-//    private var listenForChanges: Boolean = true
+    private var listenForChanges: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -44,18 +45,26 @@ class EditorFragment : Fragment() {
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-//                if (listenForChanges) {
-                    detailViewModel.setText(editText.text.toString())
-//                }
+                if (listenForChanges) {
+                    Timber.v("EditText changed: %s", s)
+                    detailViewModel.setTextFromUser(editText.text.toString())
+                } else {
+                    Timber.v("Ignoring EditText change")
+                }
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
 
-        detailViewModel.textUpdatesForEditorLiveData.observe(this, Observer {
-//            listenForChanges = false
-            editText.setText(it)
-//            listenForChanges = true
+        detailViewModel.textUpdatesLiveData.observe(this, Observer {
+            if (it.source != TextUpdate.Source.USER) {
+                Timber.v("Updating EditText: %s", it.text)
+                listenForChanges = false
+                editText.setText(it.text)
+                listenForChanges = true
+            } else {
+                Timber.v("EditText not updated")
+            }
         })
     }
 
