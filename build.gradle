@@ -58,6 +58,7 @@ ext {
             materialdrawer: "6.1.1",
             permissionutil: "1.0.3",
             workmanager   : "1.0.0-alpha10",
-            grpc          : "1.16.1"
+            grpc          : "1.16.1",
+            markwon       : "2.0.0",
     ]
 }

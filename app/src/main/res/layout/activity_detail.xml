@@ -26,22 +26,35 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <Button
-            android:id="@+id/detail_save_button"
+        <LinearLayout
+            android:id="@+id/temp_stuff"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="?attr/colorAccent"
-            android:text="@string/detail_save" />
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/detail_save_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="?attr/colorAccent"
+                android:text="@string/detail_save" />
+
+            <CheckBox
+                android:id="@+id/dirty_checkbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dirty?" />
+        </LinearLayout>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/detail_view_pager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/detail_save_button">
+            android:layout_below="@+id/temp_stuff">
 
-            <!--<include layout="@layout/editor_fragment" />-->
-            <!--<include layout="@layout/viewer_fragment" />-->
+            <include layout="@layout/editor_fragment" />
+
+            <include layout="@layout/viewer_fragment" />
 
         </androidx.viewpager.widget.ViewPager>
 

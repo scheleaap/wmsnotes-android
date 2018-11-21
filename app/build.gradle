@@ -28,6 +28,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+            testLogging {
+                events "skipped", "failed"
+                exceptionFormat = "full"
+            }
+        }
+    }
 }
 
 configurations.all {
@@ -39,7 +48,7 @@ dependencies {
     // Default stuff
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -79,6 +88,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation "com.mikepenz:materialdrawer:$versions.materialdrawer"
     implementation "com.github.baurine:permission-util:$versions.permissionutil"
+    implementation "ru.noties:markwon:$versions.markwon"
 
     // Testing
     // (Required) Writing and executing Unit Tests on the JUnit Platform
@@ -88,5 +98,4 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.11.1")
     // See also https://blog.philipphauer.de/best-practices-unit-testing-kotlin/
     testImplementation 'io.mockk:mockk:1.8.8'
-
 }

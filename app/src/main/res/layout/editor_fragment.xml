@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<info.maaskant.wmsnotes.android.ui.detail.EditorView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/editor_view"
@@ -21,4 +21,4 @@
         android:inputType="textMultiLine|textNoSuggestions"
         android:textSize="18sp" />
 
-</info.maaskant.wmsnotes.android.ui.detail.EditorView>
+</RelativeLayout>

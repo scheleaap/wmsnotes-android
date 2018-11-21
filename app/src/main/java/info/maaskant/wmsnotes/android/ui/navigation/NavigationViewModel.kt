@@ -16,15 +16,10 @@ class NavigationViewModel @Inject constructor(
 ) : ViewModel() {
 
     // TODO:
-    // Implement onCleared to release subscriptions
+    // Implement onCleared to release subscriptions?
 
-    private lateinit var liveData: LiveData<List<Node>>
-
-    fun getNotes(): LiveData<List<Node>> {
-        if (!::liveData.isInitialized) {
-            liveData = getNotesInternal().toLiveData()
-        }
-        return liveData
+    val notes: LiveData<List<Node>> by lazy {
+        getNotesInternal().toLiveData()
     }
 
     private fun getNotesInternal(): Flowable<List<Node>> {

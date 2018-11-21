@@ -5,10 +5,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.CheckBox
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
@@ -34,8 +35,6 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 //    @Inject
     //    ApplicationInstrumentation instrumentation;
 
-    private var nodeId: String? = null
-
     private var editorFragment: EditorFragment? = null
 
     private var viewerFragment: ViewerFragment? = null
@@ -45,30 +44,27 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private var viewPager: ViewPager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         Timber.v(
-            "onCreate (hash: %s, savedInstanceState: %s)", System.identityHashCode(this),
+            "onCreate (hash: %s, savedInstanceState: %s)",
+            System.identityHashCode(this),
             savedInstanceState
         )
-
-        // TODO Move up
         AndroidInjection.inject(this)
+        super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_detail)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        if (intent.hasExtra(NODE_ID_KEY)) {
-            nodeId = intent.getStringExtra(NODE_ID_KEY)
+        val noteId = if (intent.hasExtra(NODE_ID_KEY)) {
+            intent.getStringExtra(NODE_ID_KEY)
         } else {
             Timber.e("No node identifier specified")
             finish()
             return
         }
-        Timber.v("Using node identifier " + nodeId!!)
-
-        saveButton = findViewById<View>(R.id.detail_save_button) as Button
+        Timber.v("Using note identifier %s", noteId!!)
 
         this.editorFragment = getOrCreateEditorFragment(savedInstanceState)
         this.viewerFragment = getOrCreateViewerFragment(savedInstanceState)
@@ -77,8 +73,16 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
             supportFragmentManager,
             this.editorFragment!!, this.viewerFragment!!
         )
-    }
 
+        // Temp
+        saveButton = findViewById<Button>(R.id.detail_save_button)
+        val checkbox = findViewById<CheckBox>(R.id.dirty_checkbox)
+        detailViewModel.isDirtyLiveData.observe(this, Observer { checkbox.isChecked = it })
+
+        detailViewModel.titleLiveData.observe(this, Observer { this.setTitle(it) })
+
+        detailViewModel.setNote(noteId)
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -134,7 +138,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         supportFragmentManager.putFragment(outState, VIEWER_FRAGMENT_KEY, this.viewerFragment!!)
     }
 
-    internal fun setSupportActionBarTitle(title: String) {
+    internal fun setTitle(title: String) {
         supportActionBar!!.title = title
     }
 

@@ -10,8 +10,7 @@ class SynchronizationTaskLifecycleObserver constructor(
     private val synchronizationTask: SynchronizationTask,
     private val context: Context,
     private val lifecycle: Lifecycle
-) :
-    LifecycleObserver {
+) : LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
         synchronizationTask.start()

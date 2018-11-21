@@ -54,7 +54,7 @@ class NavigationFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
-        viewModel.getNotes().observe(this, Observer {
+        viewModel.notes.observe(this, Observer {
             nodeListAdapter.set(it)
         })
         nodeListAdapter.setOnClickListener(View.OnClickListener { clickedView ->
