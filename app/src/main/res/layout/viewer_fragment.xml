@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="info.maaskant.wmsnotes.android.ui.detail.DetailActivity"
-    tools:showIn="@layout/activity_detail">
+    tools:showIn="@layout/detail_activity">
 
     <!--
         <ProgressBar

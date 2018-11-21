@@ -2,6 +2,8 @@ package info.maaskant.wmsnotes.android.ui.detail
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -52,7 +54,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_detail)
+        setContentView(R.layout.detail_activity)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -82,6 +84,11 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         detailViewModel.titleLiveData.observe(this, Observer { this.setTitle(it) })
 
         detailViewModel.setNote(noteId)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.detail_menu, menu)
+        return true
     }
 
     override fun onDestroy() {
@@ -138,7 +145,14 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         supportFragmentManager.putFragment(outState, VIEWER_FRAGMENT_KEY, this.viewerFragment!!)
     }
 
-    internal fun setTitle(title: String) {
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_save -> {
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun setTitle(title: String) {
         supportActionBar!!.title = title
     }
 
