@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
-            navigateToDebug()
+            navigateToNavigation()
         }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)

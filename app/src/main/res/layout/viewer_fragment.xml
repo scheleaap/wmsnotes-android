@@ -9,11 +9,19 @@
     tools:context="info.maaskant.wmsnotes.android.ui.detail.DetailActivity"
     tools:showIn="@layout/detail_activity">
 
-    <TextView
-        android:id="@+id/viewer_textview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:textColor="@android:color/primary_text_light" />
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true">
+
+        <TextView
+            android:id="@+id/viewer_textview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:textColor="@android:color/primary_text_light" />
+
+    </ScrollView>
 
 </RelativeLayout>
