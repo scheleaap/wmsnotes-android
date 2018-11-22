@@ -10,14 +10,19 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.client.indexing.Folder
 import info.maaskant.wmsnotes.android.client.indexing.Note
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
+import info.maaskant.wmsnotes.model.CommandProcessor
+import info.maaskant.wmsnotes.model.CreateNoteCommand
 import javax.inject.Inject
 
 class NavigationFragment : Fragment() {
+    @Inject
+    lateinit var commandProcessor: CommandProcessor
 
     @Inject
     lateinit var viewModel: NavigationViewModel
@@ -27,6 +32,8 @@ class NavigationFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
 
     private lateinit var recyclerView: RecyclerView
+
+    private lateinit var floatingActionButton: FloatingActionButton
 
 //    private var recyclerViewScrollEventObservable: Observable<RecyclerViewScrollEvent>? = null
 
@@ -47,6 +54,7 @@ class NavigationFragment : Fragment() {
                 layoutManager = linearLayoutManager
                 adapter = nodeListAdapter;
             }
+            floatingActionButton = findViewById<FloatingActionButton>(R.id.floating_action_button)
 //        recyclerViewScrollEventObservable = RxRecyclerView.scrollEvents(recyclerView)
         }
     }
@@ -66,11 +74,16 @@ class NavigationFragment : Fragment() {
                     val intent = Intent(clickedView.context, DetailActivity::class.java)
                     intent.putExtra(DetailActivity.NODE_ID_KEY, node.nodeId)
                     clickedView.getContext().startActivity(intent)
-
                 }
             }
         })
+        floatingActionButton.setOnClickListener {
+            commandProcessor.commands.onNext(
+                CreateNoteCommand(
+                    noteId = null,
+                    title = getString(R.string.new_note_title)
+                )
+            )
+        }
     }
-
-
 }

@@ -12,4 +12,5 @@
     <string name="detail_dismiss_dialog_message">Je hebt wijzigingen die nog niet zijn opgeslagen.</string>
     <string name="detail_dismiss_dialog_save">Opslaan</string>
     <string name="detail_dismiss_dialog_title">Wijzigingen</string>
+    <string name="new_note_title">Nieuwe Androidnotitie</string>
 </resources>
