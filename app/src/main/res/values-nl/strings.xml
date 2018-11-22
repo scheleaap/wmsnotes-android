@@ -8,4 +8,8 @@
     <string name="detail_save">Opslaan</string>
     <string name="navigation_file_type">Type</string>
     <string name="pref_title_server_hostname">Server</string>
+    <string name="detail_dismiss_dialog_discard">Weggooien</string>
+    <string name="detail_dismiss_dialog_message">Je hebt wijzigingen die nog niet zijn opgeslagen.</string>
+    <string name="detail_dismiss_dialog_save">Opslaan</string>
+    <string name="detail_dismiss_dialog_title">Wijzigingen</string>
 </resources>

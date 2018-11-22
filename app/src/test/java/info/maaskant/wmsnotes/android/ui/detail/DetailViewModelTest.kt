@@ -15,25 +15,23 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class DetailViewModelTest {
-    private val note1Id = "note-1"
-    private val note2Id = "note-2"
+    private val noteId = "note"
     private val title = "Title"
     private val text = "Text"
-    private val note1v1 = Note()
-        .apply(NoteCreatedEvent(eventId = 1, noteId = note1Id, revision = 1, title = title)).component1()
-        .apply(ContentChangedEvent(eventId = 2, noteId = note1Id, revision = 2, content = text)).component1()
-    private val note1v2 = note1v1
+    private val noteV1 = Note()
+        .apply(NoteCreatedEvent(eventId = 1, noteId = noteId, revision = 1, title = title)).component1()
+        .apply(ContentChangedEvent(eventId = 2, noteId = noteId, revision = 2, content = text)).component1()
+    private val noteV2 = noteV1
         .apply(
             ContentChangedEvent(
                 eventId = 3,
-                noteId = note1Id,
+                noteId = noteId,
                 revision = 3,
                 content = "Different text"
             )
         ).component1()
 
     private val noteProjector: NoteProjector = mockk()
-    //    private val renderer: Renderer = mockk()
     private val scheduler = Schedulers.trampoline()
 
     @BeforeEach
@@ -65,10 +63,10 @@ internal class DetailViewModelTest {
     fun initialize() {
         // Given
         val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        givenAProjectedNoteWithUpdates(note1Id, Observable.just(note1v1))
+        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
 
         // When
-        model.setNote(note1Id)
+        model.setNote(noteId)
 
         // Then
         val dirtyObserver = model.isDirty().test()
@@ -76,9 +74,9 @@ internal class DetailViewModelTest {
         val textUpdatesObserver = model.getTextUpdates().test()
         val titleObserver = model.getTitle().test()
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(false))
-        assertThat(noteObserver.values().toList()).isEqualTo(listOf(note1v1))
-        assertThat(textUpdatesObserver.values().toList()).isEqualTo(listOf(systemUpdate(note1v1.content)))
-        assertThat(titleObserver.values().toList()).isEqualTo(listOf(note1v1.title))
+        assertThat(noteObserver.values().toList()).isEqualTo(listOf(noteV1))
+        assertThat(textUpdatesObserver.values().toList()).isEqualTo(listOf(systemUpdate(noteV1.content)))
+        assertThat(titleObserver.values().toList()).isEqualTo(listOf(noteV1.title))
     }
 
     @Test
@@ -86,11 +84,11 @@ internal class DetailViewModelTest {
         // Given
         val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
         val noteObserver = model.getNote().test()
-        givenAProjectedNoteWithUpdates(note1Id, Observable.just(note1v1))
+        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
 
         // When
-        model.setNote(note1Id)
-        model.setNote(note1Id)
+        model.setNote(noteId)
+        model.setNote(noteId)
 
         // Then
         assertThat(noteObserver.values().toList()).hasSize(1)
@@ -104,36 +102,36 @@ internal class DetailViewModelTest {
         val noteObserver = model.getNote().test()
         val textUpdatesObserver = model.getTextUpdates().test()
         val titleObserver = model.getTitle().test()
-        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(note1Id, Observable.just(note1v1))
-        model.setNote(note1Id)
+        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
+        model.setNote(noteId)
 
         // When
-        projectedNoteWithUpdates.onNext(note1v2)
+        projectedNoteWithUpdates.onNext(noteV2)
 
         // Then
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(false))
         assertThat(noteObserver.values().toList()).isEqualTo(
             listOf(
-                note1v1,
-                note1v2
+                noteV1,
+                noteV2
             )
         )
         assertThat(textUpdatesObserver.values().toList()).isEqualTo(
             listOf(
-                systemUpdate(note1v1.content),
-                systemUpdate(note1v2.content)
+                systemUpdate(noteV1.content),
+                systemUpdate(noteV2.content)
             )
         )
-        assertThat(note1v1.title).isEqualTo(note1v2.title)
-        assertThat(titleObserver.values().toList()).isEqualTo(listOf(note1v1.title))
+        assertThat(noteV1.title).isEqualTo(noteV2.title)
+        assertThat(titleObserver.values().toList()).isEqualTo(listOf(noteV1.title))
     }
 
     @Test
     fun `note update when dirty`() {
         // Given
         val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(note1Id, Observable.just(note1v1))
-        model.setNote(note1Id)
+        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
+        model.setNote(noteId)
         model.setTextFromUser("changed")
         val dirtyObserver = model.isDirty().test()
         val noteObserver = model.getNote().test()
@@ -141,14 +139,14 @@ internal class DetailViewModelTest {
         val titleObserver = model.getTitle().test()
 
         // When
-        projectedNoteWithUpdates.onNext(note1v2)
+        projectedNoteWithUpdates.onNext(noteV2)
 
         // Then
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(true))
         assertThat(noteObserver.values().toList()).isEqualTo(
             listOf(
-                note1v1,
-                note1v2
+                noteV1,
+                noteV2
             )
         )
         assertThat(textUpdatesObserver.values().toList()).isEqualTo(
@@ -156,34 +154,34 @@ internal class DetailViewModelTest {
                 userUpdate("changed")
             )
         )
-        assertThat(titleObserver.values().toList()).isEqualTo(listOf(note1v1.title))
+        assertThat(titleObserver.values().toList()).isEqualTo(listOf(noteV1.title))
     }
 
     @Test
     fun `note update when dirty, resolving the dirty state`() {
         // Given
         val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(note1Id, Observable.just(note1v1))
-        model.setNote(note1Id)
-        model.setTextFromUser(note1v2.content)
+        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
+        model.setNote(noteId)
+        model.setTextFromUser(noteV2.content)
         val dirtyObserver = model.isDirty().test()
         val noteObserver = model.getNote().test()
         val textUpdatesObserver = model.getTextUpdates().test()
 
         // When
-        projectedNoteWithUpdates.onNext(note1v2)
+        projectedNoteWithUpdates.onNext(noteV2)
 
         // Then
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(true, false))
         assertThat(noteObserver.values().toList()).isEqualTo(
             listOf(
-                note1v1,
-                note1v2
+                noteV1,
+                noteV2
             )
         )
         assertThat(textUpdatesObserver.values().toList()).isEqualTo(
             listOf(
-                userUpdate(note1v2.content)
+                userUpdate(noteV2.content)
             )
         )
     }
@@ -192,8 +190,8 @@ internal class DetailViewModelTest {
     fun `text and isDirty, normal`() {
         // Given
         val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        givenAProjectedNoteWithUpdates(note1Id, Observable.just(note1v1))
-        model.setNote(note1Id)
+        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
+        model.setNote(noteId)
         val dirtyObserver = model.isDirty().test()
         val textUpdatesObserver = model.getTextUpdates().test()
 
@@ -204,7 +202,7 @@ internal class DetailViewModelTest {
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(false, true))
         assertThat(textUpdatesObserver.values().toList()).isEqualTo(
             listOf(
-                systemUpdate(note1v1.content),
+                systemUpdate(noteV1.content),
                 userUpdate("changed")
             )
         )
@@ -214,8 +212,8 @@ internal class DetailViewModelTest {
     fun `text and isDirty, the same text twice`() {
         // Given
         val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        givenAProjectedNoteWithUpdates(note1Id, Observable.just(note1v1))
-        model.setNote(note1Id)
+        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
+        model.setNote(noteId)
         model.setTextFromUser("changed")
         val dirtyObserver = model.isDirty().test()
         val textUpdatesObserver = model.getTextUpdates().test()
@@ -236,21 +234,21 @@ internal class DetailViewModelTest {
     fun `text and isDirty, resolving the dirty state`() {
         // Given
         val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        givenAProjectedNoteWithUpdates(note1Id, Observable.just(note1v1))
-        model.setNote(note1Id)
+        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
+        model.setNote(noteId)
         model.setTextFromUser("changed")
         val dirtyObserver = model.isDirty().test()
         val textUpdatesObserver = model.getTextUpdates().test()
 
         // When
-        model.setTextFromUser(note1v1.content)
+        model.setTextFromUser(noteV1.content)
 
         // Then
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(true, false))
         assertThat(textUpdatesObserver.values().toList()).isEqualTo(
             listOf(
                 userUpdate("changed"),
-                userUpdate(note1v1.content)
+                userUpdate(noteV1.content)
             )
         )
     }

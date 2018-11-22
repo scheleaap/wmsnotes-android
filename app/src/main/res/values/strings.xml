@@ -28,5 +28,9 @@
     <string name="detail_save">Save</string>
     <string name="storage_permission_request" translatable="false">WMS Notes stores your notes on your device. Please provide permission to store your notes.</string>
     <string name="storage_permission_denied" translatable="false">WMS Notes cannot work without permission to store notes.</string>
+    <string name="detail_dismiss_dialog_title">Unsaved changes</string>
+    <string name="detail_dismiss_dialog_message">You have unsaved changes.</string>
+    <string name="detail_dismiss_dialog_save">Save</string>
+    <string name="detail_dismiss_dialog_discard">Discard</string>
 
 </resources>

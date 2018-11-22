@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.CheckBox
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -33,6 +32,9 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     @Inject
     lateinit var detailViewModel: DetailViewModel
+
+    @Inject
+    lateinit var quitController: QuitController
 
 //    @Inject
     //    ApplicationInstrumentation instrumentation;
@@ -77,14 +79,11 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
             this.viewerFragment
         )
 
-        // Temp
-        saveButton = findViewById<Button>(R.id.detail_save_button)
-        val checkbox = findViewById<CheckBox>(R.id.dirty_checkbox)
-        detailViewModel.isDirtyLiveData.observe(this, Observer { checkbox.isChecked = it })
-
         detailViewModel.titleLiveData.observe(this, Observer { this.setTitle(it) })
 
         detailViewModel.setNote(noteId)
+
+        lifecycle.addObserver(quitController)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -133,13 +132,6 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         }
     }
 
-    // @Override
-    // public void onBackPressed() {
-    // if (!navigationFragment.onBackPressed()) {
-    // super.onBackPressed();
-    // }
-    // }
-
     public override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         supportFragmentManager.putFragment(outState, EDITOR_FRAGMENT_KEY, this.editorFragment)
@@ -147,10 +139,19 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        android.R.id.home -> {
+            quitController.quit()
+            true
+        }
         R.id.action_save -> {
+            quitController.saveAndQuit()
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        quitController.quit()
     }
 
     private fun setTitle(title: String) {
