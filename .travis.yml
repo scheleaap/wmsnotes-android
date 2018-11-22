@@ -26,6 +26,7 @@ android:
 #    - sys-img-x86-android-26
 #    - sys-img-armeabi-v7a-android-17
 
+# Source: https://stackoverflow.com/questions/52274229/travis-ci-android-28-licenses-have-not-been-accepted
 before_install:
     - yes | sdkmanager "platforms;android-28"
 
