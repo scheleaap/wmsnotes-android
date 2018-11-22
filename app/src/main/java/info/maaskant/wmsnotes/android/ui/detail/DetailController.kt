@@ -8,6 +8,7 @@ import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.ui.RxAlertDialog
 import info.maaskant.wmsnotes.model.ChangeContentCommand
 import info.maaskant.wmsnotes.model.CommandProcessor
+import info.maaskant.wmsnotes.model.DeleteNoteCommand
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -17,7 +18,7 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import javax.inject.Inject
 
-class QuitController @VisibleForTesting constructor(
+class DetailController @VisibleForTesting constructor(
     private val detailViewModel: DetailViewModel,
     private val commandProcessor: CommandProcessor,
     private val detailActivity: DetailActivity,
@@ -110,6 +111,24 @@ class QuitController @VisibleForTesting constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         disposables.clear()
+    }
+
+    fun deleteAndQuit() {
+        disposables.add(
+            detailViewModel.getNote()
+                .observeOn(computationScheduler)
+                .firstElement()
+                .map { note ->
+                    DeleteNoteCommand(
+                        noteId = note.noteId,
+                        lastRevision = note.revision
+                    )
+                }
+                .subscribe {
+                    commandProcessor.commands.onNext(it)
+                    quitFunction()
+                }
+        )
     }
 
     fun saveAndQuit() = quitRequest.onNext(QuitRequestType.SAVE_AND_QUIT)

@@ -36,7 +36,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
     lateinit var detailViewModel: DetailViewModel
 
     @Inject
-    lateinit var quitController: QuitController
+    lateinit var detailController: DetailController
 
     @Inject
     lateinit var synchronizationTask: SynchronizationTask
@@ -88,7 +88,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         detailViewModel.setNote(noteId)
 
-        lifecycle.addObserver(quitController)
+        lifecycle.addObserver(detailController)
         lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask))
     }
 
@@ -146,18 +146,22 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         android.R.id.home -> {
-            quitController.quit()
+            detailController.quit()
             true
         }
         R.id.action_save -> {
-            quitController.saveAndQuit()
+            detailController.saveAndQuit()
+            true
+        }
+        R.id.action_delete -> {
+            detailController.deleteAndQuit()
             true
         }
         else -> super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
-        quitController.quit()
+        detailController.quit()
     }
 
     private fun setTitle(title: String) {

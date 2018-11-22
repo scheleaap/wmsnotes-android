@@ -24,6 +24,7 @@ import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+
 class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     private val permissionRequestCode: Int = 0
@@ -43,9 +44,10 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
             navigateToNavigation()
         }
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        createAndAddDrawer(toolbar)
+        findViewById<Toolbar>(R.id.toolbar).let { toolbar ->
+            setSupportActionBar(toolbar)
+            createAndAddDrawer(toolbar)
+        }
 
         lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask))
     }

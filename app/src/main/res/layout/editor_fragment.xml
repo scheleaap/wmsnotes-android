@@ -1,32 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/editor_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentEnd="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="info.maaskant.wmsnotes.android.ui.detail.DetailActivity"
     tools:showIn="@layout/detail_activity">
 
-    <ScrollView
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/editor_text"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true">
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/editor_text"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="8dp"
-            android:background="@android:color/transparent"
-            android:gravity="top"
-            android:inputType="textMultiLine|textNoSuggestions"
-            android:textSize="18sp" />
-
-    </ScrollView>
-
-</RelativeLayout>
+</ScrollView>

@@ -13,7 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class QuitControllerTest {
+internal class DetailControllerTest {
     private val noteId = "note"
     private val title = "Title"
     private val text = "Text"
@@ -123,7 +123,7 @@ internal class QuitControllerTest {
     }
 
     private fun createInstance() =
-        QuitController(
+        DetailController(
             detailViewModel,
             commandProcessor,
             detailActivity,

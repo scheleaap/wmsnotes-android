@@ -13,4 +13,5 @@
     <string name="detail_dismiss_dialog_save">Opslaan</string>
     <string name="detail_dismiss_dialog_title">Wijzigingen</string>
     <string name="new_note_title">Nieuwe Androidnotitie</string>
+    <string name="detail_delete">Verwijderen</string>
 </resources>
