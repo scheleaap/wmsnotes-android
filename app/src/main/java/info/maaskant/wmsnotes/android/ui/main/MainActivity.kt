@@ -34,15 +34,9 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
     lateinit var synchronizationTask: SynchronizationTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         if (!hasAllRequiredPermissions()) return
-
-        // TODO Move up
-        AndroidInjection.inject(this)
-
-        //        scheduleSynchronizationUsingWorkManager()
-        scheduleSynchronizationUsingSynchronizationTask()
-        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask, this, lifecycle))
 
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
@@ -52,6 +46,8 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         createAndAddDrawer(toolbar)
+
+        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask))
     }
 
     override fun onStart() {
@@ -126,11 +122,6 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         PermissionUtil.onActivityResult(this, requestCode)
-    }
-
-    private fun scheduleSynchronizationUsingSynchronizationTask() {
-        synchronizationTask.pause()
-        synchronizationTask.start()
     }
 
     private fun scheduleSynchronizationUsingWorkManager() {

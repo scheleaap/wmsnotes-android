@@ -16,6 +16,8 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTaskLifecycleObserver
+import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,7 +38,10 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
     @Inject
     lateinit var quitController: QuitController
 
-//    @Inject
+    @Inject
+    lateinit var synchronizationTask: SynchronizationTask
+
+    //    @Inject
     //    ApplicationInstrumentation instrumentation;
 
     private lateinit var editorFragment: EditorFragment
@@ -84,6 +89,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         detailViewModel.setNote(noteId)
 
         lifecycle.addObserver(quitController)
+        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

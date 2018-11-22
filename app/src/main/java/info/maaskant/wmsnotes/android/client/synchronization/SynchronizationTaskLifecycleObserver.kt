@@ -1,15 +1,12 @@
 package info.maaskant.wmsnotes.android.client.synchronization
 
-import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 
 class SynchronizationTaskLifecycleObserver constructor(
-    private val synchronizationTask: SynchronizationTask,
-    private val context: Context,
-    private val lifecycle: Lifecycle
+    private val synchronizationTask: SynchronizationTask
 ) : LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
