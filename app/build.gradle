@@ -49,12 +49,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
     // WMS Notes
     implementation group: 'info.maaskant.wmsnotes', name: 'shared', version: "$versions.wmsnotes", changing: true
@@ -92,10 +92,10 @@ dependencies {
 
     // Testing
     // (Required) Writing and executing Unit Tests on the JUnit Platform
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.1"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.3.1"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.3.1"
-    testImplementation("org.assertj:assertj-core:3.11.1")
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$versions.junit"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$versions.junit"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$versions.junit"
+    testImplementation("org.assertj:assertj-core:$versions.assertj")
     // See also https://blog.philipphauer.de/best-practices-unit-testing-kotlin/
-    testImplementation 'io.mockk:mockk:1.8.8'
+    testImplementation "io.mockk:mockk:$versions.mockk"
 }
