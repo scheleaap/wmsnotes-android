@@ -28,9 +28,11 @@ android:
 
 # Source: https://stackoverflow.com/questions/52274229/travis-ci-android-28-licenses-have-not-been-accepted
 before_install:
+  - yes | sdkmanager "platforms;android-28"
   - openssl aes-256-cbc -K $encrypted_1358b77c8ff7_key -iv $encrypted_1358b77c8ff7_iv
     -in scheleaap.jks.enc -out scheleaap.jks -d
-  - yes | sdkmanager "platforms;android-28"
+  - openssl aes-256-cbc -K $encrypted_1358b77c8ff7_key -iv $encrypted_1358b77c8ff7_iv
+    -in google-services.json.enc -out google-services.json -d
 
 script:
   - "./gradlew assembleRelease"
