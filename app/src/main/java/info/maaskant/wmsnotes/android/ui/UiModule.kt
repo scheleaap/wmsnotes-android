@@ -20,8 +20,8 @@ import javax.inject.Singleton
 )
 class UiModule {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideViewModelFactory(
         providers: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
     ): ViewModelProvider.Factory =

@@ -1,7 +1,12 @@
 package info.maaskant.wmsnotes.android.ui.detail
 
-import info.maaskant.wmsnotes.model.*
-import info.maaskant.wmsnotes.model.projection.Note
+import info.maaskant.wmsnotes.model.Command
+import info.maaskant.wmsnotes.model.CommandProcessor
+import info.maaskant.wmsnotes.model.Path
+import info.maaskant.wmsnotes.model.note.ChangeContentCommand
+import info.maaskant.wmsnotes.model.note.ContentChangedEvent
+import info.maaskant.wmsnotes.model.note.Note
+import info.maaskant.wmsnotes.model.note.NoteCreatedEvent
 import io.mockk.*
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
@@ -14,12 +19,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class DetailControllerTest {
-    private val noteId = "note"
+    private val aggId = "note"
+    private val path = Path()
     private val title = "Title"
-    private val text = "Text"
+    private val content = "Text"
     private val note = Note()
-        .apply(NoteCreatedEvent(eventId = 1, noteId = noteId, revision = 1, title = title)).component1()
-        .apply(ContentChangedEvent(eventId = 2, noteId = noteId, revision = 2, content = text)).component1()
+        .apply(NoteCreatedEvent(eventId = 1, aggId = aggId, revision = 1, path = path, title = title, content = ""))
+        .component1()
+        .apply(ContentChangedEvent(eventId = 2, aggId = aggId, revision = 2, content = content)).component1()
 
     private val detailViewModel: DetailViewModel = mockk()
     private lateinit var isDirtySubject: BehaviorSubject<Boolean>
@@ -88,7 +95,7 @@ internal class DetailControllerTest {
         // Then
         assertThat(commandsObserver.values().toList()).isEqualTo(
             listOf(
-                ChangeContentCommand(noteId = note.noteId, lastRevision = note.revision, content = changedText)
+                ChangeContentCommand(aggId = note.aggId, lastRevision = note.revision, content = changedText)
             )
         )
         verify(exactly = 0) { detailActivity.finish() }

@@ -6,9 +6,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.ui.RxAlertDialog
-import info.maaskant.wmsnotes.model.ChangeContentCommand
+import info.maaskant.wmsnotes.model.note.*
 import info.maaskant.wmsnotes.model.CommandProcessor
-import info.maaskant.wmsnotes.model.DeleteNoteCommand
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -55,7 +54,7 @@ class DetailController @VisibleForTesting constructor(
             .map { (_, _, it) -> it }
             .map { (note, textUpdate) ->
                 ChangeContentCommand(
-                    noteId = note.noteId,
+                    aggId = note.aggId,
                     lastRevision = note.revision,
                     content = textUpdate.text
                 )
@@ -120,7 +119,7 @@ class DetailController @VisibleForTesting constructor(
                 .firstElement()
                 .map { note ->
                     DeleteNoteCommand(
-                        noteId = note.noteId,
+                        aggId = note.aggId,
                         lastRevision = note.revision
                     )
                 }

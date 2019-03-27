@@ -19,8 +19,8 @@ class OtherModule {
     @Retention(AnnotationRetention.RUNTIME)
     annotation class AppDirectory
 
-    @Singleton
     @Provides
+    @Singleton
     @AppDirectory
     fun appDirectory(context: Context): File {
         val packageInfo: PackageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -31,8 +31,8 @@ class OtherModule {
         return appDirectory
     }
 
-    @Singleton
     @Provides
+    @Singleton
     fun kryoPool(): Pool<Kryo> {
         return object : Pool<Kryo>(true, true) {
             override fun create(): Kryo = Kryo()

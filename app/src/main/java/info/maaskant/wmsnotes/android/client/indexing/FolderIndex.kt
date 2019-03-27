@@ -1,15 +1,14 @@
 package info.maaskant.wmsnotes.android.client.indexing
 
 import android.annotation.SuppressLint
-import info.maaskant.wmsnotes.model.NoteCreatedEvent
-import info.maaskant.wmsnotes.model.NoteDeletedEvent
 import info.maaskant.wmsnotes.model.eventstore.EventStore
+import info.maaskant.wmsnotes.model.note.NoteCreatedEvent
+import info.maaskant.wmsnotes.model.note.NoteDeletedEvent
 import info.maaskant.wmsnotes.utilities.logger
 import info.maaskant.wmsnotes.utilities.persistence.StateProducer
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.Subject
 import javax.inject.Inject
 
 @SuppressLint("CheckResult")
@@ -35,12 +34,12 @@ class FolderIndex @Inject constructor(
             .subscribe({
                 when (it) {
                     is NoteCreatedEvent -> {
-                        logger.debug("Adding note ${it.noteId} to index")
-                        updateState(state.addNode(Note(it.noteId, it.title), it.eventId))
+                        logger.debug("Adding note ${it.aggId} to index")
+                        updateState(state.addNode(Note(it.aggId, it.title), it.eventId))
                     }
                     is NoteDeletedEvent -> {
-                        logger.debug("Removing note ${it.noteId} from index")
-                        updateState(state.removeNode(it.noteId, it.eventId))
+                        logger.debug("Removing note ${it.aggId} from index")
+                        updateState(state.removeNode(it.aggId, it.eventId))
                     }
                     else -> {
                     }

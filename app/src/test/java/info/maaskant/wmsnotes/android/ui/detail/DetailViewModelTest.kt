@@ -1,9 +1,10 @@
 package info.maaskant.wmsnotes.android.ui.detail
 
-import info.maaskant.wmsnotes.model.ContentChangedEvent
-import info.maaskant.wmsnotes.model.NoteCreatedEvent
-import info.maaskant.wmsnotes.model.projection.Note
-import info.maaskant.wmsnotes.model.projection.NoteProjector
+import info.maaskant.wmsnotes.model.Path
+import info.maaskant.wmsnotes.model.aggregaterepository.AggregateRepository
+import info.maaskant.wmsnotes.model.note.ContentChangedEvent
+import info.maaskant.wmsnotes.model.note.Note
+import info.maaskant.wmsnotes.model.note.NoteCreatedEvent
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -15,36 +16,38 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class DetailViewModelTest {
-    private val noteId = "note"
+    private val aggId = "note"
+    private val path = Path()
     private val title = "Title"
     private val text = "Text"
     private val noteV1 = Note()
-        .apply(NoteCreatedEvent(eventId = 1, noteId = noteId, revision = 1, title = title)).component1()
-        .apply(ContentChangedEvent(eventId = 2, noteId = noteId, revision = 2, content = text)).component1()
+        .apply(NoteCreatedEvent(eventId = 1, aggId = aggId, revision = 1, path = path, title = title, content = ""))
+        .component1()
+        .apply(ContentChangedEvent(eventId = 2, aggId = aggId, revision = 2, content = text)).component1()
     private val noteV2 = noteV1
         .apply(
             ContentChangedEvent(
                 eventId = 3,
-                noteId = noteId,
+                aggId = aggId,
                 revision = 3,
                 content = "Different text"
             )
         ).component1()
 
-    private val noteProjector: NoteProjector = mockk()
+    private val noteRepository: AggregateRepository<Note> = mockk()
     private val scheduler = Schedulers.trampoline()
 
     @BeforeEach
     fun init() {
         clearMocks(
-            noteProjector
+            noteRepository
         )
     }
 
     @Test
     fun `default values`() {
         // Given
-        val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
         val dirtyObserver = model.isDirty().test()
         val noteObserver = model.getNote().test()
         val textUpdatesObserver = model.getTextUpdates().test()
@@ -54,7 +57,7 @@ internal class DetailViewModelTest {
 
         // Then
         assertThat(dirtyObserver.values().toList()).isEqualTo(emptyList<Boolean>())
-        assertThat(noteObserver.values().toList()).isEqualTo(emptyList<info.maaskant.wmsnotes.model.projection.Note>())
+        assertThat(noteObserver.values().toList()).isEqualTo(emptyList<info.maaskant.wmsnotes.model.note.Note>())
         assertThat(textUpdatesObserver.values().toList()).isEqualTo(emptyList<String>())
         assertThat(titleObserver.values().toList()).isEqualTo(emptyList<String>())
     }
@@ -62,11 +65,11 @@ internal class DetailViewModelTest {
     @Test
     fun initialize() {
         // Given
-        val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
+        givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
 
         // When
-        model.setNote(noteId)
+        model.setNote(aggId)
 
         // Then
         val dirtyObserver = model.isDirty().test()
@@ -82,13 +85,13 @@ internal class DetailViewModelTest {
     @Test
     fun `set note id twice`() {
         // Given
-        val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
         val noteObserver = model.getNote().test()
-        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
+        givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
 
         // When
-        model.setNote(noteId)
-        model.setNote(noteId)
+        model.setNote(aggId)
+        model.setNote(aggId)
 
         // Then
         assertThat(noteObserver.values().toList()).hasSize(1)
@@ -97,13 +100,13 @@ internal class DetailViewModelTest {
     @Test
     fun `note update`() {
         // Given
-        val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
         val dirtyObserver = model.isDirty().test()
         val noteObserver = model.getNote().test()
         val textUpdatesObserver = model.getTextUpdates().test()
         val titleObserver = model.getTitle().test()
-        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
-        model.setNote(noteId)
+        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
+        model.setNote(aggId)
 
         // When
         projectedNoteWithUpdates.onNext(noteV2)
@@ -129,9 +132,9 @@ internal class DetailViewModelTest {
     @Test
     fun `note update when dirty`() {
         // Given
-        val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
-        model.setNote(noteId)
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
+        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
+        model.setNote(aggId)
         model.setTextFromUser("changed")
         val dirtyObserver = model.isDirty().test()
         val noteObserver = model.getNote().test()
@@ -160,9 +163,9 @@ internal class DetailViewModelTest {
     @Test
     fun `note update when dirty, resolving the dirty state`() {
         // Given
-        val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
-        model.setNote(noteId)
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
+        val projectedNoteWithUpdates = givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
+        model.setNote(aggId)
         model.setTextFromUser(noteV2.content)
         val dirtyObserver = model.isDirty().test()
         val noteObserver = model.getNote().test()
@@ -189,9 +192,9 @@ internal class DetailViewModelTest {
     @Test
     fun `text and isDirty, normal`() {
         // Given
-        val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
-        model.setNote(noteId)
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
+        givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
+        model.setNote(aggId)
         val dirtyObserver = model.isDirty().test()
         val textUpdatesObserver = model.getTextUpdates().test()
 
@@ -211,9 +214,9 @@ internal class DetailViewModelTest {
     @Test
     fun `text and isDirty, the same text twice`() {
         // Given
-        val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
-        model.setNote(noteId)
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
+        givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
+        model.setNote(aggId)
         model.setTextFromUser("changed")
         val dirtyObserver = model.isDirty().test()
         val textUpdatesObserver = model.getTextUpdates().test()
@@ -233,9 +236,9 @@ internal class DetailViewModelTest {
     @Test
     fun `text and isDirty, resolving the dirty state`() {
         // Given
-        val model = DetailViewModel(noteProjector, ioScheduler = scheduler, computationScheduler = scheduler)
-        givenAProjectedNoteWithUpdates(noteId, Observable.just(noteV1))
-        model.setNote(noteId)
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
+        givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
+        model.setNote(aggId)
         model.setTextFromUser("changed")
         val dirtyObserver = model.isDirty().test()
         val textUpdatesObserver = model.getTextUpdates().test()
@@ -254,11 +257,11 @@ internal class DetailViewModelTest {
     }
 
     private fun givenAProjectedNoteWithUpdates(
-        noteId: String,
+        aggId: String,
         immediateResponse: Observable<Note>
     ): PublishSubject<Note> {
         val projectedNoteWithUpdates: PublishSubject<Note> = PublishSubject.create()
-        every { noteProjector.projectAndUpdate(noteId) }.returns(Observable.defer {
+        every { noteRepository.getAndUpdate(aggId) }.returns(Observable.defer {
             Observable.concat(
                 immediateResponse,
                 projectedNoteWithUpdates

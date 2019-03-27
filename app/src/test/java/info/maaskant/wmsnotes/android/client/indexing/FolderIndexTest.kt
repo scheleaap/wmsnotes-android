@@ -1,9 +1,10 @@
 package info.maaskant.wmsnotes.android.client.indexing
 
 import info.maaskant.wmsnotes.model.Event
-import info.maaskant.wmsnotes.model.NoteCreatedEvent
-import info.maaskant.wmsnotes.model.NoteDeletedEvent
+import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.model.eventstore.EventStore
+import info.maaskant.wmsnotes.model.note.NoteCreatedEvent
+import info.maaskant.wmsnotes.model.note.NoteDeletedEvent
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -15,9 +16,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class FolderIndexTest {
-
-    private val noteId = "note"
+    private val aggId = "note"
+    private val rootPath = Path()
     private val title = "Title"
+    private val content = "Text"
+    private val noteCreatedEvent =
+        NoteCreatedEvent(eventId = 0, aggId = aggId, revision = 1, path = rootPath, title = title, content = content)
 
     private val scheduler = Schedulers.trampoline()
 
@@ -45,7 +49,7 @@ internal class FolderIndexTest {
 
         // When
         val testObserver = index.getNodes(FolderIndex.rootNode).test()
-        eventUpdatesSubject.onNext(NoteCreatedEvent(eventId = 0, noteId = noteId, revision = 1, title = title))
+        eventUpdatesSubject.onNext(noteCreatedEvent)
 
         // Then
         testObserver.assertNotComplete()
@@ -53,7 +57,7 @@ internal class FolderIndexTest {
         assertThat(testObserver.values()).isEqualTo(
             listOf(
                 emptyList(),
-                listOf(Note(noteId, title))
+                listOf(Note(aggId, title))
             )
         )
     }
@@ -65,8 +69,8 @@ internal class FolderIndexTest {
 
         // When
         val observer = index.getNodes(FolderIndex.rootNode).test()
-        eventUpdatesSubject.onNext(NoteCreatedEvent(eventId = 0, noteId = noteId, revision = 1, title = title))
-        eventUpdatesSubject.onNext(NoteDeletedEvent(eventId = 0, noteId = noteId, revision = 1))
+        eventUpdatesSubject.onNext(noteCreatedEvent)
+        eventUpdatesSubject.onNext(NoteDeletedEvent(eventId = 0, aggId = aggId, revision = 1))
 
         // Then
         observer.assertNotComplete()
@@ -74,7 +78,7 @@ internal class FolderIndexTest {
         assertThat(observer.values()).isEqualTo(
             listOf(
                 emptyList(),
-                listOf(Note(noteId, title)),
+                listOf(Note(aggId, title)),
                 emptyList<Node>()
             )
         )
@@ -108,10 +112,12 @@ internal class FolderIndexTest {
         every { eventStore.getEvents(afterEventId = 1) }.returns(
             Observable.just(
                 NoteCreatedEvent(
-                    2,
-                    "note-2",
-                    1,
-                    title
+                    eventId = 2,
+                    aggId = "note-2",
+                    path = rootPath,
+                    revision = 1,
+                    title = title,
+                    content = content
                 )
             )
         )
@@ -119,7 +125,16 @@ internal class FolderIndexTest {
 
         // When
         val observer = index.getNodes(FolderIndex.rootNode).test()
-        eventUpdatesSubject.onNext(NoteCreatedEvent(eventId = 3, noteId = "note-3", revision = 1, title = title))
+        eventUpdatesSubject.onNext(
+            NoteCreatedEvent(
+                eventId = 3,
+                aggId = "note-3",
+                revision = 1,
+                path = rootPath,
+                title = title,
+                content = content
+            )
+        )
 
         // Then
         observer.assertNotComplete()
@@ -148,7 +163,7 @@ internal class FolderIndexTest {
 
         // When
         val observer = index.getNodes(Folder("/bla", "")).test()
-        eventUpdatesSubject.onNext(NoteCreatedEvent(eventId = 0, noteId = noteId, revision = 1, title = title))
+        eventUpdatesSubject.onNext(noteCreatedEvent)
 
         // Then
         observer.assertNotComplete()

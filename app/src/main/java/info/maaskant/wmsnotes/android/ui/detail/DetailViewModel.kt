@@ -3,8 +3,8 @@ package info.maaskant.wmsnotes.android.ui.detail
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.toLiveData
-import info.maaskant.wmsnotes.model.projection.Note
-import info.maaskant.wmsnotes.model.projection.NoteProjector
+import info.maaskant.wmsnotes.model.note.Note
+import info.maaskant.wmsnotes.model.aggregaterepository.AggregateRepository
 import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 
 class DetailViewModel @VisibleForTesting constructor(
-    private val noteProjector: NoteProjector,
+    private val noteRepository: AggregateRepository<Note>,
     ioScheduler: Scheduler,
     computationScheduler: Scheduler
 ) : ViewModel() {
@@ -67,7 +67,7 @@ class DetailViewModel @VisibleForTesting constructor(
             .firstElement()
             .toObservable()
             .concatMap {
-                noteProjector.projectAndUpdate(it)
+                noteRepository.getAndUpdate(it)
                     .subscribeOn(ioScheduler)
             }
             .observeOn(computationScheduler)
@@ -76,8 +76,8 @@ class DetailViewModel @VisibleForTesting constructor(
     }
 
     @Inject
-    constructor(noteProjector: NoteProjector) : this(
-        noteProjector,
+    constructor(noteRepository: AggregateRepository<Note>) : this(
+        noteRepository,
         ioScheduler = Schedulers.io(),
         computationScheduler = Schedulers.computation()
     )

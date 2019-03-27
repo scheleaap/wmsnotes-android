@@ -17,7 +17,8 @@ import info.maaskant.wmsnotes.android.client.indexing.Folder
 import info.maaskant.wmsnotes.android.client.indexing.Note
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.model.CommandProcessor
-import info.maaskant.wmsnotes.model.CreateNoteCommand
+import info.maaskant.wmsnotes.model.Path
+import info.maaskant.wmsnotes.model.note.CreateNoteCommand
 import javax.inject.Inject
 
 class NavigationFragment : Fragment() {
@@ -80,8 +81,10 @@ class NavigationFragment : Fragment() {
         floatingActionButton.setOnClickListener {
             commandProcessor.commands.onNext(
                 CreateNoteCommand(
-                    noteId = null,
-                    title = getString(R.string.new_note_title)
+                    aggId = null,
+                    path = Path(),
+                    title = getString(R.string.new_note_title),
+                    content = ""
                 )
             )
         }
