@@ -15,7 +15,7 @@
 
 default_platform(:android)
 
-setup_travis
+# setup_travis
 
 platform :android do
   desc "Runs all the tests"
