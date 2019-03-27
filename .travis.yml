@@ -35,7 +35,7 @@ before_install:
 script:
   - "./gradlew assembleRelease"
   - jarsigner -verbose -sigalg SHA1withRSA -storepass $storepass -keypass $keypass -digestalg SHA1 -keystore scheleaap.jks app/build/outputs/apk/release/app-release-unsigned.apk wmsnotes
-  - zipalign -v 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release-signed.apk
+  - "${ANDROID_HOME}/build-tools/28.0.3/zipalign -v 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release-signed.apk"
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
