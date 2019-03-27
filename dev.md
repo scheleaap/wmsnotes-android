@@ -20,7 +20,14 @@ travis login --org
 travis encrypt-file google-services.json --add
 ```
 
+Fastlane Supply was set up as follows:
+```bash
+supply init -j google-services.json -p info.maaskant.wmsnotes
+```
+
 ## Useful references
 
 * https://github.com/tdillon/android
 * https://github.com/harmittaa/travis-example-android
+* https://medium.com/@pratikg17/fastlane-and-travis-ci-integration-for-android-ed77b2a498e2
+* https://docs.fastlane.tools/getting-started/android/setup/

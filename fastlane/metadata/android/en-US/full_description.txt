@@ -1,0 +1,3 @@
+See
+https://github.com/scheleaap/wmsnotes-desktop-and-server and
+https://github.com/scheleaap/wmsnotes-android

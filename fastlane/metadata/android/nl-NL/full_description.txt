@@ -1,0 +1,3 @@
+Zie
+https://github.com/scheleaap/wmsnotes-desktop-and-server en
+https://github.com/scheleaap/wmsnotes-android
