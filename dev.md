@@ -1,4 +1,4 @@
-Documentation
+# Documentation
 
 The Travis CLI was installed as follows:
 ```bash
@@ -19,3 +19,8 @@ The Google Developers Service Account API file was encrypted as follows:
 travis login --org
 travis encrypt-file google-services.json --add
 ```
+
+## Useful references
+
+* https://github.com/tdillon/android
+* https://github.com/harmittaa/travis-example-android
