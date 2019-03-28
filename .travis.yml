@@ -35,8 +35,10 @@ before_install:
 
 install:
   - bundle install
+
 script:
   - bundle exec fastlane test
+  - bundle exec fastlane deploy
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
