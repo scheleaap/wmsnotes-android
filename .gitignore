@@ -58,6 +58,9 @@ freeline_project_description.json
 # Fastlane
 fastlane/report.xml
 
+# Stuff to encrypt
+secrets.tar
+
 # Other
 .DS_Store
 Log.txt
