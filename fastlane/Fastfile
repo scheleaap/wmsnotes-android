@@ -34,10 +34,11 @@ platform :android do
   lane :deploy do
     gradle(task: "clean bundleRelease")
     # upload_to_play_store
-    #supply(
-    #  track: "production",
-    #  package_name: "info.maaskant.wmsnotes",
-    #  apk: "app/build/outputs/apk/app-production-release.apk"
-    #)
+    supply(
+      track: "production",
+      package_name: "info.maaskant.wmsnotes",
+      #apk: "app/build/outputs/apk/app-production-release.apk"
+      aab: "app/build/outputs/bundle/release/app.aab"
+    )
   end
 end
