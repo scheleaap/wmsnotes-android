@@ -10,7 +10,7 @@ apply plugin: 'de.mannodermaus.android-junit5'
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file("keystore.properties")
-if (propertiesFile.exists()) {
+if (keystorePropertiesFile.exists()) {
   keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
