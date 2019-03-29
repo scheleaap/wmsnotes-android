@@ -14,7 +14,7 @@ keytool -genkey -v -keystore scheleaap.jks -alias wmsnotes -keyalg RSA -keysize 
 
 The secrets file was created as follows:
 ```bash
-tar cvf secrets.tar scheleaap.jks google-services.json
+tar cvf secrets.tar scheleaap.jks keystore.properties google-services.json
 travis login --org
 travis encrypt-file secrets.tar --add
 ```

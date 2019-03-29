@@ -15,8 +15,6 @@
 
 default_platform(:android)
 
-# setup_travis
-
 platform :android do
   desc "Runs all the tests"
   lane :test do
@@ -34,7 +32,12 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    gradle(task: "clean bundleRelease")
+    # upload_to_play_store
+    #supply(
+    #  track: "production",
+    #  package_name: "info.maaskant.wmsnotes",
+    #  apk: "app/build/outputs/apk/app-production-release.apk"
+    #)
   end
 end
