@@ -33,8 +33,7 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     gradle(task: "clean bundleRelease")
-    # upload_to_play_store
-    supply(
+    upload_to_play_store(
       #track: "production",
       #package_name: "info.maaskant.wmsnotes",
       #apk: "app/build/outputs/apk/app-production-release.apk"
