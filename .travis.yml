@@ -34,6 +34,7 @@ before_install:
   - tar xvf secrets.tar
 
 install:
+  - bundle update --bundler
   - bundle install
 
 script:
