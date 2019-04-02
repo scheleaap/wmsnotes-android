@@ -8,9 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.client.indexing.Folder
-import info.maaskant.wmsnotes.android.client.indexing.Node
-import info.maaskant.wmsnotes.android.client.indexing.Note
+import info.maaskant.wmsnotes.client.indexing.Folder
+import info.maaskant.wmsnotes.client.indexing.Node
+import info.maaskant.wmsnotes.client.indexing.Note
 import kotlin.properties.Delegates
 
 internal class NodeListAdapter(initialItems: List<Node>) : RecyclerView.Adapter<NodeListAdapter.NodeViewHolder>(),
@@ -18,7 +18,7 @@ internal class NodeListAdapter(initialItems: List<Node>) : RecyclerView.Adapter<
 
     // Source: https://github.com/antoniolg/diffutil-recyclerview-kotlin/blob/master/app/src/main/java/com/antonioleiva/diffutilkotlin/ContentAdapter.kt
     var items: List<Node> by Delegates.observable(emptyList()) { _, oldList, newList ->
-        autoNotify(oldList, newList) { o, n -> o.nodeId == n.nodeId }
+        autoNotify(oldList, newList) { o, n -> o.aggId == n.aggId }
     }
 
     private lateinit var onClickListener: OnClickListener

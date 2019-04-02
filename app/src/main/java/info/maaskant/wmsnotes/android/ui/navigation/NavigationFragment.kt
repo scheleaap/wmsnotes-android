@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.client.indexing.Folder
-import info.maaskant.wmsnotes.android.client.indexing.Note
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
+import info.maaskant.wmsnotes.client.indexing.Folder
+import info.maaskant.wmsnotes.client.indexing.Note
 import info.maaskant.wmsnotes.model.CommandProcessor
 import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.model.note.CreateNoteCommand
@@ -73,7 +73,7 @@ class NavigationFragment : Fragment() {
                 is Folder -> viewModel.navigateTo(node)
                 is Note -> {
                     val intent = Intent(clickedView.context, DetailActivity::class.java)
-                    intent.putExtra(DetailActivity.NODE_ID_KEY, node.nodeId)
+                    intent.putExtra(DetailActivity.NODE_ID_KEY, node.aggId)
                     clickedView.getContext().startActivity(intent)
                 }
             }

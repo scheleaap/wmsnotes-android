@@ -5,6 +5,10 @@ import com.esotericsoftware.kryo.util.Pool
 import dagger.Module
 import dagger.Provides
 import info.maaskant.wmsnotes.android.app.OtherModule
+import info.maaskant.wmsnotes.client.indexing.DefaultNodeSortingStrategy
+import info.maaskant.wmsnotes.client.indexing.KryoTreeIndexStateSerializer
+import info.maaskant.wmsnotes.client.indexing.TreeIndex
+import info.maaskant.wmsnotes.client.indexing.TreeIndexState
 import info.maaskant.wmsnotes.model.eventstore.EventStore
 import info.maaskant.wmsnotes.utilities.persistence.FileStateRepository
 import info.maaskant.wmsnotes.utilities.persistence.StateRepository
@@ -15,13 +19,12 @@ import javax.inject.Singleton
 
 @Module
 class IndexingModule {
-
     @Provides
     @Singleton
-    fun folderIndexStateRepository(@OtherModule.AppDirectory appDirectory: File, kryoPool: Pool<Kryo>): StateRepository<FolderIndexState> =
+    fun treeIndexStateRepository(@OtherModule.AppDirectory appDirectory: File, kryoPool: Pool<Kryo>): StateRepository<TreeIndexState> =
         FileStateRepository(
-            serializer = KryoFolderIndexStateSerializer(kryoPool),
-            file = appDirectory.resolve("cache").resolve("folder_index"),
+            serializer = KryoTreeIndexStateSerializer(kryoPool),
+            file = appDirectory.resolve("cache").resolve("tree_index"),
             scheduler = Schedulers.io(),
             timeout = 1,
             unit = TimeUnit.SECONDS
@@ -29,9 +32,10 @@ class IndexingModule {
 
     @Provides
     @Singleton
-    fun folderIndex(eventStore: EventStore, stateRepository: StateRepository<FolderIndexState>): FolderIndex {
-        return FolderIndex(
+    fun treeIndex(eventStore: EventStore, stateRepository: StateRepository<TreeIndexState>): TreeIndex {
+        return TreeIndex(
             eventStore,
+            DefaultNodeSortingStrategy(),
             stateRepository.load(),
             Schedulers.io()
         ).apply {
