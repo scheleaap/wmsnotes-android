@@ -10,14 +10,4 @@
         android:singleLine="true"
         android:title="@string/pref_title_server_hostname" />
 
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_notebook_path"
-        android:inputType="textCapWords"
-        android:key="notebook_path"
-        android:maxLines="1"
-        android:selectAllOnFocus="false"
-        android:singleLine="true"
-        android:title="@string/pref_title_notebook_path" />
-
 </PreferenceScreen>

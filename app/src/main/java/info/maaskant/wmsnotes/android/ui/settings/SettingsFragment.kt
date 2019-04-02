@@ -14,13 +14,11 @@ class SettingsFragment : PreferenceFragment() {
         addPreferencesFromResource(R.xml.preferences)
 
         bindPreferenceSummaryToValue(findPreference(SERVER_HOSTNAME_KEY))
-        bindPreferenceSummaryToValue(findPreference(NOTEBOOK_PATH_KEY))
     }
 
     companion object {
 
         var SERVER_HOSTNAME_KEY = "server_hostname"
-        var NOTEBOOK_PATH_KEY = "notebook_path"
 
         private val BIND_PREFERENCE_SUMMARY_TO_VALUE_LISTENER = BindPreferenceSummaryToValueListener()
 
