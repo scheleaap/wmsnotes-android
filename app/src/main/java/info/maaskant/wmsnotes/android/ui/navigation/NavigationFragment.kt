@@ -64,7 +64,7 @@ class NavigationFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
         viewModel.notes.observe(this, Observer {
-            nodeListAdapter.set(it)
+            nodeListAdapter.items = it
         })
         nodeListAdapter.setOnClickListener(View.OnClickListener { clickedView ->
             val itemPosition = recyclerView.getChildAdapterPosition(clickedView)

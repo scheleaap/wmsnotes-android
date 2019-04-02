@@ -11,16 +11,21 @@ import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.client.indexing.Folder
 import info.maaskant.wmsnotes.android.client.indexing.Node
 import info.maaskant.wmsnotes.android.client.indexing.Note
+import kotlin.properties.Delegates
 
-internal class NodeListAdapter(nodes: List<Node>) : RecyclerView.Adapter<NodeListAdapter.NodeViewHolder>() {
+internal class NodeListAdapter(initialItems: List<Node>) : RecyclerView.Adapter<NodeListAdapter.NodeViewHolder>(),
+    AutoUpdatableAdapter {
 
-    private val nodes = ArrayList<Node>()
+    // Source: https://github.com/antoniolg/diffutil-recyclerview-kotlin/blob/master/app/src/main/java/com/antonioleiva/diffutilkotlin/ContentAdapter.kt
+    var items: List<Node> by Delegates.observable(emptyList()) { _, oldList, newList ->
+        autoNotify(oldList, newList) { o, n -> o.nodeId == n.nodeId }
+    }
 
     private lateinit var onClickListener: OnClickListener
 
     init {
         setHasStableIds(true)
-        this.nodes.addAll(nodes)
+        this.items = initialItems
     }
 
     fun setOnClickListener(onClickListener: OnClickListener) {
@@ -28,11 +33,11 @@ internal class NodeListAdapter(nodes: List<Node>) : RecyclerView.Adapter<NodeLis
     }
 
     fun getItem(position: Int): Node {
-        return nodes[position]
+        return items[position]
     }
 
     fun getPosition(node: Node): Int {
-        return nodes.indexOf(node)
+        return items.indexOf(node)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
@@ -44,7 +49,7 @@ internal class NodeListAdapter(nodes: List<Node>) : RecyclerView.Adapter<NodeLis
     }
 
     override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
-        val node = nodes[position]
+        val node = items[position]
         holder.titleTextView.text = node.title
         when (node) {
             is Note -> {
@@ -61,19 +66,13 @@ internal class NodeListAdapter(nodes: List<Node>) : RecyclerView.Adapter<NodeLis
     }
 
     override fun getItemCount(): Int {
-        return nodes.size
-    }
-
-    fun set(nodes: List<Node>) {
-        // TODO: Alternative: https://github.com/guenodz/livedata-recyclerview-sample/blob/master/app/src/main/java/me/guendouz/livedata_recyclerview/PostsAdapter.java#L55-L67
-        this.nodes.clear()
-        this.nodes.addAll(nodes)
-        notifyDataSetChanged()
+        return items.size
     }
 
     class NodeViewHolder(view: View, onClickListener: OnClickListener) : RecyclerView.ViewHolder(view) {
         val iconImageView: ImageView = view.findViewById<View>(R.id.icon) as ImageView
         val titleTextView: TextView = view.findViewById<View>(R.id.title) as TextView
+
         init {
             view.setOnClickListener(onClickListener)
         }
