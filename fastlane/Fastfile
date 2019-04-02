@@ -15,8 +15,6 @@ default_platform(:android)
 platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    ensure_git_branch(branch: "master")
-    ensure_git_status_clean
     gradle(task: "bundleRelease")
     upload_to_play_store(track: "alpha")
   end
