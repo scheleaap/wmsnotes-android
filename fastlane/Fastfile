@@ -10,34 +10,14 @@
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
 
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
-
 default_platform(:android)
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
-  end
-
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
-  end
-
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean bundleRelease")
-    upload_to_play_store(
-      #track: "production",
-      #package_name: "info.maaskant.wmsnotes",
-      #apk: "app/build/outputs/apk/app-production-release.apk"
-      #aab: "app/build/outputs/bundle/release/app.aab"
-    )
+    ensure_git_branch(branch: "master")
+    ensure_git_status_clean
+    gradle(task: "bundleRelease")
+    upload_to_play_store(track: "alpha")
   end
 end

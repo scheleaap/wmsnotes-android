@@ -1,5 +1,7 @@
 # Documentation
 
+## Signing and Deploying
+
 The Travis CLI was installed as follows (on Ubuntu 16.04):
 ```bash
 sudo apt-get install ruby ruby-dev
@@ -26,9 +28,16 @@ Fastlane Supply was set up as follows:
 supply init -j google-services.json -p info.maaskant.wmsnotes
 ```
 
-## Useful references
+### References
 
 * https://github.com/tdillon/android
 * https://github.com/harmittaa/travis-example-android
 * https://medium.com/@pratikg17/fastlane-and-travis-ci-integration-for-android-ed77b2a498e2
 * https://docs.fastlane.tools/getting-started/android/setup/
+
+
+## Versioning
+
+This might be useful in the future:
+
+* https://github.com/gladed/gradle-android-git-version

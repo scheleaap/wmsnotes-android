@@ -11,7 +11,7 @@ apply plugin: 'de.mannodermaus.android-junit5'
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 if (keystorePropertiesFile.exists()) {
-  keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -20,8 +20,8 @@ android {
         applicationId "info.maaskant.wmsnotes"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
