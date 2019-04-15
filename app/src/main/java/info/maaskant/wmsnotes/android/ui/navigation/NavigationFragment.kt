@@ -55,7 +55,7 @@ class NavigationFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
+        viewModel.restoreState(savedInstanceState)
         viewModel.getCurrentPath().observe(this, Observer { path ->
             createFolderViewIfNecessary(path)
             ensureOnlyOneChildIsVisible(folderViewContainer, folderViewsByPath.getValue(path))
@@ -73,6 +73,11 @@ class NavigationFragment : Fragment() {
                 content = ""
             )
         )
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putAll(viewModel.getStateToSave())
+        super.onSaveInstanceState(outState)
     }
 
     private fun createFolderViewIfNecessary(path: Path) {
