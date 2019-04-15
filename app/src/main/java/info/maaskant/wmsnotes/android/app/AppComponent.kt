@@ -21,6 +21,7 @@ import javax.inject.Singleton
         InstrumentationModule::class,
         ModelModule::class,
         OtherModule::class,
+        StringsModule::class,
         SynchronizationModule::class,
         UiModule::class
     ]

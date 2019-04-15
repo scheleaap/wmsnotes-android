@@ -17,15 +17,10 @@ import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumenta
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.client.indexing.Folder
 import info.maaskant.wmsnotes.client.indexing.Note
-import info.maaskant.wmsnotes.model.CommandProcessor
 import info.maaskant.wmsnotes.model.Path
-import info.maaskant.wmsnotes.model.note.CreateNoteCommand
 import javax.inject.Inject
 
 class NavigationFragment : Fragment() {
-    @Inject
-    lateinit var commandProcessor: CommandProcessor
-
     @Inject
     lateinit var instrumentation: ApplicationInstrumentation
 
@@ -63,19 +58,7 @@ class NavigationFragment : Fragment() {
             createFolderViewIfNecessary(path)
             ensureOnlyOneChildIsVisible(folderViewContainer, folderViewsByPath.getValue(path))
         })
-        floatingActionButton.setOnClickListener { onCreateNote() }
-    }
-
-    private fun onCreateNote() {
-        // TODO Move to view model
-        commandProcessor.commands.onNext(
-            CreateNoteCommand(
-                aggId = null,
-                path = Path(),
-                title = getString(R.string.new_note_title),
-                content = ""
-            )
-        )
+        floatingActionButton.setOnClickListener { viewModel.createNote() }
     }
 
     override fun onDestroy() {

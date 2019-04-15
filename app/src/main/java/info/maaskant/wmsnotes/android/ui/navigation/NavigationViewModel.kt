@@ -4,9 +4,13 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.toLiveData
+import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.app.StringsModule.StringId
 import info.maaskant.wmsnotes.client.indexing.Node
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
+import info.maaskant.wmsnotes.model.CommandProcessor
 import info.maaskant.wmsnotes.model.Path
+import info.maaskant.wmsnotes.model.note.CreateNoteCommand
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -15,19 +19,27 @@ import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import javax.inject.Inject
 
-
 class NavigationViewModel @Inject constructor(
-    private val treeIndex: TreeIndex
+    private val commandProcessor: CommandProcessor,
+    private val treeIndex: TreeIndex,
+    @StringId(R.string.new_note_title) private val newNoteTitle: String
 ) : ViewModel() {
-
-    private val CURRENT_PATH_KEY = "currentPath"
 
     // TODO:
     // Implement onCleared to release subscriptions?
 
-    private val initialPath = Path()
-
     private val currentPath: BehaviorSubject<Path> = BehaviorSubject.createDefault(initialPath)
+
+    fun createNote() {
+        commandProcessor.commands.onNext(
+            CreateNoteCommand(
+                aggId = null,
+                path = currentPath.value!!,
+                title = newNoteTitle,
+                content = ""
+            )
+        )
+    }
 
     fun getCurrentPath(): LiveData<Path> =
         currentPath
@@ -78,4 +90,9 @@ class NavigationViewModel @Inject constructor(
         }
     }
 
+    companion object {
+        private const val CURRENT_PATH_KEY = "currentPath"
+
+        private val initialPath = Path()
+    }
 }
