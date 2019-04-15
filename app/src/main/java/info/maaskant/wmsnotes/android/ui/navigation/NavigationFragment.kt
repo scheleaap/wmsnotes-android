@@ -7,7 +7,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -19,6 +18,9 @@ import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.client.indexing.Folder
 import info.maaskant.wmsnotes.client.indexing.Note
 import info.maaskant.wmsnotes.model.Path
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class NavigationFragment : Fragment(), OnBackPressedListener {
@@ -28,13 +30,17 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     @Inject
     lateinit var viewModel: NavigationViewModel
 
+    private lateinit var compositeDisposable: CompositeDisposable
+
     private lateinit var floatingActionButton: FloatingActionButton
 
     private lateinit var folderViewContainer: ViewGroup
 
     private lateinit var inflater: LayoutInflater
 
-    private var folderViewsByPath: Map<Path, View> = mapOf()
+    private data class FolderContainer(val view: View, val listAdapter: NodeListAdapter, val disposable: Disposable)
+
+    private var foldersByPath: Map<Path, FolderContainer> = mapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -55,11 +61,6 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.restoreState(savedInstanceState)
-        viewModel.getStack().observe(this, Observer { stack ->
-            val currentPath = stack.last()
-            createFolderViewIfNecessary(currentPath)
-            ensureOnlyOneChildIsVisible(folderViewContainer, folderViewsByPath.getValue(currentPath))
-        })
         floatingActionButton.setOnClickListener { viewModel.createNote() }
     }
 
@@ -76,30 +77,80 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
         instrumentation.leakTracing.traceLeakage(this)
     }
 
+    override fun onPause() {
+        super.onPause()
+        unbindViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bindViewModel()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putAll(viewModel.getStateToSave())
         super.onSaveInstanceState(outState)
     }
 
-    private fun createFolderViewIfNecessary(path: Path) {
-        if (path !in folderViewsByPath) {
-            val nodeListAdapter = NodeListAdapter()
-            lateinit var recyclerView: RecyclerView
-            val view = inflater.inflate(R.layout.navigation_folder, folderViewContainer, false).apply {
-                visibility = GONE
-                recyclerView = findViewById<RecyclerView>(R.id.node_list_view).apply {
-                    setHasFixedSize(true)
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = nodeListAdapter;
-                }
+    private fun bindViewModel() {
+        unbindViewModel()
+        compositeDisposable = CompositeDisposable()
+        compositeDisposable.add(
+            viewModel.getStackObservable()
+                .map { it.items }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(::updateFoldersAccordingToStack)
+        )
+    }
+
+    private fun createAndAddFolder(path: Path) {
+        val listAdapter = NodeListAdapter()
+        lateinit var recyclerView: RecyclerView
+        val view = inflater.inflate(R.layout.navigation_folder, folderViewContainer, false).apply {
+            visibility = GONE
+            recyclerView = findViewById<RecyclerView>(R.id.node_list_view).apply {
+                setHasFixedSize(true)
+                layoutManager = LinearLayoutManager(context)
+                adapter = listAdapter;
             }
-            nodeListAdapter.setOnClickListener(NodeClickListener(recyclerView, nodeListAdapter, viewModel))
-            viewModel.getNotes(path).observe(this, Observer {
-                nodeListAdapter.items = it
-            })
-            folderViewsByPath = folderViewsByPath + (path to view)
-            folderViewContainer.addView(view)
         }
+        listAdapter.setOnClickListener(NodeClickListener(recyclerView, listAdapter, viewModel))
+        val disposable = viewModel.getNotesObservable(path)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { listAdapter.items = it }
+        compositeDisposable.add(disposable)
+        foldersByPath = foldersByPath + (path to FolderContainer(view, listAdapter, disposable))
+        folderViewContainer.addView(view)
+    }
+
+    private fun ensureFolderIsVisible(path: Path) {
+        if (path !in foldersByPath) {
+            createAndAddFolder(path)
+        }
+        ensureOnlyOneChildIsVisible(folderViewContainer, foldersByPath.getValue(path).view)
+    }
+
+    private fun removeFoldersNotInStack(stack: List<Path>) {
+        val foldersNotInList = foldersByPath.keys - stack
+        foldersNotInList.forEach(::removeFolder)
+    }
+
+    private fun removeFolder(path: Path) {
+        val folder = foldersByPath.getValue(path)
+        folder.disposable.dispose()
+        folderViewContainer.removeView(folder.view)
+        foldersByPath = foldersByPath - path
+    }
+
+    private fun unbindViewModel() {
+        if (this::compositeDisposable.isInitialized) {
+            compositeDisposable.dispose()
+        }
+    }
+
+    private fun updateFoldersAccordingToStack(stack: List<Path>) {
+        removeFoldersNotInStack(stack)
+        ensureFolderIsVisible(stack.last())
     }
 
     companion object {

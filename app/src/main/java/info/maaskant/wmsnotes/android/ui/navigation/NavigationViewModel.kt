@@ -12,7 +12,6 @@ import info.maaskant.wmsnotes.model.CommandProcessor
 import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.model.note.CreateNoteCommand
 import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject
@@ -46,9 +45,7 @@ class NavigationViewModel @Inject constructor(
         )
     }
 
-    fun getNotes(path: Path): LiveData<List<Node>> = getNotesInternal(path).toLiveData()
-
-    private fun getNotesInternal(path: Path): Flowable<List<Node>> {
+    fun getNotesObservable(path: Path): Observable<List<Node>> {
         return Observable.concat(
             Observable.just(Unit),
             treeIndex.getEvents(filterByFolder = path)
@@ -58,15 +55,8 @@ class NavigationViewModel @Inject constructor(
                 treeIndex.getNodes(filterByFolder = path)
                     .map { it.value }.toList().blockingGet()
             }
-            .toFlowable(BackpressureStrategy.ERROR)
-            .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun getStack(): LiveData<List<Path>> =
-        stackSubject
-            .map { it.items }
-            .toFlowable(BackpressureStrategy.ERROR)
-            .toLiveData()
     fun getStackObservable(): Observable<ImmutableStack<Path>> = stackSubject
 
     fun navigateTo(path: Path) {
