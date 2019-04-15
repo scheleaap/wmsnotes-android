@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import androidx.fragment.app.Fragment
 import androidx.work.Worker
+import com.squareup.leakcanary.LeakCanary
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -36,6 +37,15 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
     override fun onCreate() {
         super.onCreate()
 
+// TODO: LEAK TESTING
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
+// TODO: LEAK TESTING
+
         Timber.plant(Timber.DebugTree())
         component = DaggerAppComponent.builder()
             .application(this)
@@ -43,7 +53,8 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
             .build()
         component.inject(this)
 
-        instrumentation.init()
+// TODO: LEAK TESTING
+//        instrumentation.init()
 
 //        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 //        val notebookPath = sharedPreferences.getString(

@@ -101,7 +101,8 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
     override fun onDestroy() {
         super.onDestroy()
         Timber.v("onDestroy")
-        instrumentation.leakTracing.traceLeakage(this);
+// TODO: LEAK TESTING
+//        instrumentation.leakTracing.traceLeakage(this);
     }
 
     /**

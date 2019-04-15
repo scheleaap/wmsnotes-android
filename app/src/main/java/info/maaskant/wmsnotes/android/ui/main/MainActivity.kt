@@ -137,7 +137,8 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     override fun onDestroy() {
         super.onDestroy()
-        instrumentation.leakTracing.traceLeakage(this)
+// TODO: LEAK TESTING
+//        instrumentation.leakTracing.traceLeakage(this)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

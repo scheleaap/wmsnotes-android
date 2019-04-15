@@ -85,8 +85,10 @@ dependencies {
     implementation "com.google.dagger:dagger-android:$versions.dagger"
     implementation "com.google.dagger:dagger-android-support:$versions.dagger"
     kapt "com.google.dagger:dagger-android-processor:$versions.dagger"
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakcanary"
+// TODO: LEAK TESTING
+    implementation /*debugImplementation*/ "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary"
+    implementation /*debugImplementation*/ "com.squareup.leakcanary:leakcanary-support-fragment:$versions.leakcanary"
+    /*releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakcanary"*/
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakcanary"
 
     // RxJava and background execution.

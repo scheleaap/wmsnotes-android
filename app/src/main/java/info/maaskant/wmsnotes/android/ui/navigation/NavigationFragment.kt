@@ -74,7 +74,8 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        instrumentation.leakTracing.traceLeakage(this)
+// TODO: LEAK TESTING
+//        instrumentation.leakTracing.traceLeakage(this)
     }
 
     override fun onPause() {
@@ -137,14 +138,16 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
 
     private fun removeFolder(path: Path) {
         val folder = foldersByPath.getValue(path)
-        folder.disposable.dispose()
+// TODO: LEAK TESTING
+//        folder.disposable.dispose()
         folderViewContainer.removeView(folder.view)
         foldersByPath = foldersByPath - path
     }
 
     private fun unbindViewModel() {
         if (this::compositeDisposable.isInitialized) {
-            compositeDisposable.dispose()
+// TODO: LEAK TESTING
+//            compositeDisposable.dispose()
         }
     }
 

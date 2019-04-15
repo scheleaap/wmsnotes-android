@@ -39,7 +39,8 @@ class ViewerFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        instrumentation.leakTracing.traceLeakage(this);
+// TODO: LEAK TESTING
+//        instrumentation.leakTracing.traceLeakage(this);
     }
 }
 
