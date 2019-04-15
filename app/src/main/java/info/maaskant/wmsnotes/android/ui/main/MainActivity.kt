@@ -38,32 +38,6 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     private lateinit var drawer: Drawer
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
-        super.onCreate(savedInstanceState)
-        if (!hasAllRequiredPermissions()) return
-
-        setContentView(R.layout.main_activity)
-        if (savedInstanceState == null) {
-            navigateToNavigation()
-        }
-
-        findViewById<Toolbar>(R.id.toolbar).let { toolbar ->
-            setSupportActionBar(toolbar)
-            createAndAddDrawer(toolbar)
-        }
-
-        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask))
-    }
-
-    override fun onStart() {
-        super.onStart()
-        checkAndAskForPermissions()
-    }
-
-    private fun hasAllRequiredPermissions() =
-        PermissionUtil.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
     private fun checkAndAskForPermissions() {
         if (!hasAllRequiredPermissions()) {
             PermissionUtil.checkPermission(
@@ -108,7 +82,8 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
             }.build()
     }
 
-    override fun onStartNavigatingButtonPressed() = navigateToNavigation()
+    private fun hasAllRequiredPermissions() =
+        PermissionUtil.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     private fun navigateToDebug() {
         supportFragmentManager.beginTransaction()
@@ -122,18 +97,43 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
             .commitNow()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        PermissionUtil.onRequestPermissionResult(this, requestCode, permissions, grantResults);
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         PermissionUtil.onActivityResult(this, requestCode)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+        super.onCreate(savedInstanceState)
+        if (!hasAllRequiredPermissions()) return
+
+        setContentView(R.layout.main_activity)
+        if (savedInstanceState == null) {
+            navigateToNavigation()
+        }
+
+        findViewById<Toolbar>(R.id.toolbar).let { toolbar ->
+            setSupportActionBar(toolbar)
+            createAndAddDrawer(toolbar)
+        }
+
+        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask))
     }
 
     override fun onDestroy() {
         super.onDestroy()
         instrumentation.leakTracing.traceLeakage(this)
     }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        PermissionUtil.onRequestPermissionResult(this, requestCode, permissions, grantResults);
+    }
+
+    override fun onStart() {
+        super.onStart()
+        checkAndAskForPermissions()
+    }
+
+    override fun onStartNavigatingButtonPressed() = navigateToNavigation()
 
     private fun scheduleSynchronizationUsingWorkManager() {
         val workRequest = PeriodicWorkRequestBuilder<SynchronizationWorker>(
