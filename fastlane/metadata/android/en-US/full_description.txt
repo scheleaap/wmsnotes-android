@@ -1,3 +1,16 @@
-See
-https://github.com/scheleaap/wmsnotes-desktop-and-server and
-https://github.com/scheleaap/wmsnotes-android
+WMS Notes is a hierarchical or tree-based note-taking application.
+
+Features:
+
+• A hierarchy of notes and folders
+• Synchronization across desktop and Android phone, enabling offline note editing
+• Note-taking in Markdown format
+• Image attachments
+
+The application consists of three parts:
+
+• A desktop application for Linux, Windows and macOS
+• An Android app
+• A server application for Linux, Windows and macOS
+
+WMS Notes is open source! Go to https://github.com/scheleaap/wmsnotes-desktop-and-server and https://github.com/scheleaap/wmsnotes-android for more information.

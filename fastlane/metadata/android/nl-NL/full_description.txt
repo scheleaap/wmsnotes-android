@@ -1,3 +1,16 @@
-Zie
-https://github.com/scheleaap/wmsnotes-desktop-and-server en
-https://github.com/scheleaap/wmsnotes-android
+WMS Notes, een hiërarchische, of boomgebaseerde notitie-app.
+
+Features:
+
+• Een hiërarchie met notities en mappen
+• Synchronizatie tussen je desktop en Android-telefoon waardoor je offline je notities kunt bewerken
+• Markdown voor de opmaak
+• Afbeeldingen toevoegen
+
+De applicatie bestaat uit drie delen:
+
+• Een desktop-applicatie voor Linux, Windows en macOS
+• Een Android-app
+• Een server-applicatie voor Linux, Windows and macOS
+
+WMS Notes is open source! Kijk op https://github.com/scheleaap/wmsnotes-desktop-and-server en https://github.com/scheleaap/wmsnotes-android voor meer informatie.
