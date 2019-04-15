@@ -101,6 +101,14 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         PermissionUtil.onActivityResult(this, requestCode)
     }
 
+    override fun onBackPressed() {
+        if (this::drawer.isInitialized && drawer.isDrawerOpen) {
+            drawer.closeDrawer();
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
