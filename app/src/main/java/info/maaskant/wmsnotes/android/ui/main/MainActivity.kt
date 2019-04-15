@@ -19,12 +19,12 @@ import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTaskLifecycleObserver
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationWorker
+import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
 import info.maaskant.wmsnotes.android.ui.settings.SettingsActivity
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-
 
 class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
@@ -103,9 +103,17 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     override fun onBackPressed() {
         if (this::drawer.isInitialized && drawer.isDrawerOpen) {
-            drawer.closeDrawer();
+            drawer.closeDrawer()
         } else {
-            super.onBackPressed()
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.main_container)
+            val handledByFragment = if (currentFragment != null && currentFragment is OnBackPressedListener) {
+                currentFragment.onBackPressed()
+            } else {
+                false
+            }
+            if (!handledByFragment) {
+                super.onBackPressed()
+            }
         }
     }
 

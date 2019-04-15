@@ -41,6 +41,8 @@ class NavigationViewModel @Inject constructor(
         )
     }
 
+    fun getCurrentPath2(): Observable<Path> = currentPath
+
     fun getCurrentPath(): LiveData<Path> =
         currentPath
             .toFlowable(BackpressureStrategy.ERROR)
@@ -63,8 +65,23 @@ class NavigationViewModel @Inject constructor(
     }
 
     fun navigateTo(path: Path) {
-        Timber.d("Navigating to %s", path)
-        currentPath.onNext(path)
+        val currentPathValue = currentPath.value!!
+        if (path.parent() == currentPathValue) {
+            Timber.d("Navigating to %s", path)
+            currentPath.onNext(path)
+        } else {
+            throw IllegalArgumentException("'$path' is not a child of '$currentPathValue'")
+        }
+    }
+
+    fun navigateUp(): Boolean {
+        val currentPathValue = currentPath.value!!
+        if (currentPathValue != rootPath) {
+            currentPath.onNext(currentPathValue.parent())
+            return true
+        } else {
+            return false
+        }
     }
 
     /**
@@ -92,7 +109,7 @@ class NavigationViewModel @Inject constructor(
 
     companion object {
         private const val CURRENT_PATH_KEY = "currentPath"
-
-        private val initialPath = Path()
+        private val rootPath = Path()
+        private val initialPath = rootPath
     }
 }

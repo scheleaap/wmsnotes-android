@@ -14,13 +14,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
+import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.client.indexing.Folder
 import info.maaskant.wmsnotes.client.indexing.Note
 import info.maaskant.wmsnotes.model.Path
 import javax.inject.Inject
 
-class NavigationFragment : Fragment() {
+class NavigationFragment : Fragment(), OnBackPressedListener {
     @Inject
     lateinit var instrumentation: ApplicationInstrumentation
 
@@ -59,6 +60,14 @@ class NavigationFragment : Fragment() {
             ensureOnlyOneChildIsVisible(folderViewContainer, folderViewsByPath.getValue(path))
         })
         floatingActionButton.setOnClickListener { viewModel.createNote() }
+    }
+
+    override fun onBackPressed(): Boolean {
+        return if (this::viewModel.isInitialized) {
+            viewModel.navigateUp()
+        } else {
+            false
+        }
     }
 
     override fun onDestroy() {
