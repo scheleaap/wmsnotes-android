@@ -55,9 +55,10 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.restoreState(savedInstanceState)
-        viewModel.getCurrentPath().observe(this, Observer { path ->
-            createFolderViewIfNecessary(path)
-            ensureOnlyOneChildIsVisible(folderViewContainer, folderViewsByPath.getValue(path))
+        viewModel.getStack().observe(this, Observer { stack ->
+            val currentPath = stack.last()
+            createFolderViewIfNecessary(currentPath)
+            ensureOnlyOneChildIsVisible(folderViewContainer, folderViewsByPath.getValue(currentPath))
         })
         floatingActionButton.setOnClickListener { viewModel.createNote() }
     }

@@ -1,9 +1,11 @@
 package info.maaskant.wmsnotes.android.ui.navigation
 
+import android.os.Bundle
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
 import info.maaskant.wmsnotes.model.CommandProcessor
 import info.maaskant.wmsnotes.model.Path
 import io.mockk.clearMocks
+import io.mockk.every
 import io.mockk.mockk
 import io.reactivex.observers.TestObserver
 import org.assertj.core.api.Assertions.assertThat
@@ -30,19 +32,23 @@ internal class NavigationViewModelTest {
     fun `initial values`() {
         // Given
         val model = createInstance()
-        val observer: TestObserver<Path> = model.getCurrentPath2().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
 
         // When
 
         // Then
-        assertThat(observer.values().toList()).isEqualTo(listOf(Path()))
+        assertThat(observer.values().toList()).isEqualTo(
+            listOf(
+                ImmutableStack.from(Path())
+            )
+        )
     }
 
     @Test
     fun `navigate to child`() {
         // Given
         val model = createInstance()
-        val observer: TestObserver<Path> = model.getCurrentPath2().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
 
         // When
         model.navigateTo(Path("el1"))
@@ -50,8 +56,8 @@ internal class NavigationViewModelTest {
         // Then
         assertThat(observer.values().toList()).isEqualTo(
             listOf(
-                Path(),
-                Path("el1")
+                ImmutableStack.from(Path()),
+                ImmutableStack.from(Path(), Path("el1"))
             )
         )
     }
@@ -61,7 +67,7 @@ internal class NavigationViewModelTest {
         // Given
         val model = createInstance()
         model.navigateTo(Path("el1"))
-        val observer: TestObserver<Path> = model.getCurrentPath2().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
 
         // When / then
         try {
@@ -71,7 +77,7 @@ internal class NavigationViewModelTest {
         }
         assertThat(observer.values().toList()).isEqualTo(
             listOf(
-                Path("el1")
+                ImmutableStack.from(Path(), Path("el1"))
             )
         )
     }
@@ -82,7 +88,7 @@ internal class NavigationViewModelTest {
         val model = createInstance()
         model.navigateTo(Path("el1"))
         model.navigateTo(Path("el1", "el2"))
-        val observer: TestObserver<Path> = model.getCurrentPath2().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
 
         // When
         val result = model.navigateUp()
@@ -91,8 +97,8 @@ internal class NavigationViewModelTest {
         assertThat(result).isEqualTo(true)
         assertThat(observer.values().toList()).isEqualTo(
             listOf(
-                Path("el1", "el2"),
-                Path("el1")
+                ImmutableStack.from(Path(), Path("el1"), Path("el1", "el2")),
+                ImmutableStack.from(Path(), Path("el1"))
             )
         )
     }
@@ -101,7 +107,7 @@ internal class NavigationViewModelTest {
     fun `navigate up, in root folder`() {
         // Given
         val model = createInstance()
-        val observer: TestObserver<Path> = model.getCurrentPath2().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
 
         // When
         val result = model.navigateUp()
@@ -110,7 +116,28 @@ internal class NavigationViewModelTest {
         assertThat(result).isEqualTo(false)
         assertThat(observer.values().toList()).isEqualTo(
             listOf(
-                Path()
+                ImmutableStack.from(Path())
+            )
+        )
+    }
+
+    @Test
+    fun `restore state`() {
+        // Given
+        val bundle: Bundle = mockk()
+        every { bundle.containsKey("currentPath") }.returns(true)
+        every { bundle.getString("currentPath") }.returns(Path("el1", "el2").toString())
+        val model = createInstance()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
+
+        // When
+        model.restoreState(bundle)
+
+        // Then
+        assertThat(observer.values().toList()).isEqualTo(
+            listOf(
+                ImmutableStack.from(Path()),
+                ImmutableStack.from(Path(), Path("el1"), Path("el1", "el2"))
             )
         )
     }

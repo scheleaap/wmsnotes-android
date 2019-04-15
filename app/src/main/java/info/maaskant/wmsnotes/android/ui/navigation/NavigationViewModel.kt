@@ -28,25 +28,23 @@ class NavigationViewModel @Inject constructor(
     // TODO:
     // Implement onCleared to release subscriptions?
 
-    private val currentPath: BehaviorSubject<Path> = BehaviorSubject.createDefault(initialPath)
+    private val stackSubject: BehaviorSubject<ImmutableStack<Path>> = BehaviorSubject.create()
+    private lateinit var stackValue: ImmutableStack<Path>
+
+    init {
+        setStack(ImmutableStack.from(initialPath))
+    }
 
     fun createNote() {
         commandProcessor.commands.onNext(
             CreateNoteCommand(
                 aggId = null,
-                path = currentPath.value!!,
+                path = stackValue.peek()!!,
                 title = newNoteTitle,
                 content = ""
             )
         )
     }
-
-    fun getCurrentPath2(): Observable<Path> = currentPath
-
-    fun getCurrentPath(): LiveData<Path> =
-        currentPath
-            .toFlowable(BackpressureStrategy.ERROR)
-            .toLiveData()
 
     fun getNotes(path: Path): LiveData<List<Node>> = getNotesInternal(path).toLiveData()
 
@@ -64,20 +62,27 @@ class NavigationViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
+    fun getStack(): LiveData<List<Path>> =
+        stackSubject
+            .map { it.items }
+            .toFlowable(BackpressureStrategy.ERROR)
+            .toLiveData()
+    fun getStackObservable(): Observable<ImmutableStack<Path>> = stackSubject
+
     fun navigateTo(path: Path) {
-        val currentPathValue = currentPath.value!!
-        if (path.parent() == currentPathValue) {
+        val currentPath = stackValue.peek()
+        if (path.parent() == currentPath) {
             Timber.d("Navigating to %s", path)
-            currentPath.onNext(path)
+            setStack(stackValue.push(path))
         } else {
-            throw IllegalArgumentException("'$path' is not a child of '$currentPathValue'")
+            throw IllegalArgumentException("'$path' is not a child of '$currentPath'")
         }
     }
 
     fun navigateUp(): Boolean {
-        val currentPathValue = currentPath.value!!
+        val currentPathValue = stackValue.peek()!!
         if (currentPathValue != rootPath) {
-            currentPath.onNext(currentPathValue.parent())
+            setStack(stackValue.pop().first)
             return true
         } else {
             return false
@@ -90,7 +95,7 @@ class NavigationViewModel @Inject constructor(
     // Source: https://github.com/googlesamples/android-architecture/blob/dev-todo-mvvm-rxjava/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/tasks/TasksFragment.java
     fun getStateToSave(): Bundle {
         val bundle = Bundle()
-        bundle.putSerializable(CURRENT_PATH_KEY, currentPath.value?.toString() ?: "")
+        bundle.putSerializable(CURRENT_PATH_KEY, stackValue.peek().toString())
         return bundle
     }
 
@@ -103,9 +108,24 @@ class NavigationViewModel @Inject constructor(
     fun restoreState(bundle: Bundle?) {
         if (bundle != null && bundle.containsKey(CURRENT_PATH_KEY)) {
             val path = Path.from(bundle.getString(CURRENT_PATH_KEY)!!)
-            currentPath.onNext(path)
+            setStack(createNavigationStack(ImmutableStack.empty(), path))
         }
     }
+
+    private fun createNavigationStack(stack: ImmutableStack<Path>, path: Path): ImmutableStack<Path> {
+        return if (path != rootPath) {
+            createNavigationStack(stack, path.parent()).push(path)
+        } else {
+            stack.push(path)
+        }
+    }
+
+    @Synchronized
+    private fun setStack(stack: ImmutableStack<Path>) {
+        this.stackValue = stack
+        this.stackSubject.onNext(stack)
+    }
+
 
     companion object {
         private const val CURRENT_PATH_KEY = "currentPath"
