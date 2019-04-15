@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -28,15 +29,13 @@ class NavigationFragment : Fragment() {
     @Inject
     lateinit var viewModel: NavigationViewModel
 
-    private lateinit var nodeListAdapter: NodeListAdapter
-
-    private lateinit var linearLayoutManager: LinearLayoutManager
-
-    private lateinit var recyclerView: RecyclerView
-
     private lateinit var floatingActionButton: FloatingActionButton
 
-//    private var recyclerViewScrollEventObservable: Observable<RecyclerViewScrollEvent>? = null
+    private lateinit var folderViewContainer: ViewGroup
+
+    private lateinit var inflater: LayoutInflater
+
+    private var folderViewsByPath: Map<Path, View> = mapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -47,46 +46,89 @@ class NavigationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        nodeListAdapter = NodeListAdapter(emptyList())
-        linearLayoutManager = LinearLayoutManager(context)
+        this.inflater = inflater
         return inflater.inflate(R.layout.navigation_fragment, container, false).apply {
-            recyclerView = findViewById<RecyclerView>(R.id.node_list_view).apply {
-                setHasFixedSize(true)
-                layoutManager = linearLayoutManager
-                adapter = nodeListAdapter;
-            }
-            floatingActionButton = findViewById<FloatingActionButton>(R.id.floating_action_button)
-//        recyclerViewScrollEventObservable = RxRecyclerView.scrollEvents(recyclerView)
+            floatingActionButton = findViewById(R.id.floating_action_button)
+            folderViewContainer = findViewById(R.id.navigation_folder_container)
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
-        viewModel.notes.observe(this, Observer {
-            nodeListAdapter.items = it
+        viewModel.getCurrentPath().observe(this, Observer { path ->
+            createFolderViewIfNecessary(path)
+            ensureOnlyOneChildIsVisible(folderViewContainer, folderViewsByPath.getValue(path))
         })
-        nodeListAdapter.setOnClickListener(View.OnClickListener { clickedView ->
-            val itemPosition = recyclerView.getChildAdapterPosition(clickedView)
-            val node = nodeListAdapter.getItem(itemPosition)
-            when (node) {
-                is Folder -> viewModel.navigateTo(node)
-                is Note -> {
-                    val intent = Intent(clickedView.context, DetailActivity::class.java)
-                    intent.putExtra(DetailActivity.NODE_ID_KEY, node.aggId)
-                    clickedView.getContext().startActivity(intent)
+        floatingActionButton.setOnClickListener { onCreateNote() }
+    }
+
+    private fun onCreateNote() {
+        // TODO Move to view model
+        commandProcessor.commands.onNext(
+            CreateNoteCommand(
+                aggId = null,
+                path = Path(),
+                title = getString(R.string.new_note_title),
+                content = ""
+            )
+        )
+    }
+
+    private fun createFolderViewIfNecessary(path: Path) {
+        if (path !in folderViewsByPath) {
+            val nodeListAdapter = NodeListAdapter()
+            lateinit var recyclerView: RecyclerView
+            val view = inflater.inflate(R.layout.navigation_folder, folderViewContainer, false).apply {
+                visibility = GONE
+                recyclerView = findViewById<RecyclerView>(R.id.node_list_view).apply {
+                    setHasFixedSize(true)
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = nodeListAdapter;
                 }
             }
-        })
-        floatingActionButton.setOnClickListener {
-            commandProcessor.commands.onNext(
-                CreateNoteCommand(
-                    aggId = null,
-                    path = Path(),
-                    title = getString(R.string.new_note_title),
-                    content = ""
-                )
-            )
+            nodeListAdapter.setOnClickListener(NodeClickListener(recyclerView, nodeListAdapter, viewModel))
+            viewModel.getNotes(path).observe(this, Observer {
+                nodeListAdapter.items = it
+            })
+            folderViewsByPath = folderViewsByPath + (path to view)
+            folderViewContainer.addView(view)
+        }
+    }
+
+    companion object {
+        private fun ensureOnlyOneChildIsVisible(parent: ViewGroup, child: View) {
+            for (i in 0 until parent.childCount) {
+                val otherView = parent.getChildAt(i)
+                if (otherView != child) {
+                    otherView.visibility = GONE
+                }
+            }
+            child.visibility = View.VISIBLE
+        }
+    }
+
+    private class NodeClickListener(
+        private val recyclerView: RecyclerView,
+        private val nodeListAdapter: NodeListAdapter,
+        private val viewModel: NavigationViewModel
+    ) : View.OnClickListener {
+        /**
+         * Called when a view has been clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        override fun onClick(v: View) {
+            val itemPosition = recyclerView.getChildAdapterPosition(v)
+            val node = nodeListAdapter.getItem(itemPosition)
+            when (node) {
+                is Folder -> viewModel.navigateTo(node.path)
+                is Note -> {
+                    val intent = Intent(v.context, DetailActivity::class.java)
+                    intent.putExtra(DetailActivity.NODE_ID_KEY, node.aggId)
+                    v.context.startActivity(intent)
+                }
+            }
         }
     }
 }

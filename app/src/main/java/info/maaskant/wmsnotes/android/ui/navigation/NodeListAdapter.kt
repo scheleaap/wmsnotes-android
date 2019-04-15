@@ -13,7 +13,7 @@ import info.maaskant.wmsnotes.client.indexing.Node
 import info.maaskant.wmsnotes.client.indexing.Note
 import kotlin.properties.Delegates
 
-internal class NodeListAdapter(initialItems: List<Node>) : RecyclerView.Adapter<NodeListAdapter.NodeViewHolder>(),
+internal class NodeListAdapter : RecyclerView.Adapter<NodeListAdapter.NodeViewHolder>(),
     AutoUpdatableAdapter {
 
     // Source: https://github.com/antoniolg/diffutil-recyclerview-kotlin/blob/master/app/src/main/java/com/antonioleiva/diffutilkotlin/ContentAdapter.kt
@@ -25,27 +25,26 @@ internal class NodeListAdapter(initialItems: List<Node>) : RecyclerView.Adapter<
 
     init {
         setHasStableIds(true)
-        this.items = initialItems
-    }
-
-    fun setOnClickListener(onClickListener: OnClickListener) {
-        this.onClickListener = onClickListener
+        this.items = emptyList()
     }
 
     fun getItem(position: Int): Node {
         return items[position]
     }
 
-    fun getPosition(node: Node): Int {
-        return items.indexOf(node)
+    override fun getItemCount(): Int {
+        return items.size
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(
-            R.layout.node_list_item, parent,
-            false
-        )
-        return NodeViewHolder(v, onClickListener)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.node_list_item, parent, false).apply {
+            setOnClickListener(onClickListener)
+        }
+        return NodeViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
@@ -61,21 +60,13 @@ internal class NodeListAdapter(initialItems: List<Node>) : RecyclerView.Adapter<
         }
     }
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
+    fun setOnClickListener(onClickListener: OnClickListener) {
+        this.onClickListener = onClickListener
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
-
-    class NodeViewHolder(view: View, onClickListener: OnClickListener) : RecyclerView.ViewHolder(view) {
-        val iconImageView: ImageView = view.findViewById<View>(R.id.icon) as ImageView
-        val titleTextView: TextView = view.findViewById<View>(R.id.title) as TextView
-
-        init {
-            view.setOnClickListener(onClickListener)
-        }
+    class NodeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val iconImageView: ImageView = view.findViewById(R.id.icon)
+        val titleTextView: TextView = view.findViewById(R.id.title)
     }
 
 }

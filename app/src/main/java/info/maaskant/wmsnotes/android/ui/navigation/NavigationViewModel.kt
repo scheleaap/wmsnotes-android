@@ -10,6 +10,7 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -20,12 +21,16 @@ class NavigationViewModel @Inject constructor(
     // TODO:
     // Implement onCleared to release subscriptions?
 
-    val notes: LiveData<List<Node>> by lazy {
-        getNotesInternal().toLiveData()
-    }
+    private val currentPath: BehaviorSubject<Path> = BehaviorSubject.createDefault(Path())
 
-    private fun getNotesInternal(): Flowable<List<Node>> {
-        val path = Path()
+    fun getCurrentPath(): LiveData<Path> =
+        currentPath
+            .toFlowable(BackpressureStrategy.ERROR)
+            .toLiveData()
+
+    fun getNotes(path: Path): LiveData<List<Node>> = getNotesInternal(path).toLiveData()
+
+    private fun getNotesInternal(path: Path): Flowable<List<Node>> {
         return Observable.concat(
             Observable.just(Unit),
             treeIndex.getEvents(filterByFolder = path)
@@ -39,7 +44,8 @@ class NavigationViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun navigateTo(node: Node) {
-        Timber.d("Navigating to %s", node.title)
+    fun navigateTo(path: Path) {
+        Timber.d("Navigating to %s", path)
+        currentPath.onNext(path)
     }
 }

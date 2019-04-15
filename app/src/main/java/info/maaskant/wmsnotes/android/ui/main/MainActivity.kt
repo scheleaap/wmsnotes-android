@@ -108,13 +108,13 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     private fun navigateToDebug() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, MainFragment())
+            .replace(R.id.main_container, MainFragment())
             .commitNow()
     }
 
     private fun navigateToNavigation() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, NavigationFragment())
+            .replace(R.id.main_container, NavigationFragment())
             .commitNow()
     }
 
