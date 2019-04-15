@@ -8,12 +8,12 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.client.indexing.Folder
 import info.maaskant.wmsnotes.client.indexing.Note
@@ -25,6 +25,9 @@ import javax.inject.Inject
 class NavigationFragment : Fragment() {
     @Inject
     lateinit var commandProcessor: CommandProcessor
+
+    @Inject
+    lateinit var instrumentation: ApplicationInstrumentation
 
     @Inject
     lateinit var viewModel: NavigationViewModel
@@ -73,6 +76,11 @@ class NavigationFragment : Fragment() {
                 content = ""
             )
         )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        instrumentation.leakTracing.traceLeakage(this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

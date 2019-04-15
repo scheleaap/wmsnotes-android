@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import javax.inject.Inject
 
 class ViewerFragment : Fragment() {
@@ -15,8 +16,8 @@ class ViewerFragment : Fragment() {
     @Inject
     lateinit var detailViewModel: DetailViewModel
 
-    //    @Inject
-    //    ApplicationInstrumentation instrumentation;
+    @Inject
+    lateinit var instrumentation: ApplicationInstrumentation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -38,7 +39,7 @@ class ViewerFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //        instrumentation.getLeakTracing().traceLeakage(this);
+        instrumentation.leakTracing.traceLeakage(this);
     }
 }
 

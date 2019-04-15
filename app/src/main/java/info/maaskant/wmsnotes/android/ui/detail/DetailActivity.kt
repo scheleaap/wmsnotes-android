@@ -16,6 +16,7 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTaskLifecycleObserver
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import timber.log.Timber
@@ -30,19 +31,19 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
     @Inject
-    lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
-
-    @Inject
     lateinit var detailViewModel: DetailViewModel
 
     @Inject
     lateinit var detailController: DetailController
 
     @Inject
-    lateinit var synchronizationTask: SynchronizationTask
+    lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
 
-    //    @Inject
-    //    ApplicationInstrumentation instrumentation;
+    @Inject
+    lateinit var instrumentation: ApplicationInstrumentation
+
+    @Inject
+    lateinit var synchronizationTask: SynchronizationTask
 
     private lateinit var editorFragment: EditorFragment
 
@@ -99,8 +100,8 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     override fun onDestroy() {
         super.onDestroy()
-        Timber.v("onDestroyView")
-        //        instrumentation.getLeakTracing().traceLeakage(this);
+        Timber.v("onDestroy")
+        instrumentation.leakTracing.traceLeakage(this);
     }
 
     /**

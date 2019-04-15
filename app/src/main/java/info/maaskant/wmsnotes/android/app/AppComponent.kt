@@ -14,13 +14,14 @@ import javax.inject.Singleton
 
 @Component(
     modules = [
-        OtherModule::class,
-        ModelModule::class,
-        IndexingModule::class,
-        SynchronizationModule::class,
         AndroidInjectionModule::class,
         AndroidSupportInjectionModule::class,
         AndroidWorkerInjectionModule::class,
+        IndexingModule::class,
+        InstrumentationModule::class,
+        ModelModule::class,
+        OtherModule::class,
+        SynchronizationModule::class,
         UiModule::class
     ]
 )

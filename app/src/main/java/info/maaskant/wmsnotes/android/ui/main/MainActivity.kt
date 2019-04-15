@@ -16,6 +16,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import dagger.android.AndroidInjection
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTaskLifecycleObserver
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationWorker
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
@@ -27,12 +28,15 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
-    private val permissionRequestCode: Int = 0
-
-    private lateinit var drawer: Drawer
+    @Inject
+    lateinit var instrumentation: ApplicationInstrumentation
 
     @Inject
     lateinit var synchronizationTask: SynchronizationTask
+
+    private val permissionRequestCode: Int = 0
+
+    private lateinit var drawer: Drawer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -124,6 +128,11 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         PermissionUtil.onActivityResult(this, requestCode)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        instrumentation.leakTracing.traceLeakage(this)
     }
 
     private fun scheduleSynchronizationUsingWorkManager() {

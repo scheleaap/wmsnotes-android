@@ -3,21 +3,22 @@ package info.maaskant.wmsnotes.android.app
 import android.app.Activity
 import android.app.Application
 import androidx.fragment.app.Fragment
-import androidx.work.*
+import androidx.work.Worker
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.android.app.di.workmanager.HasWorkerInjector
+import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import timber.log.Timber
 import javax.inject.Inject
 
 
 class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasWorkerInjector {
 
-    //    @Inject
-//    internal var instrumentation: ApplicationInstrumentation? = null
-//
+    @Inject
+    lateinit var instrumentation: ApplicationInstrumentation
+
 //    @Inject
 //    internal var navigationViewModel: NavigationViewModel? = null
 
@@ -42,8 +43,7 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
             .build()
         component.inject(this)
 
-//        instrumentation!!.init()
-
+        instrumentation.init()
 
 //        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 //        val notebookPath = sharedPreferences.getString(

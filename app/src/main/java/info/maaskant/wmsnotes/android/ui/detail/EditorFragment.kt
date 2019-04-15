@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -19,8 +20,8 @@ class EditorFragment : Fragment() {
     @Inject
     lateinit var detailViewModel: DetailViewModel
 
-    //    @Inject
-    //    ApplicationInstrumentation instrumentation;
+    @Inject
+    lateinit var instrumentation: ApplicationInstrumentation
 
     private lateinit var editText: EditText
 
@@ -70,7 +71,7 @@ class EditorFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //        instrumentation.getLeakTracing().traceLeakage(this);
+        instrumentation.leakTracing.traceLeakage(this);
     }
 
 }

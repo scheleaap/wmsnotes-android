@@ -85,9 +85,9 @@ dependencies {
     implementation "com.google.dagger:dagger-android:$versions.dagger"
     implementation "com.google.dagger:dagger-android-support:$versions.dagger"
     kapt "com.google.dagger:dagger-android-processor:$versions.dagger"
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakcanary"
+    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakcanary"
 
     // RxJava and background execution.
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'

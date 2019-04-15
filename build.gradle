@@ -48,7 +48,7 @@ ext {
 //            navigation  : navigation_version,
 //            lifecycle   : "2.0.0",
 //            room        : "2.0.0",
-//            leakcanary  : "1.5.4",
+            leakcanary  : "1.5.4",
             timber        : "4.7.1",
             slf4jtimber   : "3.0@aar",
             dagger        : "2.16",
