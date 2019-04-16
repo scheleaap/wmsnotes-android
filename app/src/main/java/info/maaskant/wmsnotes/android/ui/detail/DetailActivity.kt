@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -68,16 +67,9 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         }
         Timber.v("Using note identifier %s", noteId!!)
 
-        this.editorFragment = getOrCreateEditorFragment(savedInstanceState)
-        this.viewerFragment = getOrCreateViewerFragment(savedInstanceState)
-        viewPager = findViewById<View>(R.id.detail_view_pager) as ViewPager
-        viewPager.adapter = DetailPagerAdapter(
-            supportFragmentManager,
-            this.editorFragment,
-            this.viewerFragment
-        )
         setContentView(R.layout.detail_activity)
         setupSupportActionBar()
+        setupFragmentsAndViewPager(savedInstanceState)
 
         detailViewModel.titleLiveData.observe(this, Observer { this.setTitle(it) })
 
@@ -162,6 +154,27 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     private fun setTitle(title: String) {
         supportActionBar!!.title = title
+    }
+
+    private fun setupFragmentsAndViewPager(savedInstanceState: Bundle?) {
+        editorFragment = getOrCreateEditorFragment(savedInstanceState)
+        viewerFragment = getOrCreateViewerFragment(savedInstanceState)
+        viewPager = findViewById<ViewPager>(R.id.detail_view_pager).apply {
+            val pagerAdapter = DetailPagerAdapter(
+                supportFragmentManager,
+                editorFragment,
+                viewerFragment
+            )
+            adapter = pagerAdapter
+            addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+                override fun onPageSelected(position: Int) {
+                    val currentFragment = pagerAdapter.getItem(position)
+                    if (currentFragment is OnPageSelectedListener) {
+                        currentFragment.onPageSelected()
+                    }
+                }
+            })
+        }
     }
 
     private fun setupSupportActionBar() {

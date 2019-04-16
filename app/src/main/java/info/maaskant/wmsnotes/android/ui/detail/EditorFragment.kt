@@ -15,8 +15,7 @@ import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumenta
 import timber.log.Timber
 import javax.inject.Inject
 
-class EditorFragment : Fragment() {
-
+class EditorFragment : Fragment(), OnPageSelectedListener {
     @Inject
     lateinit var detailViewModel: DetailViewModel
 
@@ -73,6 +72,13 @@ class EditorFragment : Fragment() {
         super.onDestroy()
 // TODO: LEAK TESTING
 //        instrumentation.leakTracing.traceLeakage(this);
+    }
+
+    /**
+     * Called if the page associated with the listener is selected.
+     */
+    override fun onPageSelected() {
+        editText.requestFocus()
     }
 
 }
