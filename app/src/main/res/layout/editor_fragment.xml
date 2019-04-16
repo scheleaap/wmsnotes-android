@@ -18,6 +18,8 @@
         android:layout_margin="8dp"
         android:background="@android:color/transparent"
         android:gravity="top"
+        android:hint="@string/detail_content_hint"
+        android:importantForAutofill="no"
         android:inputType="textMultiLine|textNoSuggestions"
         android:textSize="18sp" />
 

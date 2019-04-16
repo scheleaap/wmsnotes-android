@@ -9,28 +9,32 @@
     <string name="title_activity_detail" translatable="false">Detail Activity</string>
     <string name="title_activity_settings" translatable="false">Settings</string>
 
-    <!-- Navigation drawer -->
-    <string name="drawer_item_debug" translatable="false">Debug</string>
-    <string name="drawer_item_notes">Notes</string>
-    <string name="drawer_item_settings">Settings</string>
+    <!-- Permissions -->
+    <string name="storage_permission_request" translatable="false">WMS Notes stores your notes on your device. Please provide permission to store your notes.</string>
+    <string name="storage_permission_denied" translatable="false">WMS Notes cannot work without permission to store notes.</string>
 
     <!-- Settings -->
     <string name="pref_header_general">General</string>
     <string name="pref_title_server_hostname">Server</string>
     <string name="pref_default_server_hostname" translatable="false">10.0.2.2</string>
 
-    <!-- Navigation -->
+    <!-- MainActivity -->
+    <string name="drawer_item_debug" translatable="false">Debug</string>
+    <string name="drawer_item_notes">Notes</string>
+    <string name="drawer_item_settings">Settings</string>
+
+    <!-- NavigationFragment -->
     <string name="navigation_file_type">Type</string>
 
-    <!-- Detail -->
+    <!-- DetailActivity -->
     <string name="detail_save">Save</string>
     <string name="detail_delete">Delete</string>
-    <string name="storage_permission_request" translatable="false">WMS Notes stores your notes on your device. Please provide permission to store your notes.</string>
-    <string name="storage_permission_denied" translatable="false">WMS Notes cannot work without permission to store notes.</string>
     <string name="detail_dismiss_dialog_title">Unsaved changes</string>
     <string name="detail_dismiss_dialog_message">You have unsaved changes.</string>
     <string name="detail_dismiss_dialog_save">Save</string>
     <string name="detail_dismiss_dialog_discard">Discard</string>
-    <string name="new_note_title">New Note on Android</string>
+    <string name="detail_content_hint">Start typing your note here…</string>
 
+    <!-- Other -->
+    <string name="new_note_title">New Note on Android</string>
 </resources>
