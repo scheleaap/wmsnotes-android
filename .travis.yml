@@ -38,8 +38,7 @@ install:
   - bundle install
 
 script:
-  - "./gradlew clean bundleRelease"
-  - if [ $TRAVIS_BRANCH = 'master' ]; then bundle exec fastlane deploy; fi
+  - ./build.sh
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
