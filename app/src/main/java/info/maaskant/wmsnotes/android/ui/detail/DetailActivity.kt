@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -49,8 +48,6 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     private lateinit var viewerFragment: ViewerFragment
 
-    private lateinit var saveButton: Button
-
     private lateinit var viewPager: ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,11 +58,6 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         )
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.detail_activity)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val noteId = if (intent.hasExtra(NODE_ID_KEY)) {
             intent.getStringExtra(NODE_ID_KEY)
@@ -84,6 +76,8 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
             this.editorFragment,
             this.viewerFragment
         )
+        setContentView(R.layout.detail_activity)
+        setupSupportActionBar()
 
         detailViewModel.titleLiveData.observe(this, Observer { this.setTitle(it) })
 
@@ -168,6 +162,12 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     private fun setTitle(title: String) {
         supportActionBar!!.title = title
+    }
+
+    private fun setupSupportActionBar() {
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
     internal fun hideKeyboard() {
