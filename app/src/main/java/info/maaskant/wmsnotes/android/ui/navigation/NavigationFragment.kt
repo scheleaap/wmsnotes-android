@@ -138,16 +138,14 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
 
     private fun removeFolder(path: Path) {
         val folder = foldersByPath.getValue(path)
-// TODO: LEAK TESTING
-//        folder.disposable.dispose()
+        folder.disposable.dispose()
         folderViewContainer.removeView(folder.view)
         foldersByPath = foldersByPath - path
     }
 
     private fun unbindViewModel() {
         if (this::compositeDisposable.isInitialized) {
-// TODO: LEAK TESTING
-//            compositeDisposable.dispose()
+            compositeDisposable.dispose()
         }
     }
 
