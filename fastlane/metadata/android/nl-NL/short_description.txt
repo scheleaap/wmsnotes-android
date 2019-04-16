@@ -1,1 +1,1 @@
-WMS Notes, een hiërarchische, of boomgebaseerde notitie-app.
+WMS Notes is een hiërarchische (boomgebaseerde) notitie-app.

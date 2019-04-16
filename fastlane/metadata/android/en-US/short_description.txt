@@ -1,1 +1,1 @@
-WMS Notes, a hierarchical or tree-based note-taking application
+WMS Notes is a hierarchical (tree-based) note-taking application.
