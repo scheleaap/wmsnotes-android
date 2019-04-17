@@ -18,4 +18,15 @@ platform :android do
     gradle(task: "bundleRelease")
     upload_to_play_store(track: "production")
   end
+
+  desc "Update changelogs"
+  lane :update_changelogs do
+    upload_to_play_store(
+      track: "production",
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
 end

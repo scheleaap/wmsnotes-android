@@ -21,11 +21,11 @@ or alternatively using `brew cask install fastlane`
 fastlane android deploy
 ```
 Deploy a new version to the Google Play
-### android test
+### android update_changelogs
 ```
-fastlane android test
+fastlane android update_changelogs
 ```
-
+Update changelogs
 
 ----
 
