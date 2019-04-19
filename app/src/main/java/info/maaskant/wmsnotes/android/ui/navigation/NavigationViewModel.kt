@@ -1,9 +1,7 @@
 package info.maaskant.wmsnotes.android.ui.navigation
 
 import android.os.Bundle
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.toLiveData
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.StringsModule.StringId
 import info.maaskant.wmsnotes.client.indexing.Node
@@ -11,9 +9,8 @@ import info.maaskant.wmsnotes.client.indexing.TreeIndex
 import info.maaskant.wmsnotes.model.CommandProcessor
 import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.model.note.CreateNoteCommand
-import io.reactivex.BackpressureStrategy
+import info.maaskant.wmsnotes.model.note.Note
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import javax.inject.Inject
@@ -37,7 +34,7 @@ class NavigationViewModel @Inject constructor(
     fun createNote() {
         commandProcessor.commands.onNext(
             CreateNoteCommand(
-                aggId = null,
+                aggId = Note.randomAggId(),
                 path = stackValue.peek()!!,
                 title = newNoteTitle,
                 content = ""
