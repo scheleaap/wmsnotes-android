@@ -45,7 +45,7 @@ class NavigationViewModel @Inject constructor(
         )
     }
 
-    fun getNotesObservable(path: Path): Observable<List<Node>> {
+    fun getNotes(path: Path): Observable<List<Node>> {
         return Observable.concat(
             Observable.just(Unit),
             treeIndex.getEvents(filterByFolder = path)
@@ -57,7 +57,7 @@ class NavigationViewModel @Inject constructor(
             }
     }
 
-    fun getStackObservable(): Observable<ImmutableStack<Path>> = stackSubject
+    fun getStack(): Observable<ImmutableStack<Path>> = stackSubject
 
     fun navigateTo(path: Path) {
         val currentPath = stackValue.peek()

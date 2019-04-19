@@ -32,7 +32,7 @@ internal class NavigationViewModelTest {
     fun `initial values`() {
         // Given
         val model = createInstance()
-        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStack().test()
 
         // When
 
@@ -48,7 +48,7 @@ internal class NavigationViewModelTest {
     fun `navigate to child`() {
         // Given
         val model = createInstance()
-        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStack().test()
 
         // When
         model.navigateTo(Path("el1"))
@@ -67,7 +67,7 @@ internal class NavigationViewModelTest {
         // Given
         val model = createInstance()
         model.navigateTo(Path("el1"))
-        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStack().test()
 
         // When / then
         try {
@@ -88,7 +88,7 @@ internal class NavigationViewModelTest {
         val model = createInstance()
         model.navigateTo(Path("el1"))
         model.navigateTo(Path("el1", "el2"))
-        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStack().test()
 
         // When
         val result = model.navigateUp()
@@ -107,7 +107,7 @@ internal class NavigationViewModelTest {
     fun `navigate up, in root folder`() {
         // Given
         val model = createInstance()
-        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStack().test()
 
         // When
         val result = model.navigateUp()
@@ -128,7 +128,7 @@ internal class NavigationViewModelTest {
         every { bundle.containsKey("currentPath") }.returns(true)
         every { bundle.getString("currentPath") }.returns(Path("el1", "el2").toString())
         val model = createInstance()
-        val observer: TestObserver<ImmutableStack<Path>> = model.getStackObservable().test()
+        val observer: TestObserver<ImmutableStack<Path>> = model.getStack().test()
 
         // When
         model.restoreState(bundle)
