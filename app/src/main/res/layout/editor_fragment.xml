@@ -20,7 +20,7 @@
         android:gravity="top"
         android:hint="@string/detail_content_hint"
         android:importantForAutofill="no"
-        android:inputType="textMultiLine|textNoSuggestions"
+        android:inputType="textMultiLine|textNoSuggestions|textCapSentences"
         android:textSize="18sp" />
 
 </ScrollView>

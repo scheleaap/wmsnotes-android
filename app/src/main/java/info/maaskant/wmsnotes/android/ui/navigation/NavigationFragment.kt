@@ -2,6 +2,7 @@ package info.maaskant.wmsnotes.android.ui.navigation
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.*
 import android.view.View.GONE
 import androidx.fragment.app.Fragment
@@ -32,6 +33,7 @@ import io.reactivex.disposables.Disposable
 import timber.log.Timber
 import javax.inject.Inject
 
+
 class NavigationFragment : Fragment(), OnBackPressedListener {
     @Inject
     lateinit var instrumentation: ApplicationInstrumentation
@@ -58,9 +60,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
-        if (inflater != null) {
-            inflater.inflate(R.menu.navigation_menu, menu)
-        }
+        inflater?.inflate(R.menu.navigation_menu, menu)
     }
 
     override fun onCreateView(
@@ -100,7 +100,10 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
         MaterialDialog(requireContext()).show {
             lifecycleOwner(this@NavigationFragment)
             title(res = R.string.create_folder_dialog_title)
-            input(waitForPositiveButton = false) { dialog, text ->
+            input(
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES,
+                waitForPositiveButton = false
+            ) { dialog, text ->
                 val inputField = dialog.getInputField()
                 val validity = viewModel.isValidFolderTitle(text.toString())
                 inputField.error = when (validity) {
@@ -172,7 +175,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
             recyclerView = findViewById<RecyclerView>(R.id.node_list_view).apply {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(context)
-                adapter = listAdapter;
+                adapter = listAdapter
             }
         }
         listAdapter.setOnClickListener(NodeClickListener(recyclerView, listAdapter, viewModel))
