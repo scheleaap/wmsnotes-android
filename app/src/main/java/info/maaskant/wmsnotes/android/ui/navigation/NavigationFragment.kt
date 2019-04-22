@@ -2,13 +2,16 @@ package info.maaskant.wmsnotes.android.ui.navigation
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.GONE
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.WhichButton
+import com.afollestad.materialdialogs.actions.setActionButtonEnabled
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.leakcanary.LeakCanary
 import dagger.android.support.AndroidSupportInjection
@@ -16,6 +19,8 @@ import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
+import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid
+import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
 import info.maaskant.wmsnotes.client.indexing.Folder
 import info.maaskant.wmsnotes.client.indexing.Note
 import info.maaskant.wmsnotes.model.Path
@@ -45,6 +50,14 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        if (inflater != null) {
+            inflater.inflate(R.menu.navigation_menu, menu)
+        }
     }
 
     override fun onCreateView(
@@ -78,6 +91,33 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
 //        instrumentation.leakTracing.traceLeakage(this)
         val refWatcher = LeakCanary.installedRefWatcher()
         refWatcher.watch(this)
+    }
+
+    private fun onCreateFolderClicked() {
+        MaterialDialog(requireContext()).show {
+            title(res = R.string.create_folder_dialog_title)
+            input(waitForPositiveButton = false) { dialog, text ->
+                val inputField = dialog.getInputField()
+                val validity = viewModel.isValidFolderTitle(text.toString())
+                inputField.error = when (validity) {
+                    Valid -> null
+                    is Invalid -> validity.reason
+                }
+                dialog.setActionButtonEnabled(WhichButton.POSITIVE, validity is Valid)
+            }
+            positiveButton(R.string.create) { dialog ->
+                viewModel.createFolder(dialog.getInputField().text.toString())
+            }
+            negativeButton(android.R.string.cancel)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_create_folder -> {
+            onCreateFolderClicked()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onPause() {

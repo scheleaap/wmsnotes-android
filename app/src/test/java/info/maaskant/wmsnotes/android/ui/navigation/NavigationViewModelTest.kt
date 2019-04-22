@@ -1,6 +1,8 @@
 package info.maaskant.wmsnotes.android.ui.navigation
 
 import android.os.Bundle
+import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid
+import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
 import info.maaskant.wmsnotes.model.CommandProcessor
 import info.maaskant.wmsnotes.model.Path
@@ -17,8 +19,6 @@ internal class NavigationViewModelTest {
     private val commandProcessor: CommandProcessor = mockk()
 
     private val treeIndex: TreeIndex = mockk()
-
-    private val newNoteTitle: String = "new"
 
     @BeforeEach
     fun init() {
@@ -142,5 +142,33 @@ internal class NavigationViewModelTest {
         )
     }
 
-    private fun createInstance() = NavigationViewModel(commandProcessor, treeIndex, newNoteTitle)
+    @Test
+    fun isValidFolderTitle() {
+        // Given
+        val titleMustNotBeEmptyText = "text1"
+        val titleMustNotContainSlashText = "text2"
+        val model = createInstance(
+            titleMustNotBeEmptyText = titleMustNotBeEmptyText,
+            titleMustNotContainSlashText = titleMustNotContainSlashText
+        )
+
+        // When / then
+        assertThat(model.isValidFolderTitle("title")).isEqualTo(Valid)
+        assertThat(model.isValidFolderTitle("")).isEqualTo(Invalid(titleMustNotBeEmptyText))
+        assertThat(model.isValidFolderTitle("")).isEqualTo(Invalid(titleMustNotBeEmptyText))
+        assertThat(model.isValidFolderTitle("tit/le")).isEqualTo(Invalid(titleMustNotContainSlashText))
+    }
+
+    private fun createInstance(
+        newNoteTitle: String = "",
+        titleMustNotBeEmptyText: String = "",
+        titleMustNotContainSlashText: String = ""
+    ) =
+        NavigationViewModel(
+            commandProcessor,
+            treeIndex,
+            newNoteTitle,
+            titleMustNotBeEmptyText,
+            titleMustNotContainSlashText
+        )
 }

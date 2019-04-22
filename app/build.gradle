@@ -105,6 +105,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-reactivestreams-ktx:2.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation "com.afollestad.material-dialogs:core:$versions.materialdialogs"
+    implementation "com.afollestad.material-dialogs:input:$versions.materialdialogs"
+    implementation "com.afollestad.material-dialogs:lifecycle:$versions.materialdialogs"
     implementation "com.mikepenz:materialdrawer:$versions.materialdrawer"
     implementation "com.github.baurine:permission-util:$versions.permissionutil"
     implementation "ru.noties:markwon:$versions.markwon"

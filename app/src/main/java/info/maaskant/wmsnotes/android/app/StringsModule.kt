@@ -20,5 +20,17 @@ class StringsModule {
     @Provides
     @Singleton
     @StringId(R.string.new_note_title)
-    fun newNoteTitle(context: Context): String = context.getString(R.string.new_note_title)
+    fun string001(context: Context): String = context.getString(R.string.new_note_title)
+
+    @Provides
+    @Singleton
+    @StringId(R.string.create_folder_dialog_error_title_must_not_be_empty)
+    fun string002(context: Context): String =
+        context.getString(R.string.create_folder_dialog_error_title_must_not_be_empty)
+
+    @Provides
+    @Singleton
+    @StringId(R.string.create_folder_dialog_error_title_must_not_contain_slash)
+    fun string003(context: Context): String =
+        context.getString(R.string.create_folder_dialog_error_title_must_not_contain_slash)
 }

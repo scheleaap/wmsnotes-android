@@ -4,10 +4,13 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.StringsModule.StringId
+import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid
+import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
 import info.maaskant.wmsnotes.client.indexing.Node
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
 import info.maaskant.wmsnotes.model.CommandProcessor
 import info.maaskant.wmsnotes.model.Path
+import info.maaskant.wmsnotes.model.folder.CreateFolderCommand
 import info.maaskant.wmsnotes.model.note.CreateNoteCommand
 import info.maaskant.wmsnotes.model.note.Note
 import io.reactivex.Observable
@@ -18,7 +21,9 @@ import javax.inject.Inject
 class NavigationViewModel @Inject constructor(
     private val commandProcessor: CommandProcessor,
     private val treeIndex: TreeIndex,
-    @StringId(R.string.new_note_title) private val newNoteTitle: String
+    @StringId(R.string.new_note_title) private val newNoteTitle: String,
+    @StringId(R.string.create_folder_dialog_error_title_must_not_be_empty) private val titleMustNotBeEmptyText: String,
+    @StringId(R.string.create_folder_dialog_error_title_must_not_contain_slash) private val titleMustNotContainSlashText: String
 ) : ViewModel() {
 
     // TODO:
@@ -29,6 +34,14 @@ class NavigationViewModel @Inject constructor(
 
     init {
         setStack(ImmutableStack.from(initialPath))
+    }
+
+    fun createFolder(title: String) {
+        commandProcessor.commands.onNext(
+            CreateFolderCommand(
+                path = stackValue.peek()!!.child(title)
+            )
+        )
     }
 
     private fun createNavigationStack(stack: ImmutableStack<Path>, path: Path): ImmutableStack<Path> {
@@ -74,6 +87,15 @@ class NavigationViewModel @Inject constructor(
         return bundle
     }
 
+    fun isValidFolderTitle(title: String): FolderTitleValidity =
+        if (title.isBlank()) {
+            Invalid(titleMustNotBeEmptyText)
+        } else if (title.contains('/')) {
+            Invalid(titleMustNotContainSlashText)
+        } else {
+            Valid
+        }
+
     fun navigateTo(path: Path) {
         val currentPath = stackValue.peek()
         if (path.parent() == currentPath) {
@@ -117,5 +139,10 @@ class NavigationViewModel @Inject constructor(
         private const val CURRENT_PATH_KEY = "currentPath"
         private val rootPath = Path()
         private val initialPath = rootPath
+    }
+
+    sealed class FolderTitleValidity {
+        object Valid : FolderTitleValidity()
+        data class Invalid(val reason: String) : FolderTitleValidity()
     }
 }

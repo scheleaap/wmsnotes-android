@@ -13,5 +13,10 @@
     <string name="detail_dismiss_dialog_title">Wijzigingen</string>
     <string name="new_note_title">Nieuwe Androidnotitie</string>
     <string name="detail_delete">Verwijderen</string>
-    <string name="detail_content_hint">Maak een notitie…</string>
+    <string name="detail_content_hint">Begin met schrijven…</string>
+    <string name="navigation_create_folder">Nieuwe map…</string>
+    <string name="create">Maken</string>
+    <string name="create_folder_dialog_title">Nieuwe map</string>
+    <string name="create_folder_dialog_error_title_must_not_be_empty">De naam van de map mag niet leeg zijn</string>
+    <string name="create_folder_dialog_error_title_must_not_contain_slash">Teken niet toegestaan: \'/\'</string>
 </resources>

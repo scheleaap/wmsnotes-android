@@ -4,6 +4,9 @@
     <!-- TODO remove -->
     <string name="action_settings">Settings</string>
 
+    <!-- General -->
+    <string name="create">Create</string>
+
     <!-- Activities -->
     <!--<string name="title_activity_main" translatable="false">Main Activity</string>-->
     <string name="title_activity_detail" translatable="false">Detail Activity</string>
@@ -24,7 +27,11 @@
     <string name="drawer_item_settings">Settings</string>
 
     <!-- NavigationFragment -->
+    <string name="navigation_create_folder">Create Folder…</string>
     <string name="navigation_file_type">Type</string>
+    <string name="create_folder_dialog_title">Create Folder</string>
+    <string name="create_folder_dialog_error_title_must_not_be_empty">The folder name must not be empty</string>
+    <string name="create_folder_dialog_error_title_must_not_contain_slash">Illegal character: \'/\'</string>
 
     <!-- DetailActivity -->
     <string name="detail_save">Save</string>
