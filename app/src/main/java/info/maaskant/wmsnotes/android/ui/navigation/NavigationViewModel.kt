@@ -88,12 +88,10 @@ class NavigationViewModel @Inject constructor(
     }
 
     fun isValidFolderTitle(title: String): FolderTitleValidity =
-        if (title.isBlank()) {
-            Invalid(titleMustNotBeEmptyText)
-        } else if (title.contains('/')) {
-            Invalid(titleMustNotContainSlashText)
-        } else {
-            Valid
+        when {
+            title.isBlank() -> Invalid(titleMustNotBeEmptyText)
+            title.contains('/') -> Invalid(titleMustNotContainSlashText)
+            else -> Valid
         }
 
     fun navigateTo(path: Path) {
@@ -108,11 +106,11 @@ class NavigationViewModel @Inject constructor(
 
     fun navigateUp(): Boolean {
         val currentPathValue = stackValue.peek()!!
-        if (currentPathValue != rootPath) {
+        return if (currentPathValue != rootPath) {
             setStack(stackValue.pop().first)
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
