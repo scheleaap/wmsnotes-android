@@ -9,6 +9,7 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import dagger.android.support.HasSupportFragmentInjector
+import info.maaskant.wmsnotes.BuildConfig
 import info.maaskant.wmsnotes.android.app.di.workmanager.HasWorkerInjector
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import timber.log.Timber
@@ -46,12 +47,8 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
         LeakCanary.install(this);
 // TODO: LEAK TESTING
 
-        Timber.plant(Timber.DebugTree())
-        component = DaggerAppComponent.builder()
-            .application(this)
-            .context(this)
-            .build()
-        component.inject(this)
+        setupLogging()
+        setupDependencyInjection()
 
 // TODO: LEAK TESTING
 //        instrumentation.init()
@@ -62,6 +59,20 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
 //            resources.getString(R.string.pref_default_notebook_path)
 //        )
 //        navigationViewModel!!.navigateForward(notebookPath)
+    }
+
+    private fun setupDependencyInjection() {
+        component = DaggerAppComponent.builder()
+            .application(this)
+            .context(this)
+            .build()
+        component.inject(this)
+    }
+
+    private fun setupLogging() {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
     }
 
     override fun activityInjector(): AndroidInjector<Activity> = activityInjector

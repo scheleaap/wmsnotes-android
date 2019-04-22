@@ -27,6 +27,7 @@ import info.maaskant.wmsnotes.model.Path
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import timber.log.Timber
 import javax.inject.Inject
 
 class NavigationFragment : Fragment(), OnBackPressedListener {
@@ -136,19 +137,23 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     }
 
     private fun bindFolderToViewModel(path: Path) {
+        Timber.v("Binding folder $path to view model")
         val listAdapter = (foldersByPath[path] ?: error("Folder $path not present")).listAdapter
         val disposable = viewModel.getNotes(path)
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { Timber.v("New folder contents: $it") }
             .subscribe { listAdapter.items = it }
         folderDisposables = folderDisposables + (path to disposable)
     }
 
     private fun bindViewModel() {
+        Timber.v("Binding to view model")
         unbindViewModel()
         mainDisposable = CompositeDisposable()
         mainDisposable.add(
             viewModel.getStack()
                 .map { it.items }
+                .doOnNext { Timber.v("New path stack: $it") }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::updateFoldersAccordingToStack)
         )
@@ -156,6 +161,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     }
 
     private fun createAndAddFolder(path: Path) {
+        Timber.v("Creating and adding folder $path")
         val listAdapter = NodeListAdapter()
         lateinit var recyclerView: RecyclerView
         val view = inflater.inflate(R.layout.navigation_folder, folderViewContainer, false).apply {
@@ -180,6 +186,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     }
 
     private fun removeFolder(path: Path) {
+        Timber.v("Removing folder $path")
         unbindFolderFromViewModel(path)
         folderViewContainer.removeView(foldersByPath.getValue(path).view)
         foldersByPath = foldersByPath - path
@@ -191,11 +198,13 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     }
 
     private fun unbindFolderFromViewModel(path: Path) {
+        Timber.v("Unbinding folder $path from view model")
         folderDisposables.getValue(path).dispose()
         folderDisposables = folderDisposables - path
     }
 
     private fun unbindViewModel() {
+        Timber.v("Unbinding from view model")
         if (this::mainDisposable.isInitialized) {
             mainDisposable.dispose()
         }
