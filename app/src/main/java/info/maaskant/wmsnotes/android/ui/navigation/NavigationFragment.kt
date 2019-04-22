@@ -20,6 +20,7 @@ import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
+import info.maaskant.wmsnotes.android.ui.main.MainActivity
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
 import info.maaskant.wmsnotes.client.indexing.Folder
@@ -214,6 +215,8 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     }
 
     private fun updateFoldersAccordingToStack(stack: List<Path>) {
+        // TODO Replace ugly hack with something better
+        (activity as MainActivity?)?.supportActionBar?.title = stack.lastOrNull()?.elements?.lastOrNull() ?: "WMS Notes"
         removeFoldersNotInStack(stack)
         ensureFolderExistsAndIsVisible(stack.last())
     }
