@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         val settingsDrawerItem = PrimaryDrawerItem().withIdentifier(2)
             .withName(R.string.drawer_item_settings).withSelectable(false)
         drawer = DrawerBuilder().withActivity(this).withToolbar(toolbar)
-            .addDrawerItems(debugDrawerItem, notesDrawerItem, settingsDrawerItem)
+             .addDrawerItems(/*debugDrawerItem,*/ notesDrawerItem, settingsDrawerItem)
             .withOnDrawerItemClickListener { view, position, drawerItem ->
                 when (drawerItem) {
                     debugDrawerItem -> navigateToDebug()
