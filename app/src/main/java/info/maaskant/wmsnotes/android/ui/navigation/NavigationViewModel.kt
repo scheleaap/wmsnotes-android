@@ -31,6 +31,14 @@ class NavigationViewModel @Inject constructor(
         setStack(ImmutableStack.from(initialPath))
     }
 
+    private fun createNavigationStack(stack: ImmutableStack<Path>, path: Path): ImmutableStack<Path> {
+        return if (path != rootPath) {
+            createNavigationStack(stack, path.parent()).push(path)
+        } else {
+            stack.push(path)
+        }
+    }
+
     fun createNote() {
         commandProcessor.commands.onNext(
             CreateNoteCommand(
@@ -56,6 +64,16 @@ class NavigationViewModel @Inject constructor(
 
     fun getStack(): Observable<ImmutableStack<Path>> = stackSubject
 
+    /**
+     * @return The state of the view model that needs to be saved.
+     */
+    // Source: https://github.com/googlesamples/android-architecture/blob/dev-todo-mvvm-rxjava/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/tasks/TasksFragment.java
+    fun getStateToSave(): Bundle {
+        val bundle = Bundle()
+        bundle.putSerializable(CURRENT_PATH_KEY, stackValue.peek().toString())
+        return bundle
+    }
+
     fun navigateTo(path: Path) {
         val currentPath = stackValue.peek()
         if (path.parent() == currentPath) {
@@ -77,16 +95,6 @@ class NavigationViewModel @Inject constructor(
     }
 
     /**
-     * @return The state of the view model that needs to be saved.
-     */
-    // Source: https://github.com/googlesamples/android-architecture/blob/dev-todo-mvvm-rxjava/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/tasks/TasksFragment.java
-    fun getStateToSave(): Bundle {
-        val bundle = Bundle()
-        bundle.putSerializable(CURRENT_PATH_KEY, stackValue.peek().toString())
-        return bundle
-    }
-
-    /**
      * Restore the state of the view model based on a bundle.
      *
      * @param bundle The bundle containing the state.
@@ -99,20 +107,11 @@ class NavigationViewModel @Inject constructor(
         }
     }
 
-    private fun createNavigationStack(stack: ImmutableStack<Path>, path: Path): ImmutableStack<Path> {
-        return if (path != rootPath) {
-            createNavigationStack(stack, path.parent()).push(path)
-        } else {
-            stack.push(path)
-        }
-    }
-
     @Synchronized
     private fun setStack(stack: ImmutableStack<Path>) {
         this.stackValue = stack
         this.stackSubject.onNext(stack)
     }
-
 
     companion object {
         private const val CURRENT_PATH_KEY = "currentPath"
