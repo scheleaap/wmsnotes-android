@@ -37,7 +37,9 @@ internal class NodeListAdapter : RecyclerView.Adapter<NodeListAdapter.NodeViewHo
     }
 
     override fun getItemId(position: Int): Long {
-        return position.toLong()
+        // This is not really correct, since two different objects may have the same hash code. However, we are going
+        // to rely on our implementation in Note/Folder.hashCode()
+        return items[position].hashCode().toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
