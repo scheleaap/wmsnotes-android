@@ -12,6 +12,7 @@ import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.leakcanary.LeakCanary
 import dagger.android.support.AndroidSupportInjection
@@ -96,6 +97,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
 
     private fun onCreateFolderClicked() {
         MaterialDialog(requireContext()).show {
+            lifecycleOwner(this@NavigationFragment)
             title(res = R.string.create_folder_dialog_title)
             input(waitForPositiveButton = false) { dialog, text ->
                 val inputField = dialog.getInputField()
