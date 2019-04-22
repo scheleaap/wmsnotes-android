@@ -6,7 +6,10 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import dagger.android.support.AndroidSupportInjection
@@ -25,6 +28,13 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
     private lateinit var editText: EditText
 
     private var listenForChanges: Boolean = true
+
+    private fun hideKeyboard() {
+        getSystemService(
+            requireContext(),
+            InputMethodManager::class.java
+        )?.hideSoftInputFromWindow(editText.windowToken, 0)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -75,10 +85,21 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
     }
 
     /**
+     * Called if the page associated with the listener is deselected.
+     */
+    override fun onPageDeselected() {
+        hideKeyboard()
+    }
+
+    /**
      * Called if the page associated with the listener is selected.
      */
     override fun onPageSelected() {
         editText.requestFocus()
+        showKeyboard()
     }
 
+    private fun showKeyboard() {
+        getSystemService(requireContext(), InputMethodManager::class.java)?.showSoftInput(editText, SHOW_IMPLICIT)
+    }
 }
