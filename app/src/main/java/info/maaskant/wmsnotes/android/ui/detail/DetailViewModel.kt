@@ -17,7 +17,6 @@ import io.reactivex.subjects.Subject
 import timber.log.Timber
 import javax.inject.Inject
 
-
 class DetailViewModel @VisibleForTesting constructor(
     private val noteRepository: AggregateRepository<Note>,
     ioScheduler: Scheduler,

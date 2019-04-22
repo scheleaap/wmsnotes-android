@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
@@ -15,6 +16,8 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import dagger.android.AndroidInjection
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTaskLifecycleObserver
@@ -26,7 +29,9 @@ import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), MainFragment.Listener {
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragment.Listener {
+    @Inject
+    lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
 
     @Inject
     lateinit var instrumentation: ApplicationInstrumentation
@@ -71,7 +76,7 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         val settingsDrawerItem = PrimaryDrawerItem().withIdentifier(2)
             .withName(R.string.drawer_item_settings).withSelectable(false)
         drawer = DrawerBuilder().withActivity(this).withToolbar(toolbar)
-             .addDrawerItems(/*debugDrawerItem,*/ notesDrawerItem, settingsDrawerItem)
+            .addDrawerItems(/*debugDrawerItem,*/ notesDrawerItem, settingsDrawerItem)
             .withOnDrawerItemClickListener { view, position, drawerItem ->
                 when (drawerItem) {
                     debugDrawerItem -> navigateToDebug()
@@ -166,4 +171,5 @@ class MainActivity : AppCompatActivity(), MainFragment.Listener {
         WorkManager.getInstance().enqueue(workRequest).get()
     }
 
+    override fun supportFragmentInjector() = fragmentInjector
 }

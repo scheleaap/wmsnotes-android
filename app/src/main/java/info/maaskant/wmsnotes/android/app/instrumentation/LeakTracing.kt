@@ -9,13 +9,13 @@ interface LeakTracing : Instrumentation {
 }
 
 class LeakCanaryTracing(private val application: Application) : LeakTracing {
-    private var refWatcher: RefWatcher? = null
+    private lateinit var refWatcher: RefWatcher
 
     override fun init() {
         refWatcher = LeakCanary.install(application)
     }
 
     override fun traceLeakage(reference: Any) {
-        refWatcher!!.watch(reference)
+        refWatcher.watch(reference)
     }
 }
