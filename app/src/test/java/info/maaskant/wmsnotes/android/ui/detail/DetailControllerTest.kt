@@ -1,5 +1,6 @@
 package info.maaskant.wmsnotes.android.ui.detail
 
+import info.maaskant.wmsnotes.android.ui.detail.DetailViewModel.Update
 import info.maaskant.wmsnotes.model.Command
 import info.maaskant.wmsnotes.model.CommandProcessor
 import info.maaskant.wmsnotes.model.Path
@@ -30,7 +31,7 @@ internal class DetailControllerTest {
 
     private val detailViewModel: DetailViewModel = mockk()
     private lateinit var isDirtySubject: BehaviorSubject<Boolean>
-    private lateinit var textUpdatesSubject: BehaviorSubject<TextUpdate>
+    private lateinit var textUpdatesSubject: BehaviorSubject<Update>
 
     private val commandProcessor: CommandProcessor = mockk()
     private lateinit var commandsObserver: TestObserver<Command>
@@ -50,7 +51,7 @@ internal class DetailControllerTest {
         isDirtySubject = BehaviorSubject.create()
         every { detailViewModel.isDirty() }.returns(isDirtySubject)
         textUpdatesSubject = BehaviorSubject.create()
-        every { detailViewModel.getTextUpdates() }.returns(textUpdatesSubject)
+        every { detailViewModel.getContentUpdates() }.returns(textUpdatesSubject)
 
         val commandsSubject: Subject<Command> = PublishSubject.create()
         every { commandProcessor.commands }.returns(commandsSubject)
@@ -142,12 +143,12 @@ internal class DetailControllerTest {
 
     private fun givenALoadedNote(note: Note) {
         every { detailViewModel.getNote() }.returns(Observable.just(note))
-        textUpdatesSubject.onNext(TextUpdate(note.content, TextUpdate.Source.SYSTEM))
+        textUpdatesSubject.onNext(Update(note.content, Update.Source.SYSTEM))
     }
 
     private fun givenADirtyViewModel(text: String) {
         isDirtySubject.onNext(true)
-        textUpdatesSubject.onNext(TextUpdate(text, TextUpdate.Source.USER))
+        textUpdatesSubject.onNext(Update(text, Update.Source.USER))
     }
 
     private fun givenANotDirtyViewModel() {

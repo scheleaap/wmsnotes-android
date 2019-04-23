@@ -47,7 +47,7 @@ class DetailController @VisibleForTesting constructor(
         disposables.add(Observables.combineLatest(
             quitRequest.filter { it == QuitRequestType.SAVE_AND_QUIT },
             detailViewModel.isDirty(),
-            Observables.combineLatest(detailViewModel.getNote(), detailViewModel.getTextUpdates())
+            Observables.combineLatest(detailViewModel.getNote(), detailViewModel.getContentUpdates())
         )
             .observeOn(computationScheduler)
             .filter { (_, isDirty, _) -> isDirty }
@@ -56,7 +56,7 @@ class DetailController @VisibleForTesting constructor(
                 ChangeContentCommand(
                     aggId = note.aggId,
                     lastRevision = note.revision,
-                    content = textUpdate.text
+                    content = textUpdate.value
                 )
             }
             .subscribe { commandProcessor.commands.onNext(it) }

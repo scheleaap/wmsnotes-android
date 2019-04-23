@@ -39,11 +39,11 @@ internal class Renderer(
         disposables.add(
             Observables.combineLatest(
                 isPaused,
-                detailViewModel.getTextUpdates()
+                detailViewModel.getContentUpdates()
             )
                 .observeOn(Schedulers.computation())
                 .filter { (isPaused, _) -> !isPaused }
-                .map { (_, textUpdate) -> textUpdate.text }
+                .map { (_, textUpdate) -> textUpdate.value }
                 .map { parser.parse(it) }
                 .map { renderer.render(configuration, it) }
                 .observeOn(AndroidSchedulers.mainThread())
