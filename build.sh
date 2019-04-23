@@ -21,7 +21,7 @@ if [[ "$TRAVIS_BRANCH" == "feature-buildscript" ]]; then
       echo "Tagging version $version_number"
       setup_git
       git tag -a "test-$version_number" -m"Version $version_number"
-      git push https://${GITHUB_TOKEN}@github.com/scheleaap/wmsnotes-desktop-and-server.git "$version_number"
+      git push https://${GITHUB_TOKEN}@github.com/scheleaap/wmsnotes-desktop-and-server.git "test-$version_number"
     else
       >&2 echo "Version number not tagged!"
     fi
