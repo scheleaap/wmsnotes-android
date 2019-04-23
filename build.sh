@@ -4,6 +4,7 @@ set -ev
 
 setup_git() {
   git config --global user.name "Travis CI"
+  git fetch --unshallow
 }
 
 function get_version_number_from_gradle() {
