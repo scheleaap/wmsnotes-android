@@ -19,5 +19,4 @@
     <string name="create_folder_dialog_title">Nieuwe map</string>
     <string name="create_folder_dialog_error_title_must_not_be_empty">De naam van de map mag niet leeg zijn</string>
     <string name="create_folder_dialog_error_title_must_not_contain_slash">Teken niet toegestaan: \'/\'</string>
-    <string name="detail_title_hint">Kies een titel…</string>
 </resources>

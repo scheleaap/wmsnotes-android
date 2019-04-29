@@ -40,7 +40,6 @@
     <string name="detail_dismiss_dialog_message">You have unsaved changes.</string>
     <string name="detail_dismiss_dialog_save">Save</string>
     <string name="detail_dismiss_dialog_discard">Discard</string>
-    <string name="detail_title_hint">Choose a title…</string>
     <string name="detail_content_hint">Start typing your note here…</string>
 
     <!-- Other -->

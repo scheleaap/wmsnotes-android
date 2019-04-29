@@ -29,34 +29,25 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
 
     private lateinit var contentField: EditText
     private lateinit var scrollView: ScrollView
-    private lateinit var titleField: EditText
 
     private var listenForChanges: Boolean = true
 
     private fun focusFieldAndShowKeyboard() {
-        if (!(titleField.hasFocus() || contentField.hasFocus())) {
-            val field = if (contentField.text.isEmpty()) {
-                titleField.setSelection(titleField.text.length)
-                titleField
-            } else {
-                contentField
-            }
-            field.requestFocus()
-            getSystemService(requireContext(), InputMethodManager::class.java)?.showSoftInput(field, SHOW_IMPLICIT)
-            scrollView.scrollTo(0, titleField.top)
+        if (!contentField.hasFocus()) {
+            contentField.requestFocus()
+            getSystemService(requireContext(), InputMethodManager::class.java)?.showSoftInput(
+                contentField,
+                SHOW_IMPLICIT
+            )
         }
     }
 
     private fun hideKeyboard() {
-        when {
-            titleField.hasFocus() -> titleField
-            contentField.hasFocus() -> contentField
-            else -> null
-        }?.let { field ->
+        if (contentField.hasFocus()) {
             getSystemService(
                 requireContext(),
                 InputMethodManager::class.java
-            )?.hideSoftInputFromWindow(field.windowToken, 0)
+            )?.hideSoftInputFromWindow(contentField.windowToken, 0)
         }
     }
 
@@ -72,7 +63,6 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
         return inflater.inflate(R.layout.editor_fragment, container, false).apply {
             scrollView = findViewById(R.id.editor_view)
             contentField = findViewById(R.id.editor_content)
-            titleField = findViewById(R.id.editor_title)
         }
     }
 
@@ -91,19 +81,6 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
 
             override fun afterTextChanged(s: Editable) {}
         })
-        titleField.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (listenForChanges) {
-                    Timber.v("Title EditText changed: %s", s)
-                    detailViewModel.setTitleFromUser(titleField.text.toString())
-                } else {
-                    Timber.v("Ignoring title EditText change")
-                }
-            }
-
-            override fun afterTextChanged(s: Editable) {}
-        })
 
         detailViewModel.contentUpdatesLiveData.observe(this, Observer {
             if (it.source != Source.USER) {
@@ -113,16 +90,6 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
                 listenForChanges = true
             } else {
                 Timber.v("Content EditText not updated")
-            }
-        })
-        detailViewModel.titleUpdatesLiveData.observe(this, Observer {
-            if (it.source != Source.USER) {
-                Timber.v("Updating title EditText: %s", it.value)
-                listenForChanges = false
-                titleField.setText(it.value)
-                listenForChanges = true
-            } else {
-                Timber.v("Title EditText not updated")
             }
         })
     }

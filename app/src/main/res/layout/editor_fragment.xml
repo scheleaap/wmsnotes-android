@@ -11,35 +11,16 @@
     tools:context="info.maaskant.wmsnotes.android.ui.detail.DetailActivity"
     tools:showIn="@layout/detail_activity">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/editor_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/editor_title"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:background="@android:color/transparent"
-            android:gravity="top"
-            android:hint="@string/detail_title_hint"
-            android:importantForAutofill="no"
-            android:inputType="textNoSuggestions|textCapSentences"
-            android:textSize="24sp" />
-
-        <EditText
-            android:id="@+id/editor_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:background="@android:color/transparent"
-            android:gravity="top"
-            android:hint="@string/detail_content_hint"
-            android:importantForAutofill="no"
-            android:inputType="textMultiLine|textNoSuggestions|textCapSentences"
-            android:textSize="18sp" />
-
-    </LinearLayout>
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:hint="@string/detail_content_hint"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine|textNoSuggestions|textCapSentences"
+        android:textSize="18sp" />
 
 </ScrollView>
