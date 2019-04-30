@@ -69,7 +69,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         setupSupportActionBar()
         setupFragmentsAndViewPager(savedInstanceState)
 
-        detailViewModel.titleLiveData.observe(this, Observer { this.setTitle(it) })
+        this.setTitle("")
 
         detailViewModel.setNote(noteId)
 
