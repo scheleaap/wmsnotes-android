@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
             .withName(R.string.drawer_item_settings).withSelectable(false)
         drawer = DrawerBuilder().withActivity(this).withToolbar(toolbar)
             .addDrawerItems(/*debugDrawerItem,*/ notesDrawerItem, settingsDrawerItem)
-            .withOnDrawerItemClickListener { view, position, drawerItem ->
+            .withOnDrawerItemClickListener { _, _, drawerItem ->
                 when (drawerItem) {
                     debugDrawerItem -> navigateToDebug()
                     notesDrawerItem -> navigateToNavigation()

@@ -33,7 +33,7 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
     @Inject
     lateinit var workerInjector: DispatchingAndroidInjector<Worker>
 
-    lateinit var component: AppComponent
+    private lateinit var component: AppComponent
 
     override fun onCreate() {
         super.onCreate()
@@ -58,7 +58,6 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasW
 //            SettingsFragment.NOTEBOOK_PATH_KEY,
 //            resources.getString(R.string.pref_default_notebook_path)
 //        )
-//        navigationViewModel!!.navigateForward(notebookPath)
     }
 
     private fun setupDependencyInjection() {

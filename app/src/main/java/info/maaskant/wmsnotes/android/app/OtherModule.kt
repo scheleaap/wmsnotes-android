@@ -1,7 +1,6 @@
 package info.maaskant.wmsnotes.android.app
 
 import android.content.Context
-import android.content.pm.PackageInfo
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util.Pool
 import dagger.Module
@@ -23,7 +22,7 @@ class OtherModule {
     @Singleton
     @AppDirectory
     fun appDirectory(context: Context): File {
-        val packageInfo: PackageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+//        val packageInfo: PackageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
 //        val appDirectory = File(packageInfo.applicationInfo.dataDir)
         val appDirectory = File("/storage/emulated/0/wmsnotes")
         appDirectory.mkdirs()

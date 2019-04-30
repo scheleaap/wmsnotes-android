@@ -27,6 +27,7 @@ import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTi
 import info.maaskant.wmsnotes.client.indexing.Folder
 import info.maaskant.wmsnotes.client.indexing.Note
 import info.maaskant.wmsnotes.model.Path
+import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -35,6 +36,8 @@ import javax.inject.Inject
 
 
 class NavigationFragment : Fragment(), OnBackPressedListener {
+    private val logger by logger()
+
     @Inject
     lateinit var instrumentation: ApplicationInstrumentation
 
@@ -161,7 +164,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
                 .map { it.items }
                 .doOnNext { Timber.v("New path stack: $it") }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::updateFoldersAccordingToStack)
+                .subscribe(::updateFoldersAccordingToStack) { logger.warn("Error", it) }
         )
         foldersByPath.keys.forEach(::bindFolderToViewModel)
     }
