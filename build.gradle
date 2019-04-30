@@ -40,7 +40,7 @@ ext {
     versions = [
             kotlin         : kotlin_version,
             gradle         : gradle_version,
-            wmsnotes       : "0.0.3-SNAPSHOT",
+            wmsnotes       : "6288b76caa6e8633c2c8787c3a1aac9c5b87c0b9",
 //            ktx         : "1.0.0",
 //            appcompat   : "1.0.0",
 //            material    : "1.0.0",

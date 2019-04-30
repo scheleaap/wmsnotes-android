@@ -8,18 +8,22 @@ import dagger.android.support.AndroidSupportInjectionModule
 import info.maaskant.wmsnotes.android.app.di.workmanager.AndroidWorkerInjectionModule
 import info.maaskant.wmsnotes.android.client.indexing.IndexingModule
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationModule
-import info.maaskant.wmsnotes.android.model.ModelModule
+import info.maaskant.wmsnotes.android.model.AggregateModule
+import info.maaskant.wmsnotes.android.model.CommandModule
+import info.maaskant.wmsnotes.android.model.EventModule
 import info.maaskant.wmsnotes.android.ui.UiModule
 import javax.inject.Singleton
 
 @Component(
     modules = [
+        AggregateModule::class,
         AndroidInjectionModule::class,
         AndroidSupportInjectionModule::class,
         AndroidWorkerInjectionModule::class,
+        CommandModule::class,
+        EventModule::class,
         IndexingModule::class,
         InstrumentationModule::class,
-        ModelModule::class,
         OtherModule::class,
         StringsModule::class,
         SynchronizationModule::class,

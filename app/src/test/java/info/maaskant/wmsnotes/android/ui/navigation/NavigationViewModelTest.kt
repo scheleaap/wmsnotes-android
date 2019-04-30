@@ -4,7 +4,7 @@ import android.os.Bundle
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
-import info.maaskant.wmsnotes.model.CommandProcessor
+import info.maaskant.wmsnotes.model.CommandBus
 import info.maaskant.wmsnotes.model.Path
 import io.mockk.clearMocks
 import io.mockk.every
@@ -16,14 +16,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class NavigationViewModelTest {
-    private val commandProcessor: CommandProcessor = mockk()
+    private val commandBus: CommandBus = mockk()
 
     private val treeIndex: TreeIndex = mockk()
 
     @BeforeEach
     fun init() {
         clearMocks(
-            commandProcessor,
+            commandBus,
             treeIndex
         )
     }
@@ -165,7 +165,7 @@ internal class NavigationViewModelTest {
         titleMustNotContainSlashText: String = ""
     ) =
         NavigationViewModel(
-            commandProcessor,
+            commandBus,
             treeIndex,
             newNoteTitle,
             titleMustNotBeEmptyText,

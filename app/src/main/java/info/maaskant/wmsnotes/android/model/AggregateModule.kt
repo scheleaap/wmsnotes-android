@@ -6,82 +6,20 @@ import dagger.Module
 import dagger.Provides
 import info.maaskant.wmsnotes.android.app.OtherModule
 import info.maaskant.wmsnotes.android.app.di.Configuration.cache
-import info.maaskant.wmsnotes.android.app.di.Configuration.delay
 import info.maaskant.wmsnotes.android.app.di.Configuration.storeInMemory
-import info.maaskant.wmsnotes.model.AggregateCommandHandler
-import info.maaskant.wmsnotes.model.CommandProcessor
-import info.maaskant.wmsnotes.model.Event
-import info.maaskant.wmsnotes.model.KryoEventSerializer
 import info.maaskant.wmsnotes.model.aggregaterepository.*
-import info.maaskant.wmsnotes.model.eventstore.DelayingEventStore
 import info.maaskant.wmsnotes.model.eventstore.EventStore
-import info.maaskant.wmsnotes.model.eventstore.FileEventStore
-import info.maaskant.wmsnotes.model.eventstore.InMemoryEventStore
 import info.maaskant.wmsnotes.model.folder.Folder
-import info.maaskant.wmsnotes.model.folder.FolderCommand
-import info.maaskant.wmsnotes.model.folder.FolderCommandToEventMapper
 import info.maaskant.wmsnotes.model.folder.KryoFolderSerializer
 import info.maaskant.wmsnotes.model.note.KryoNoteSerializer
 import info.maaskant.wmsnotes.model.note.Note
-import info.maaskant.wmsnotes.model.note.NoteCommand
-import info.maaskant.wmsnotes.model.note.NoteCommandToEventMapper
 import info.maaskant.wmsnotes.utilities.serialization.Serializer
 import java.io.File
 import javax.inject.Singleton
 
 @Suppress("ConstantConditionIf")
 @Module
-class ModelModule {
-
-    @Provides
-    fun eventSerializer(kryoPool: Pool<Kryo>): Serializer<Event> = KryoEventSerializer(kryoPool)
-
-    @Provides
-    @Singleton
-    fun eventStore(@OtherModule.AppDirectory appDirectory: File, eventSerializer: Serializer<Event>): EventStore {
-        val realStore = if (storeInMemory) {
-            InMemoryEventStore()
-        } else {
-            FileEventStore(appDirectory.resolve("events"), eventSerializer)
-        }
-        return if (delay) {
-            DelayingEventStore(realStore)
-        } else {
-            realStore
-        }
-    }
-
-    @Provides
-    @Singleton
-    fun folderCommandHandler(repository: AggregateRepository<Folder>): AggregateCommandHandler<Folder> =
-        AggregateCommandHandler(
-            FolderCommand::class,
-            repository,
-            FolderCommandToEventMapper()
-        )
-
-    @Provides
-    @Singleton
-    fun noteCommandHandler(repository: AggregateRepository<Note>): AggregateCommandHandler<Note> =
-        AggregateCommandHandler(
-            NoteCommand::class,
-            repository,
-            NoteCommandToEventMapper()
-        )
-
-    @Provides
-    @Singleton
-    fun commandProcessor(
-        eventStore: EventStore,
-        folderCommandHandler: AggregateCommandHandler<Folder>,
-        noteCommandHandler: AggregateCommandHandler<Note>
-    ): CommandProcessor =
-        CommandProcessor(
-            eventStore,
-            folderCommandHandler,
-            noteCommandHandler
-        )
-
+class AggregateModule {
     @Provides
     @Singleton
     fun folderCache(@OtherModule.AppDirectory appDirectory: File, serializer: Serializer<Folder>): AggregateCache<Folder> =

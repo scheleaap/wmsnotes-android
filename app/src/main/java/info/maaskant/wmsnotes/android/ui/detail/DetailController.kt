@@ -6,8 +6,10 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.ui.RxAlertDialog
-import info.maaskant.wmsnotes.model.note.*
-import info.maaskant.wmsnotes.model.CommandProcessor
+import info.maaskant.wmsnotes.model.CommandBus
+import info.maaskant.wmsnotes.model.note.ChangeContentCommand
+import info.maaskant.wmsnotes.model.note.DeleteNoteCommand
+import info.maaskant.wmsnotes.model.note.NoteCommandRequest
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -19,7 +21,7 @@ import javax.inject.Inject
 
 class DetailController @VisibleForTesting constructor(
     private val detailViewModel: DetailViewModel,
-    private val commandProcessor: CommandProcessor,
+    private val commandBus: CommandBus,
     private val detailActivity: DetailActivity,
     private val computationScheduler: Scheduler,
     private val uiScheduler: Scheduler
@@ -32,11 +34,11 @@ class DetailController @VisibleForTesting constructor(
     @Inject
     constructor(
         detailViewModel: DetailViewModel,
-        commandProcessor: CommandProcessor,
+        commandBus: CommandBus,
         detailActivity: DetailActivity
     ) : this(
         detailViewModel,
-        commandProcessor,
+        commandBus,
         detailActivity,
         computationScheduler = Schedulers.computation(),
         uiScheduler = AndroidSchedulers.mainThread()
@@ -53,13 +55,15 @@ class DetailController @VisibleForTesting constructor(
             .filter { (_, isDirty, _) -> isDirty }
             .map { (_, _, it) -> it }
             .map { (note, textUpdate) ->
-                ChangeContentCommand(
-                    aggId = note.aggId,
-                    lastRevision = note.revision,
-                    content = textUpdate.value
+                NoteCommandRequest.of(
+                    command = ChangeContentCommand(
+                        aggId = note.aggId,
+                        content = textUpdate.value
+                    ),
+                    lastRevision = note.revision
                 )
             }
-            .subscribe { commandProcessor.commands.onNext(it) }
+            .subscribe { commandBus.requests.onNext(it) }
         )
         disposables.add(Observables.combineLatest(
             quitRequest,
@@ -118,13 +122,15 @@ class DetailController @VisibleForTesting constructor(
                 .observeOn(computationScheduler)
                 .firstElement()
                 .map { note ->
-                    DeleteNoteCommand(
-                        aggId = note.aggId,
+                    NoteCommandRequest.of(
+                        command = DeleteNoteCommand(
+                            aggId = note.aggId
+                        ),
                         lastRevision = note.revision
                     )
                 }
                 .subscribe {
-                    commandProcessor.commands.onNext(it)
+                    commandBus.requests.onNext(it)
                     quitFunction()
                 }
         )

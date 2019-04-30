@@ -8,18 +8,20 @@ import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTi
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
 import info.maaskant.wmsnotes.client.indexing.Node
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
-import info.maaskant.wmsnotes.model.CommandProcessor
+import info.maaskant.wmsnotes.model.CommandBus
 import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.model.folder.CreateFolderCommand
+import info.maaskant.wmsnotes.model.folder.FolderCommandRequest
 import info.maaskant.wmsnotes.model.note.CreateNoteCommand
 import info.maaskant.wmsnotes.model.note.Note
+import info.maaskant.wmsnotes.model.note.NoteCommandRequest
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 import javax.inject.Inject
 
 class NavigationViewModel @Inject constructor(
-    private val commandProcessor: CommandProcessor,
+    private val commandBus: CommandBus,
     private val treeIndex: TreeIndex,
     @StringId(R.string.new_note_title) private val newNoteTitle: String,
     @StringId(R.string.create_folder_dialog_error_title_must_not_be_empty) private val titleMustNotBeEmptyText: String,
@@ -37,9 +39,11 @@ class NavigationViewModel @Inject constructor(
     }
 
     fun createFolder(title: String) {
-        commandProcessor.commands.onNext(
-            CreateFolderCommand(
-                path = stackValue.peek()!!.child(title)
+        commandBus.requests.onNext(
+            FolderCommandRequest.of(
+                CreateFolderCommand(
+                    path = stackValue.peek()!!.child(title)
+                )
             )
         )
     }
@@ -53,12 +57,14 @@ class NavigationViewModel @Inject constructor(
     }
 
     fun createNote() {
-        commandProcessor.commands.onNext(
-            CreateNoteCommand(
-                aggId = Note.randomAggId(),
-                path = stackValue.peek()!!,
-                title = newNoteTitle,
-                content = ""
+        commandBus.requests.onNext(
+            NoteCommandRequest.of(
+                CreateNoteCommand(
+                    aggId = Note.randomAggId(),
+                    path = stackValue.peek()!!,
+                    title = newNoteTitle,
+                    content = ""
+                )
             )
         )
     }
