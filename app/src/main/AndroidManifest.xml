@@ -44,6 +44,7 @@
                 android:value="info.maaskant.wmsnotes.android.ui.main.MainActivity" />
         </activity>
 
+        <service android:name=".android.service.ApplicationServiceManager" />
     </application>
 
 </manifest>

@@ -11,6 +11,7 @@ import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationModu
 import info.maaskant.wmsnotes.android.model.AggregateModule
 import info.maaskant.wmsnotes.android.model.CommandModule
 import info.maaskant.wmsnotes.android.model.EventModule
+import info.maaskant.wmsnotes.android.service.ServiceModule
 import info.maaskant.wmsnotes.android.ui.UiModule
 import javax.inject.Singleton
 
@@ -25,6 +26,7 @@ import javax.inject.Singleton
         IndexingModule::class,
         InstrumentationModule::class,
         OtherModule::class,
+        ServiceModule::class,
         StringsModule::class,
         SynchronizationModule::class,
         UiModule::class

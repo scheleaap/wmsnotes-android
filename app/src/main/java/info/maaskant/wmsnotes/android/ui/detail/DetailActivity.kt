@@ -6,14 +6,13 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
-import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTaskLifecycleObserver
+import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import timber.log.Timber
 import javax.inject.Inject
@@ -54,6 +53,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
             savedInstanceState
         )
         AndroidInjection.inject(this)
+        Timber.i("DetailActivity: vm=$detailViewModel")
         super.onCreate(savedInstanceState)
 
         val noteId = if (intent.hasExtra(NODE_ID_KEY)) {
@@ -74,7 +74,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         detailViewModel.setNote(noteId)
 
         lifecycle.addObserver(detailController)
-        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask))
+        ApplicationServiceManager.ServiceBindingLifecycleObserver(this, lifecycle)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

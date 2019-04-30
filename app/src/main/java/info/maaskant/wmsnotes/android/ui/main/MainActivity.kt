@@ -19,8 +19,8 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
-import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationTaskLifecycleObserver
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationWorker
 import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
             createAndAddDrawer(toolbar)
         }
 
-        lifecycle.addObserver(SynchronizationTaskLifecycleObserver(synchronizationTask))
+        ApplicationServiceManager.ServiceBindingLifecycleObserver(this, lifecycle)
     }
 
     override fun onDestroy() {
