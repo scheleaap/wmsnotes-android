@@ -19,7 +19,7 @@
     <!-- Settings -->
     <string name="pref_header_general">General</string>
     <string name="pref_title_server_hostname">Server</string>
-    <string name="pref_default_server_hostname" translatable="false">10.0.2.2</string>
+    <string name="pref_default_server_hostname" translatable="false">localhost</string> <!-- 10.0.2.2 -->
 
     <!-- MainActivity -->
     <string name="drawer_item_debug" translatable="false">Debug</string>
