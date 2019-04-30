@@ -22,9 +22,6 @@ import javax.inject.Inject
 
 class ApplicationServiceManager : Service() {
     @Inject
-    lateinit var synchronizationTask: SynchronizationTask
-
-    @Inject
     lateinit var folderCommandExecutor: FolderCommandExecutor
 
     @Inject
@@ -36,6 +33,9 @@ class ApplicationServiceManager : Service() {
     @Inject
     lateinit var treeIndex: TreeIndex
 
+    @Inject
+    lateinit var synchronizationTask: SynchronizationTask
+
     lateinit var services: List<ApplicationService>
 
     private lateinit var binder: Binder
@@ -43,9 +43,6 @@ class ApplicationServiceManager : Service() {
     override fun onBind(intent: Intent?): IBinder? {
         Timber.v("onBind")
         services.forEach(ApplicationService::start)
-        synchronizationTask.pause()
-        synchronizationTask.start()
-
         if (!this::binder.isInitialized) {
             binder = Binder()
         }
@@ -59,7 +56,8 @@ class ApplicationServiceManager : Service() {
             folderCommandExecutor,
             noteCommandExecutor,
             noteTitlePolicy,
-            treeIndex
+            treeIndex,
+            synchronizationTask
         )
         Timber.v("onCreate")
         super.onCreate()
@@ -67,7 +65,6 @@ class ApplicationServiceManager : Service() {
 
     override fun onUnbind(intent: Intent?): Boolean {
         Timber.v("onUnbind")
-        synchronizationTask.shutdown()
         services.reversed().forEach(ApplicationService::shutdown)
         return super.onUnbind(intent)
     }
