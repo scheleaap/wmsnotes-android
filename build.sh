@@ -26,12 +26,13 @@ function create_changelogs_if_not_present() {
     local changelog_path="fastlane/metadata/android/*/changelogs"
     create_changelog_if_not_present ${version_code} "en-US"
     create_changelog_if_not_present ${version_code} "nl-NL"
-    git add ${changelog_path}
-    git diff --quiet ${changelog_path} && git diff --staged --quiet ${changelog_path} \
-      || git commit -m "chore: Added default changelogs for version code ${version_code}." ${changelog_path} \
-        && git push https://${GITHUB_TOKEN}@github.com/scheleaap/wmsnotes-android.git \
-        && echo "Exiting build to let the next build take over." \
-        && return 1
+    # The code below currently does not work on Travis, as it checks the repository out with a detached head.
+    #git add ${changelog_path}
+    #git diff --quiet ${changelog_path} && git diff --staged --quiet ${changelog_path} \
+    #  || git commit -m "chore: Added default changelogs for version code ${version_code}." ${changelog_path} \
+    #    && git push https://${GITHUB_TOKEN}@github.com/scheleaap/wmsnotes-android.git \
+    #    && echo "Exiting build to let the next build take over." \
+    #    && return 1
 }
 
 function get_version_code_from_gradle() {
