@@ -192,7 +192,10 @@ class SynchronizationModule {
         differenceAnalyzer: DifferenceAnalyzer,
         differenceCompensator: DifferenceCompensator
     ): MergeStrategy =
-        KeepBothMergeStrategy(differenceAnalyzer, differenceCompensator) { "n-" + UUID.randomUUID().toString() }
+        MultipleMergeStrategy(
+            EqualsMergeStrategy(),
+            KeepBothMergeStrategy(differenceAnalyzer, differenceCompensator) { "n-" + UUID.randomUUID().toString() }
+        )
 
     @Singleton
     @Provides
