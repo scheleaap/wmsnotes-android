@@ -14,7 +14,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.Subject
-import timber.log.Timber
 import javax.inject.Inject
 
 class DetailViewModel @VisibleForTesting constructor(
@@ -22,7 +21,6 @@ class DetailViewModel @VisibleForTesting constructor(
     ioScheduler: Scheduler,
     computationScheduler: Scheduler
 ) : ViewModel() {
-
     private val logger by logger()
 
     private val isDirtySubject: Subject<Boolean> = BehaviorSubject.create()
@@ -138,7 +136,7 @@ class DetailViewModel @VisibleForTesting constructor(
         if (this.contentValue != note.content) {
             this.contentValue = note.content
             this.contentUpdatesSubject.onNext(Update(note.content, source = Update.Source.SYSTEM))
-            Timber.v("Content set from note: %s", this.contentValue)
+            logger.trace("Content set from note: {}", this.contentValue)
         }
     }
 
@@ -149,7 +147,7 @@ class DetailViewModel @VisibleForTesting constructor(
             this.contentValue = content
             this.contentUpdatesSubject.onNext(Update(content, source = Update.Source.USER))
             setContentDirty(!isSameAsNoteContent)
-            Timber.v("Content set by user: %s", this.contentValue)
+            logger.trace("Content set by user: {}", this.contentValue)
         } else {
         }
     }
@@ -163,7 +161,7 @@ class DetailViewModel @VisibleForTesting constructor(
         if (this.titleValue != note.title) {
             this.titleValue = note.title
             this.titleUpdatesSubject.onNext(Update(note.title, source = Update.Source.SYSTEM))
-            Timber.v("Title set from note: %s", this.titleValue)
+            logger.trace("Title set from note: {}", this.titleValue)
         }
     }
 
@@ -174,7 +172,7 @@ class DetailViewModel @VisibleForTesting constructor(
             this.titleValue = title
             this.titleUpdatesSubject.onNext(Update(title, source = Update.Source.USER))
             setTitleDirty(!isSameAsNoteTitle)
-            Timber.v("Title set by user: %s", this.titleValue)
+            logger.trace("Title set by user: {}", this.titleValue)
         } else {
         }
     }

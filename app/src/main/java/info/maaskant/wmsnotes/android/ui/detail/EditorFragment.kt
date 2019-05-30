@@ -17,10 +17,12 @@ import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.ui.detail.DetailViewModel.Update.Source
-import timber.log.Timber
+import info.maaskant.wmsnotes.utilities.logger
 import javax.inject.Inject
 
 class EditorFragment : Fragment(), OnPageSelectedListener {
+    private val logger by logger()
+
     @Inject
     lateinit var detailViewModel: DetailViewModel
 
@@ -72,10 +74,10 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (listenForChanges) {
-                    Timber.v("Content EditText changed: %s", s)
+                    logger.trace("Content EditText changed: {}", s)
                     detailViewModel.setContentFromUser(contentField.text.toString())
                 } else {
-                    Timber.v("Ignoring content EditText change")
+                    logger.trace("Ignoring content EditText change")
                 }
             }
 
@@ -84,12 +86,12 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
 
         detailViewModel.contentUpdatesLiveData.observe(this, Observer {
             if (it.source != Source.USER) {
-                Timber.v("Updating content EditText: %s", it.value)
+                logger.trace("Updating content EditText: {}", it.value)
                 listenForChanges = false
                 contentField.setText(it.value)
                 listenForChanges = true
             } else {
-                Timber.v("Content EditText not updated")
+                logger.trace("Content EditText not updated")
             }
         })
     }

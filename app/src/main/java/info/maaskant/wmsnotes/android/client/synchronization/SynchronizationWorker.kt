@@ -23,14 +23,14 @@ class SynchronizationWorker constructor(context: Context, params: WorkerParamete
     override fun doWork(): Result {
         return Result.FAILURE // TODO
 //        return try {
-//            Timber.d("Running %s", this::class.java.simpleName)
+//            logger.debug("Running {}", this::class.java.simpleName)
 //            injectDependencies()
 //            localEventImporter.loadAndStoreLocalEvents()
 //            remoteEventImporter.loadAndStoreRemoteEvents()
 //            synchronizer.synchronize()
 //            Result.SUCCESS
 //        } catch (t: Throwable) {
-//            Timber.w(t)
+//            logger.warn(t)
 //            Result.RETRY
 //        }
     }

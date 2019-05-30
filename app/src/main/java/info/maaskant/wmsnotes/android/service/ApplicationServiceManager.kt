@@ -17,10 +17,12 @@ import info.maaskant.wmsnotes.model.folder.FolderCommandExecutor
 import info.maaskant.wmsnotes.model.note.NoteCommandExecutor
 import info.maaskant.wmsnotes.model.note.policy.NoteTitlePolicy
 import info.maaskant.wmsnotes.utilities.ApplicationService
-import timber.log.Timber
+import info.maaskant.wmsnotes.utilities.logger
 import javax.inject.Inject
 
 class ApplicationServiceManager : Service() {
+    private val logger by logger()
+
     @Inject
     lateinit var folderCommandExecutor: FolderCommandExecutor
 
@@ -41,7 +43,7 @@ class ApplicationServiceManager : Service() {
     private lateinit var binder: Binder
 
     override fun onBind(intent: Intent?): IBinder? {
-        Timber.v("onBind")
+        logger.trace("onBind")
         services.forEach(ApplicationService::start)
         if (!this::binder.isInitialized) {
             binder = Binder()
@@ -59,18 +61,18 @@ class ApplicationServiceManager : Service() {
             treeIndex,
             synchronizationTask
         )
-        Timber.v("onCreate")
+        logger.trace("onCreate")
         super.onCreate()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        Timber.v("onUnbind")
+        logger.trace("onUnbind")
         services.reversed().forEach(ApplicationService::shutdown)
         return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
-        Timber.v("onDestroy")
+        logger.trace("onDestroy")
         super.onDestroy()
     }
 

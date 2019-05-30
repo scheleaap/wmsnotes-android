@@ -5,13 +5,14 @@ import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util.Pool
 import dagger.Module
 import dagger.Provides
-import timber.log.Timber
+import info.maaskant.wmsnotes.utilities.logger
 import java.io.File
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 class OtherModule {
+    private val logger by logger()
 
     @Qualifier
     @MustBeDocumented
@@ -27,7 +28,7 @@ class OtherModule {
 //        val appDirectory = File(packageInfo.applicationInfo.dataDir)
         val appDirectory = File("/storage/emulated/0/wmsnotes")
         appDirectory.mkdirs()
-        Timber.d("The application directory is %s", appDirectory)
+        logger.debug("The application directory is {}", appDirectory)
         return appDirectory
     }
 

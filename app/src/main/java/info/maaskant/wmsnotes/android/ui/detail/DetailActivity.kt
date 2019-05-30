@@ -14,16 +14,17 @@ import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
-import timber.log.Timber
+import info.maaskant.wmsnotes.utilities.logger
 import javax.inject.Inject
 
 class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
-
     companion object {
         const val NODE_ID_KEY = "nodeId"
         private const val EDITOR_FRAGMENT_KEY = "editorFragment"
         private const val VIEWER_FRAGMENT_KEY = "viewerFragment"
     }
+
+    private val logger by logger()
 
     @Inject
     lateinit var detailViewModel: DetailViewModel
@@ -47,23 +48,23 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
     private lateinit var viewPager: ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.v(
-            "onCreate (hash: %s, savedInstanceState: %s)",
+        logger.trace(
+            "onCreate (hash: {}, savedInstanceState: {})",
             System.identityHashCode(this),
             savedInstanceState
         )
         AndroidInjection.inject(this)
-        Timber.i("DetailActivity: vm=$detailViewModel")
+        logger.info("DetailActivity: vm=$detailViewModel")
         super.onCreate(savedInstanceState)
 
         val noteId = if (intent.hasExtra(NODE_ID_KEY)) {
             intent.getStringExtra(NODE_ID_KEY)
         } else {
-            Timber.e("No node identifier specified")
+            logger.error("No node identifier specified")
             finish()
             return
         }
-        Timber.v("Using note identifier %s", noteId!!)
+        logger.trace("Using note identifier {}", noteId!!)
 
         setContentView(R.layout.detail_activity)
         setupSupportActionBar()
@@ -84,7 +85,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     override fun onDestroy() {
         super.onDestroy()
-        Timber.v("onDestroy")
+        logger.trace("onDestroy")
 // TODO: LEAK TESTING
 //        instrumentation.leakTracing.traceLeakage(this);
     }

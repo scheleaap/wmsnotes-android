@@ -15,9 +15,9 @@ import info.maaskant.wmsnotes.model.folder.FolderCommandRequest
 import info.maaskant.wmsnotes.model.note.CreateNoteCommand
 import info.maaskant.wmsnotes.model.note.Note
 import info.maaskant.wmsnotes.model.note.NoteCommandRequest
+import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
-import timber.log.Timber
 import javax.inject.Inject
 
 class NavigationViewModel @Inject constructor(
@@ -27,6 +27,7 @@ class NavigationViewModel @Inject constructor(
     @StringId(R.string.create_folder_dialog_error_title_must_not_be_empty) private val titleMustNotBeEmptyText: String,
     @StringId(R.string.create_folder_dialog_error_title_must_not_contain_slash) private val titleMustNotContainSlashText: String
 ) : ViewModel() {
+    private val logger by logger()
 
     // TODO:
     // Implement onCleared to release subscriptions?
@@ -103,7 +104,7 @@ class NavigationViewModel @Inject constructor(
     fun navigateTo(path: Path) {
         val currentPath = stackValue.peek()
         if (path.parent() == currentPath) {
-            Timber.d("Navigating to %s", path)
+            logger.debug("Navigating to {}", path)
             setStack(stackValue.push(path))
         } else {
             throw IllegalArgumentException("'$path' is not a child of '$currentPath'")
