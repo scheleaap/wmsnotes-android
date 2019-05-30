@@ -8,12 +8,12 @@ setup_git() {
 }
 
 function create_changelog_if_not_present() {
-    if [[ "$#" -ne 2 ]]; then echo "Usage: $0 <version number> <language code>"; exit 1; fi
-    local version_number="$1"
+    if [[ "$#" -ne 2 ]]; then echo "Usage: $0 <version code> <language code>"; exit 1; fi
+    local version_code="$1"
     local language_code="$2"
 
     local default_path="fastlane/metadata/android/${language_code}/changelogs/default.txt"
-    local expected_path="fastlane/metadata/android/${language_code}/changelogs/${version_number}.txt"
+    local expected_path="fastlane/metadata/android/${language_code}/changelogs/${version_code}.txt"
     if [[ ! -f ${expected_path} && -f ${default_path} ]]; then
         cp ${default_path} ${expected_path}
     fi
@@ -23,10 +23,10 @@ function create_changelogs_if_not_present() {
     if [[ "$#" -ne 1 ]]; then echo "Usage: $0 <version code>"; exit 1; fi
     local version_code="$1"
 
-    local changelog_path="fastlane/metadata/android/*/changelogs"
     create_changelog_if_not_present ${version_code} "en-US"
     create_changelog_if_not_present ${version_code} "nl-NL"
     # The code below currently does not work on Travis, as it checks the repository out with a detached head.
+    #local changelog_path="fastlane/metadata/android/*/changelogs"
     #git add ${changelog_path}
     #git diff --quiet ${changelog_path} && git diff --staged --quiet ${changelog_path} \
     #  || git commit -m "chore: Added default changelogs for version code ${version_code}." ${changelog_path} \
@@ -56,12 +56,13 @@ function tag_git_with_version_number() {
     fi
 }
 
-echo "Building Travis branch $TRAVIS_BRANCH"
+echo "Building Travis branch ${TRAVIS_BRANCH}"
 version_code=$(get_version_code_from_gradle)
 version_number=$(get_version_number_from_gradle)
 create_changelogs_if_not_present ${version_code}
 ./gradlew clean bundleRelease
-if [[ "$TRAVIS_BRANCH" == "master" ]]; then
+if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+    create_changelogs_if_not_present ${version_code}
     bundle exec fastlane deploy
     tag_git_with_version_number ${version_number}
 fi
