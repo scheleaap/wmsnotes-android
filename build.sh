@@ -15,6 +15,7 @@ function create_changelog_if_not_present() {
     local default_path="fastlane/metadata/android/${language_code}/changelogs/default.txt"
     local expected_path="fastlane/metadata/android/${language_code}/changelogs/${version_code}.txt"
     if [[ ! -f ${expected_path} && -f ${default_path} ]]; then
+        echo "Creating temporary changelog file ${expected_path}"
         cp ${default_path} ${expected_path}
     fi
 }
@@ -62,7 +63,6 @@ version_number=$(get_version_number_from_gradle)
 create_changelogs_if_not_present ${version_code}
 ./gradlew clean bundleRelease
 if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-    create_changelogs_if_not_present ${version_code}
     bundle exec fastlane deploy
     tag_git_with_version_number ${version_number}
 fi
