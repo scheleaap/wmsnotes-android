@@ -1,6 +1,6 @@
 #!/bin/bash
 # The git stuff was based on this: https://gist.github.com/willprice/e07efd73fb7f13f917ea
-set -ev
+set -ex
 
 setup_git() {
   git config --global user.name "Travis CI"
