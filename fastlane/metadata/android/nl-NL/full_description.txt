@@ -1,5 +1,7 @@
 WMS Notes is een hiërarchische (boomgebaseerde) notitie-app.
 
+<b>Opmerking: Omdat deze app nog volop in ontwikkeling is kan de app zich vreemd gedragen of onverwacht crashen.</b>
+
 Features:
 
 • Een hiërarchie met notities en mappen

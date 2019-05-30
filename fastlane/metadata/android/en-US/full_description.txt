@@ -1,5 +1,7 @@
 WMS Notes is a hierarchical (tree-based) note-taking application.
 
+<b>Note: This application is still under development, so you may experience strange behavior as well as random crashes.</b>
+
 Features:
 
 • A hierarchy of notes and folders
