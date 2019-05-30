@@ -78,11 +78,10 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
         return logcatAppender
     }
 
-    private fun createRollingFileAppenderAndStart(loggerContext: LoggerContext): RollingFileAppender<ILoggingEvent> {
-        // TODO: Replace with Context.getFilesDir(), see OtherModule as well
-        //        val logDirectory = context.filesDir.toString() + "/logs"
-        val logDirectory = File("/storage/emulated/0/wmsnotes/logs")
-
+    private fun createRollingFileAppenderAndStart(
+        loggerContext: LoggerContext,
+        logDirectory: File
+    ): RollingFileAppender<ILoggingEvent> {
         val encoder = PatternLayoutEncoder().also {
             it.context = loggerContext
             it.charset = Charset.forName("UTF-8")
@@ -153,6 +152,10 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
     private fun setupLogging() {
         // Source: https://sureshjoshi.com/mobile/file-logging-in-android-with-timber/
 
+        // TODO: Replace with Context.getFilesDir(), see OtherModule as well
+        //        val logDirectory = context.filesDir.toString() + "/logs"
+        val logDirectory = File("/storage/emulated/0/wmsnotes/logs")
+
         // Reset the default context (which may already have been initialized) since we want to reconfigure it.
         val loggerContext = (LoggerFactory.getILoggerFactory() as LoggerContext).also {
             it.reset()
@@ -163,7 +166,9 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
             it.level = Level.DEBUG
             // In the future, we may want to make this conditional on BuildConfig.DEBUG.
             it.addAppender(createLogcatAppenderAndStart(loggerContext))
-            it.addAppender(createRollingFileAppenderAndStart(loggerContext))
+            if (logDirectory.exists()) {
+                it.addAppender(createRollingFileAppenderAndStart(loggerContext, logDirectory))
+            }
         }
 
         if (BuildConfig.DEBUG) {
