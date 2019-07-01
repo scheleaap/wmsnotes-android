@@ -18,6 +18,7 @@ import info.maaskant.wmsnotes.model.note.NoteCommandExecutor
 import info.maaskant.wmsnotes.model.note.policy.NoteTitlePolicy
 import info.maaskant.wmsnotes.utilities.ApplicationService
 import info.maaskant.wmsnotes.utilities.logger
+import leakcanary.LeakSentry
 import javax.inject.Inject
 
 class ApplicationServiceManager : Service() {
@@ -40,13 +41,13 @@ class ApplicationServiceManager : Service() {
 
     lateinit var services: List<ApplicationService>
 
-    private lateinit var binder: Binder
+    private var binder: Binder? = null
 
     override fun onBind(intent: Intent?): IBinder? {
         logger.trace("onBind")
         services.forEach(ApplicationService::start)
-        if (!this::binder.isInitialized) {
-            binder = Binder()
+        if (binder == null) {
+            binder = Binder(this)
         }
         return binder
     }
@@ -68,17 +69,26 @@ class ApplicationServiceManager : Service() {
     override fun onUnbind(intent: Intent?): Boolean {
         logger.trace("onUnbind")
         services.reversed().forEach(ApplicationService::shutdown)
+        binder?.onUnbind()
         return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
         logger.trace("onDestroy")
         super.onDestroy()
+        LeakSentry.refWatcher.watch(this)
     }
 
-    inner class Binder : android.os.Binder() {
+    class Binder(applicationServiceManager: ApplicationServiceManager) : android.os.Binder() {
+        private var _service: ApplicationServiceManager? = applicationServiceManager
+
         internal val service: ApplicationServiceManager
-            get() = this@ApplicationServiceManager
+            get() = _service!!
+
+        fun onUnbind() {
+            // To prevent memory leaks
+            _service = null
+        }
     }
 
     class ServiceBindingLifecycleObserver constructor(
