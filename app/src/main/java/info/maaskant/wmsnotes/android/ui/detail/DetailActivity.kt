@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
     companion object {
-        const val NODE_ID_KEY = "nodeId"
+        const val AGG_ID_KEY = "aggId"
         private const val EDITOR_FRAGMENT_KEY = "editorFragment"
         private const val VIEWER_FRAGMENT_KEY = "viewerFragment"
     }
@@ -57,22 +57,23 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         logger.trace("DetailActivity: vm={}", detailViewModel)
         super.onCreate(savedInstanceState)
 
-        val noteId = if (intent.hasExtra(NODE_ID_KEY)) {
-            intent.getStringExtra(NODE_ID_KEY)
-        } else {
-            logger.error("No node identifier specified")
-            finish()
-            return
-        }
-        logger.trace("Using note identifier {}", noteId!!)
-
         setContentView(R.layout.detail_activity)
         setupSupportActionBar()
         setupFragmentsAndViewPager(savedInstanceState)
 
         this.setTitle("")
 
-        detailViewModel.setNote(noteId)
+        val aggId = if (intent.hasExtra(AGG_ID_KEY)) {
+            intent.getStringExtra(AGG_ID_KEY)!!
+        } else {
+            logger.error("No node identifier specified")
+            finish()
+            return
+        }
+        logger.trace("Using note identifier {}", aggId)
+
+        detailViewModel.setNote(aggId)
+        detailViewModel.restoreState(savedInstanceState)
 
         lifecycle.addObserver(detailController)
         ApplicationServiceManager.ServiceBindingLifecycleObserver(this, lifecycle)
@@ -129,6 +130,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         super.onSaveInstanceState(outState)
         supportFragmentManager.putFragment(outState, EDITOR_FRAGMENT_KEY, this.editorFragment)
         supportFragmentManager.putFragment(outState, VIEWER_FRAGMENT_KEY, this.viewerFragment)
+        outState.putAll(detailViewModel.getStateToSave())
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {

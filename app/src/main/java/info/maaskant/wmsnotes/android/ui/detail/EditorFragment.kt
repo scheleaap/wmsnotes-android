@@ -12,12 +12,14 @@ import android.widget.EditText
 import android.widget.ScrollView
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
-import info.maaskant.wmsnotes.android.ui.detail.DetailViewModel.Update.Source
+import info.maaskant.wmsnotes.android.ui.detail.DetailViewModel.Update.Origin
 import info.maaskant.wmsnotes.utilities.logger
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.sellmair.disposer.disposeBy
+import io.sellmair.disposer.onStop
 import javax.inject.Inject
 
 class EditorFragment : Fragment(), OnPageSelectedListener {
@@ -64,7 +66,9 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
     ): View? {
         return inflater.inflate(R.layout.editor_fragment, container, false).apply {
             scrollView = findViewById(R.id.editor_view)
-            contentField = findViewById(R.id.editor_content)
+            contentField = findViewById<EditText>(R.id.editor_content).apply {
+                isSaveEnabled = false
+            }
         }
     }
 
@@ -84,16 +88,19 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
             override fun afterTextChanged(s: Editable) {}
         })
 
-        detailViewModel.contentUpdatesLiveData.observe(this, Observer {
-            if (it.source != Source.USER) {
-                logger.trace("Updating content EditText: {}", it.value)
-                listenForChanges = false
-                contentField.setText(it.value)
-                listenForChanges = true
-            } else {
-                logger.trace("Content EditText not updated")
+        detailViewModel.getContentUpdates()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (it.origin != Origin.VIEW) {
+                    logger.trace("Updating content EditText: {}", it.value)
+                    listenForChanges = false
+                    contentField.setText(it.value)
+                    listenForChanges = true
+                } else {
+                    logger.trace("Content EditText not updated")
+                }
             }
-        })
+            .disposeBy(onStop)
     }
 
     override fun onDestroy() {

@@ -140,12 +140,12 @@ internal class DetailControllerTest {
 
     private fun givenALoadedNote(note: Note) {
         every { detailViewModel.getNote() }.returns(Observable.just(note))
-        textUpdatesSubject.onNext(Update(note.content, Update.Source.SYSTEM))
+        textUpdatesSubject.onNext(Update(note.content, Update.Origin.VIEW_MODEL))
     }
 
     private fun givenADirtyViewModel(text: String) {
         isDirtySubject.onNext(true)
-        textUpdatesSubject.onNext(Update(text, Update.Source.USER))
+        textUpdatesSubject.onNext(Update(text, Update.Origin.VIEW))
     }
 
     private fun givenANotDirtyViewModel() {

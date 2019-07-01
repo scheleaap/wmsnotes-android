@@ -255,7 +255,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
                 is Folder -> viewModel.navigateTo(node.path)
                 is Note -> {
                     val intent = Intent(v.context, DetailActivity::class.java)
-                    intent.putExtra(DetailActivity.NODE_ID_KEY, node.aggId)
+                    intent.putExtra(DetailActivity.AGG_ID_KEY, node.aggId)
                     v.context.startActivity(intent)
                 }
             }

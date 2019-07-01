@@ -100,13 +100,13 @@ dependencies {
     implementation("android.arch.work:work-runtime-ktx:$versions.workmanager") {
         exclude group: 'com.google.guava', module: 'listenablefuture'
     }
+    implementation 'io.sellmair:disposer:2.0.0'
 
     // gRPC
     implementation "io.grpc:grpc-okhttp:$versions.grpc"
 
     // UI
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
-    implementation 'androidx.lifecycle:lifecycle-reactivestreams-ktx:2.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation "com.afollestad.material-dialogs:core:$versions.materialdialogs"
     implementation "com.afollestad.material-dialogs:input:$versions.materialdialogs"

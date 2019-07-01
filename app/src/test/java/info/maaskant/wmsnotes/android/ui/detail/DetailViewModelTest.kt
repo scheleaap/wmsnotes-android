@@ -1,5 +1,6 @@
 package info.maaskant.wmsnotes.android.ui.detail
 
+import android.os.Bundle
 import info.maaskant.wmsnotes.android.ui.detail.DetailViewModel.Update
 import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.model.aggregaterepository.AggregateRepository
@@ -15,7 +16,6 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class DetailViewModelTest {
@@ -97,8 +97,8 @@ internal class DetailViewModelTest {
         val titleUpdatesObserver = model.getTitleUpdates().test()
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(false))
         assertThat(noteObserver.values().toList()).isEqualTo(listOf(noteV1))
-        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(systemUpdate(noteV1.content)))
-        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(systemUpdate(noteV1.title)))
+        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromViewModel(noteV1.content)))
+        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromViewModel(noteV1.title)))
     }
 
     @Test
@@ -140,14 +140,14 @@ internal class DetailViewModelTest {
         )
         assertThat(contentUpdatesObserver.values().toList()).isEqualTo(
             listOf(
-                systemUpdate(noteV1.content),
-                systemUpdate(noteV2.content)
+                updateFromViewModel(noteV1.content),
+                updateFromViewModel(noteV2.content)
             )
         )
         assertThat(titleUpdatesObserver.values().toList()).isEqualTo(
             listOf(
-                systemUpdate(noteV1.title),
-                systemUpdate(noteV2.title)
+                updateFromViewModel(noteV1.title),
+                updateFromViewModel(noteV2.title)
             )
         )
     }
@@ -175,8 +175,8 @@ internal class DetailViewModelTest {
                 noteV2
             )
         )
-        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(userUpdate("changed")))
-        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(systemUpdate(noteV1.title)))
+        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromView("changed")))
+        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromViewModel(noteV1.title)))
     }
 
     @Test
@@ -202,8 +202,8 @@ internal class DetailViewModelTest {
                 noteV2
             )
         )
-        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(systemUpdate(noteV1.content)))
-        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(userUpdate("changed")))
+        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromViewModel(noteV1.content)))
+        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromView("changed")))
     }
 
     @Test
@@ -230,8 +230,8 @@ internal class DetailViewModelTest {
                 noteV2
             )
         )
-        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(userUpdate(noteV2.content)))
-        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(userUpdate(noteV2.title)))
+        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromView(noteV2.content)))
+        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromView(noteV2.title)))
     }
 
     @Test
@@ -257,11 +257,11 @@ internal class DetailViewModelTest {
                 noteV2
             )
         )
-        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(userUpdate(noteV2.content)))
+        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromView(noteV2.content)))
         assertThat(titleUpdatesObserver.values().toList()).isEqualTo(
             listOf(
-                systemUpdate(noteV1.title),
-                systemUpdate(noteV2.title)
+                updateFromViewModel(noteV1.title),
+                updateFromViewModel(noteV2.title)
             )
         )
     }
@@ -291,11 +291,11 @@ internal class DetailViewModelTest {
         )
         assertThat(contentUpdatesObserver.values().toList()).isEqualTo(
             listOf(
-                systemUpdate(noteV1.content),
-                systemUpdate(noteV2.content)
+                updateFromViewModel(noteV1.content),
+                updateFromViewModel(noteV2.content)
             )
         )
-        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(userUpdate(noteV2.title)))
+        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromView(noteV2.title)))
     }
 
     @Test
@@ -322,8 +322,8 @@ internal class DetailViewModelTest {
                 noteV2
             )
         )
-        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(userUpdate(noteV2.content)))
-        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(userUpdate("changed")))
+        assertThat(contentUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromView(noteV2.content)))
+        assertThat(titleUpdatesObserver.values().toList()).isEqualTo(listOf(updateFromView("changed")))
     }
 
     @Test
@@ -342,8 +342,8 @@ internal class DetailViewModelTest {
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(false, true))
         assertThat(updatesObserver.values().toList()).isEqualTo(
             listOf(
-                systemUpdate(noteV1.content),
-                userUpdate("changed")
+                updateFromViewModel(noteV1.content),
+                updateFromView("changed")
             )
         )
     }
@@ -364,8 +364,8 @@ internal class DetailViewModelTest {
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(false, true))
         assertThat(updatesObserver.values().toList()).isEqualTo(
             listOf(
-                systemUpdate(noteV1.title),
-                userUpdate("changed")
+                updateFromViewModel(noteV1.title),
+                updateFromView("changed")
             )
         )
     }
@@ -387,7 +387,7 @@ internal class DetailViewModelTest {
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(true))
         assertThat(updatesObserver.values().toList()).isEqualTo(
             listOf(
-                userUpdate("changed")
+                updateFromView("changed")
             )
         )
     }
@@ -409,7 +409,7 @@ internal class DetailViewModelTest {
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(true))
         assertThat(updatesObserver.values().toList()).isEqualTo(
             listOf(
-                userUpdate("changed")
+                updateFromView("changed")
             )
         )
     }
@@ -431,8 +431,8 @@ internal class DetailViewModelTest {
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(true, false))
         assertThat(updatesObserver.values().toList()).isEqualTo(
             listOf(
-                userUpdate("changed"),
-                userUpdate(noteV1.content)
+                updateFromView("changed"),
+                updateFromView(noteV1.content)
             )
         )
     }
@@ -454,8 +454,33 @@ internal class DetailViewModelTest {
         assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(true, false))
         assertThat(updatesObserver.values().toList()).isEqualTo(
             listOf(
-                userUpdate("changed"),
-                userUpdate(noteV1.title)
+                updateFromView("changed"),
+                updateFromView(noteV1.title)
+            )
+        )
+    }
+
+    @Test
+    fun `restore state`() {
+        // Given
+        val bundle: Bundle = mockk()
+        every { bundle.containsKey("content") }.returns(true)
+        every { bundle.getString("content") }.returns("Bundle Content")
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
+        givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
+        model.setNote(aggId)
+        val dirtyObserver = model.isDirty().test()
+        val updatesObserver = model.getContentUpdates().test()
+
+        // When
+        model.restoreState(bundle)
+
+        // Then
+        assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(false, true))
+        assertThat(updatesObserver.values().toList()).isEqualTo(
+            listOf(
+                updateFromViewModel(noteV1.content),
+                updateFromViewModel("Bundle Content")
             )
         )
     }
@@ -474,6 +499,6 @@ internal class DetailViewModelTest {
         return projectedNoteWithUpdates
     }
 
-    private fun systemUpdate(value: String) = Update(value, Update.Source.SYSTEM)
-    private fun userUpdate(value: String) = Update(value, Update.Source.USER)
+    private fun updateFromViewModel(value: String) = Update(value, Update.Origin.VIEW_MODEL)
+    private fun updateFromView(value: String) = Update(value, Update.Origin.VIEW)
 }
