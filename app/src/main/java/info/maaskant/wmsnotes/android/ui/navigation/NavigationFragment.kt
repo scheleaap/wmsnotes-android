@@ -147,7 +147,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     private fun bindFolderToViewModel(path: Path) {
         logger.trace("Binding folder $path to view model")
         val listAdapter = (foldersByPath[path] ?: error("Folder $path not present")).listAdapter
-        val disposable = viewModel.getNotes(path)
+        val disposable = viewModel.getNodes(path)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { logger.trace("New folder contents: $it") }
             .subscribe { listAdapter.items = it }

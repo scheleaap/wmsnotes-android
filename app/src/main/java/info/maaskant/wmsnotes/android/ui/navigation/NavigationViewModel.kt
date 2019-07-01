@@ -70,7 +70,7 @@ class NavigationViewModel @Inject constructor(
         )
     }
 
-    fun getNotes(path: Path): Observable<List<Node>> {
+    fun getNodes(path: Path): Observable<List<Node>> {
         return Observable.concat(
             Observable.just(Unit),
             treeIndex.getEvents(filterByFolder = path)

@@ -54,7 +54,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
             savedInstanceState
         )
         AndroidInjection.inject(this)
-        logger.info("DetailActivity: vm=$detailViewModel")
+        logger.trace("DetailActivity: vm={}", detailViewModel)
         super.onCreate(savedInstanceState)
 
         val noteId = if (intent.hasExtra(NODE_ID_KEY)) {
