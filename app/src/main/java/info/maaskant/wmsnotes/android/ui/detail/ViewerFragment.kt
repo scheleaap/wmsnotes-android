@@ -8,16 +8,12 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import javax.inject.Inject
 
 class ViewerFragment : Fragment() {
 
     @Inject
     lateinit var detailViewModel: DetailViewModel
-
-    @Inject
-    lateinit var instrumentation: ApplicationInstrumentation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -35,12 +31,6 @@ class ViewerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val textView = view.findViewById<TextView>(R.id.viewer_textview)
         lifecycle.addObserver(Renderer(detailViewModel, requireContext(), textView))
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-// TODO: LEAK TESTING
-//        instrumentation.leakTracing.traceLeakage(this);
     }
 }
 

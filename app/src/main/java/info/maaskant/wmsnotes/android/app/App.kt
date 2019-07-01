@@ -15,7 +15,6 @@ import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy
 import ch.qos.logback.core.util.FileSize
 import ch.qos.logback.core.util.StatusPrinter
-import com.squareup.leakcanary.LeakCanary
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -23,7 +22,6 @@ import dagger.android.HasServiceInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.BuildConfig
 import info.maaskant.wmsnotes.android.app.di.workmanager.HasWorkerInjector
-import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.utilities.logger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -34,9 +32,6 @@ import javax.inject.Inject
 
 class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasServiceInjector, HasWorkerInjector {
     private val logger by logger()
-
-    @Inject
-    lateinit var instrumentation: ApplicationInstrumentation
 
 //    @Inject
 //    internal var navigationViewModel: NavigationViewModel? = null
@@ -119,20 +114,8 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
     override fun onCreate() {
         super.onCreate()
 
-// TODO: LEAK TESTING
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
-// TODO: LEAK TESTING
-
         setupLogging()
         setupDependencyInjection()
-
-// TODO: LEAK TESTING
-//        instrumentation.init()
 
 //        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 //        val notebookPath = sharedPreferences.getString(

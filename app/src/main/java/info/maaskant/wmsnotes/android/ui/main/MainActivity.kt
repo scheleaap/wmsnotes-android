@@ -19,9 +19,8 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
-import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationWorker
+import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
 import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
 import info.maaskant.wmsnotes.android.ui.settings.SettingsActivity
@@ -32,9 +31,6 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragment.Listener {
     @Inject
     lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
-
-    @Inject
-    lateinit var instrumentation: ApplicationInstrumentation
 
     @Inject
     lateinit var synchronizationTask: SynchronizationTask
@@ -138,12 +134,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
         }
 
         ApplicationServiceManager.ServiceBindingLifecycleObserver(this, lifecycle)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-// TODO: LEAK TESTING
-//        instrumentation.leakTracing.traceLeakage(this)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

@@ -11,7 +11,6 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import info.maaskant.wmsnotes.utilities.logger
@@ -34,9 +33,6 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     @Inject
     lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
-
-    @Inject
-    lateinit var instrumentation: ApplicationInstrumentation
 
     @Inject
     lateinit var synchronizationTask: SynchronizationTask
@@ -87,8 +83,6 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
     override fun onDestroy() {
         super.onDestroy()
         logger.trace("onDestroy")
-// TODO: LEAK TESTING
-//        instrumentation.leakTracing.traceLeakage(this);
     }
 
     /**

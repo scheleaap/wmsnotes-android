@@ -88,11 +88,8 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$versions.dagger"
 
     // Infrastructure - Leak Testing
-// TODO: LEAK TESTING
-    implementation /*debugImplementation*/ "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary"
-    implementation /*debugImplementation*/ "com.squareup.leakcanary:leakcanary-support-fragment:$versions.leakcanary"
-    /*releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakcanary"*/
-    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakcanary"
+    implementation 'com.squareup.leakcanary:leaksentry:2.0-alpha-2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-2'
 
     // RxJava and background execution.
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'

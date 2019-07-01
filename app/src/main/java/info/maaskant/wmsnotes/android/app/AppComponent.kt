@@ -24,7 +24,6 @@ import javax.inject.Singleton
         CommandModule::class,
         EventModule::class,
         IndexingModule::class,
-        InstrumentationModule::class,
         OtherModule::class,
         ServiceModule::class,
         StringsModule::class,

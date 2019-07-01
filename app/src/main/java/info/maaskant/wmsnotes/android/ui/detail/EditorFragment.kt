@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.ui.detail.DetailViewModel.Update.Origin
 import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,9 +26,6 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
 
     @Inject
     lateinit var detailViewModel: DetailViewModel
-
-    @Inject
-    lateinit var instrumentation: ApplicationInstrumentation
 
     private lateinit var contentField: EditText
     private lateinit var scrollView: ScrollView
@@ -101,12 +97,6 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
                 }
             }
             .disposeBy(onStop)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-// TODO: LEAK TESTING
-//        instrumentation.leakTracing.traceLeakage(this);
     }
 
     /**

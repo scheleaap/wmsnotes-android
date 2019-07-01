@@ -15,10 +15,8 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.squareup.leakcanary.LeakCanary
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.app.instrumentation.ApplicationInstrumentation
 import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.android.ui.main.MainActivity
@@ -33,12 +31,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
-
 class NavigationFragment : Fragment(), OnBackPressedListener {
     private val logger by logger()
-
-    @Inject
-    lateinit var instrumentation: ApplicationInstrumentation
 
     @Inject
     lateinit var viewModel: NavigationViewModel
@@ -88,14 +82,6 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
         } else {
             false
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-// TODO: LEAK TESTING
-//        instrumentation.leakTracing.traceLeakage(this)
-        val refWatcher = LeakCanary.installedRefWatcher()
-        refWatcher.watch(this)
     }
 
     private fun onCreateFolderClicked() {
