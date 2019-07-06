@@ -1,1 +1,1 @@
-Kijk voor informatie over wat er is veranderd in het commit log op GitHub: https://github.com/scheleaap/wmsnotes-android/commits/master .
+Dank je wel dat je WMS Notes gebruikt! WMS Notes is nog in ontwikkeling. Kijk voor informatie over wat er is veranderd in het commit log op GitHub: https://github.com/scheleaap/wmsnotes-android/commits/master .

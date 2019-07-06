@@ -21,6 +21,7 @@ function create_changelogs_if_not_present() {
     create_changelog_if_not_present ${version_code} "nl-NL"
     local changelog_path="fastlane/metadata/android/*/changelogs"
     travis_add_and_commit "$changelog_path" "chore: Added default changelogs for version code ${version_code}."
+    travis_push
 }
 
 function get_version_code_from_gradle() {
