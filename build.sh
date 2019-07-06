@@ -26,6 +26,7 @@ function create_changelogs_if_not_present() {
 
     create_changelog_if_not_present ${version_code} "en-US"
     create_changelog_if_not_present ${version_code} "nl-NL"
+    find
     # The code below currently does not work on Travis, as it checks the repository out with a detached head.
     #local changelog_path="fastlane/metadata/android/*/changelogs"
     #git add ${changelog_path}
