@@ -17,6 +17,14 @@ platform :android do
   lane :deploy do
     gradle(task: "bundleRelease")
     upload_to_play_store(track: "production")
+    # Upload changelogs after the new version is released
+    upload_to_play_store(
+      track: "production",
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
   end
 
   desc "Update changelogs"
