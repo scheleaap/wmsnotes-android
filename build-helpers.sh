@@ -41,7 +41,8 @@ function travis_add_and_commit() {
         return 1
     fi
     # make Travis CI skip this build
-    if ! git diff --quiet $add_path && git diff --staged --quiet $add_path || git commit -m "$commit_message [ci skip]"; then
+    # git diff --quiet $add_path && git diff --staged --quiet $add_path ||
+    if ! git commit -m "$commit_message [ci skip]"; then
         err "failed to commit updates"
         return 1
     fi
