@@ -40,7 +40,6 @@ ext {
     versions = [
             kotlin         : kotlin_version,
             gradle         : gradle_version,
-            wmsnotes       : "fd21dc1d9b6e789442f478b351276bf33daeca50",
             leakcanary     : "1.6.3",
             dagger         : "2.16",
             materialdialogs: "2.8.1",
