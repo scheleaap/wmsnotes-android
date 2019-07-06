@@ -97,7 +97,7 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
 
         val rollingPolicy = TimeBasedRollingPolicy<ILoggingEvent>().also {
             it.context = loggerContext
-            it.fileNamePattern = "$logDirectory/%d{yyyy-MM-dd}.%i.html"
+            it.fileNamePattern = "$logDirectory/%d{yyyy-MM-dd}.%i.txt"
             it.maxHistory = 5
             it.timeBasedFileNamingAndTriggeringPolicy = fileNamingPolicy
             it.setParent(rollingFileAppender)  // parent and context required!
