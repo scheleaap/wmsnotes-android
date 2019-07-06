@@ -2,6 +2,9 @@
 # The git stuff was based on this: https://gist.github.com/willprice/e07efd73fb7f13f917ea
 set -ex
 
+basedir=$(dirname $0)
+source $basedir/build-helpers.sh
+
 function create_changelog_if_not_present() {
     if [[ "$#" -ne 2 ]]; then echo "Usage: $0 <version code> <language code>"; exit 1; fi
     local version_code="$1"
