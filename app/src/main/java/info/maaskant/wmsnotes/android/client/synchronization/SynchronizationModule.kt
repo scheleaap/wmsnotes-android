@@ -194,7 +194,12 @@ class SynchronizationModule {
     ): MergeStrategy =
         MultipleMergeStrategy(
             EqualsMergeStrategy(),
-            KeepBothMergeStrategy(differenceAnalyzer, differenceCompensator) { "n-" + UUID.randomUUID().toString() }
+            KeepBothMergeStrategy(
+                differenceAnalyzer=differenceAnalyzer,
+                differenceCompensator=differenceCompensator,
+                aggregateIdGenerator = { "n-" + UUID.randomUUID().toString() },
+                conflictedNoteTitleSuffix = " (conflict on Android)"
+            )
         )
 
     @Singleton
