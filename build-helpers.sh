@@ -29,7 +29,7 @@ function travis_checkout_branch() {
 
 function travis_add_and_commit() {
     if [[ $# -ne 2 ]]; then
-        err "not enough arguments"
+        err "incorrect number of arguments"
         return 1
     fi
     local add_path=$1

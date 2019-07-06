@@ -1,9 +1,4 @@
 #!/bin/bash
-# The git stuff was based on this: https://gist.github.com/willprice/e07efd73fb7f13f917ea
-set -ex
-
-basedir=$(dirname $0)
-source $basedir/build-helpers.sh
 
 function create_changelog_if_not_present() {
     if [[ "$#" -ne 2 ]]; then echo "Usage: $0 <version code> <language code>"; exit 1; fi
@@ -25,7 +20,7 @@ function create_changelogs_if_not_present() {
     create_changelog_if_not_present ${version_code} "en-US"
     create_changelog_if_not_present ${version_code} "nl-NL"
     local changelog_path="fastlane/metadata/android/*/changelogs"
-    travis_add_and_commit $changelog_path "chore: Added default changelogs for version code ${version_code}."
+    travis_add_and_commit "$changelog_path" "chore: Added default changelogs for version code ${version_code}."
 }
 
 function get_version_code_from_gradle() {
@@ -48,7 +43,11 @@ function tag_git_with_version_number() {
     fi
 }
 
-echo "Building Travis branch ${TRAVIS_BRANCH}"
+set -ex
+
+basedir=$(dirname $0)
+source $basedir/build-helpers.sh
+
 travis_checkout_branch
 version_code=$(get_version_code_from_gradle)
 version_number=$(get_version_number_from_gradle)
