@@ -20,8 +20,8 @@ function create_changelogs_if_not_present() {
     create_changelog_if_not_present ${version_code} "en-US"
     create_changelog_if_not_present ${version_code} "nl-NL"
     local changelog_path="fastlane/metadata/android/*/changelogs"
-    travis_add_and_commit "$changelog_path" "chore: Added default changelogs for version code ${version_code}."
-    travis_push
+    # travis_add_and_commit "$changelog_path" "chore: Added default changelogs for version code ${version_code}."
+    # travis_push "$TRAVIS_BRANCH"
 }
 
 function get_version_code_from_gradle() {
@@ -38,7 +38,8 @@ function tag_git_with_version_number() {
     if [[ "$version_number" != "" ]]; then
       echo "Tagging version $version_number"
       git tag -a "$version_number" -m"Version $version_number [ci skip]"
-      travis_push
+      # travis_push $TRAVIS_BRANCH
+      travis_push "$version_number"
     else
       >&2 echo "Version number not tagged!"
     fi
@@ -49,7 +50,7 @@ set -ex
 basedir=$(dirname $0)
 source $basedir/build-helpers.sh
 
-travis_checkout_branch
+# travis_checkout_branch
 version_code=$(get_version_code_from_gradle)
 version_number=$(get_version_number_from_gradle)
 create_changelogs_if_not_present ${version_code}

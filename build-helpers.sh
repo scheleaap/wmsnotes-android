@@ -32,8 +32,8 @@ function travis_add_and_commit() {
         err "incorrect number of arguments"
         return 1
     fi
-    local add_path=$1
-    local commit_message=$2
+    local add_path="$1"
+    local commit_message="$2"
 
     git config --global user.name "Travis CI"
     if ! git add --all $add_path; then
@@ -48,11 +48,16 @@ function travis_add_and_commit() {
 }
 
 function travis_push() {
+    if [[ $# -ne 1 ]]; then
+        err "incorrect number of arguments"
+        return 1
+    fi
+    local push_what="$1"
     local remote=origin
     if [[ $GITHUB_TOKEN ]]; then
         remote=https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG
     fi
-    if ! git push --quiet --follow-tags "$remote" "$TRAVIS_BRANCH" > /dev/null 2>&1; then
+    if ! git push --quiet --follow-tags "$remote" "$push_what" > /dev/null 2>&1; then
         err "failed to push git changes"
         return 1
     fi
