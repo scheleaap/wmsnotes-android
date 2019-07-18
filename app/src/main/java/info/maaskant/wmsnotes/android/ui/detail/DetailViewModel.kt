@@ -73,7 +73,6 @@ class DetailViewModel @VisibleForTesting constructor(
     private fun setContentDirty(dirty: Boolean) {
         this.isContentDirtyValue = dirty
         this.isDirtySubject.onNext(isContentDirtyValue || isTitleDirtyValue)
-        println(dirty)
     }
 
     @Synchronized

@@ -30,14 +30,7 @@
             android:id="@+id/detail_view_pager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <include layout="@layout/editor_fragment" />
-
-            <include layout="@layout/viewer_fragment" />
-
         </androidx.viewpager.widget.ViewPager>
-
     </RelativeLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
