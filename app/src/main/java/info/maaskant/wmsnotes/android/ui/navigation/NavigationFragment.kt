@@ -30,6 +30,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
+import kotlin.reflect.KFunction1
 
 class NavigationFragment : Fragment(), OnBackPressedListener {
     private val logger by logger()
@@ -73,7 +74,11 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.restoreState(savedInstanceState)
-        floatingActionButton.setOnClickListener { viewModel.createNote() }
+        floatingActionButton.setOnClickListener {
+            viewModel.createNote()?.let {
+                openNote(it)
+            }
+        }
     }
 
     override fun onBackPressed(): Boolean {
@@ -166,7 +171,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
                 adapter = listAdapter
             }
         }
-        listAdapter.setOnClickListener(NodeClickListener(recyclerView, listAdapter, viewModel))
+        listAdapter.setOnClickListener(NodeClickListener(recyclerView, listAdapter, ::navigateToFolder, ::openNote))
         foldersByPath = foldersByPath + (path to FolderContainer(view, listAdapter))
         folderViewContainer.addView(view)
         bindFolderToViewModel(path)
@@ -177,6 +182,17 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
             createAndAddFolder(path)
         }
         ensureOnlyOneChildIsVisible(folderViewContainer, foldersByPath.getValue(path).view)
+    }
+
+    private fun navigateToFolder(path: Path) {
+        viewModel.navigateTo(path)
+    }
+
+    private fun openNote(aggId: String) {
+        val context = requireContext()
+        val intent = Intent(context, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.AGG_ID_KEY, aggId)
+        context.startActivity(intent)
     }
 
     private fun removeFolder(path: Path) {
@@ -227,23 +243,15 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     private class NodeClickListener(
         private val recyclerView: RecyclerView,
         private val nodeListAdapter: NodeListAdapter,
-        private val viewModel: NavigationViewModel
+        private val navigateToFolder: KFunction1<Path, Unit>,
+        private val openNote: KFunction1<String, Unit>
     ) : View.OnClickListener {
-        /**
-         * Called when a view has been clicked.
-         *
-         * @param v The view that was clicked.
-         */
         override fun onClick(v: View) {
             val itemPosition = recyclerView.getChildAdapterPosition(v)
             val node = nodeListAdapter.getItem(itemPosition)
             when (node) {
-                is Folder -> viewModel.navigateTo(node.path)
-                is Note -> {
-                    val intent = Intent(v.context, DetailActivity::class.java)
-                    intent.putExtra(DetailActivity.AGG_ID_KEY, node.aggId)
-                    v.context.startActivity(intent)
-                }
+                is Folder -> navigateToFolder(node.path)
+                is Note -> openNote(node.aggId)
             }
         }
     }

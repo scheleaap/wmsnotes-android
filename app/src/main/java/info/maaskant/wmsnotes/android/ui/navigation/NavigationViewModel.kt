@@ -9,6 +9,7 @@ import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTi
 import info.maaskant.wmsnotes.client.indexing.Node
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
 import info.maaskant.wmsnotes.model.CommandBus
+import info.maaskant.wmsnotes.model.CommandExecution
 import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.model.folder.CreateFolderCommand
 import info.maaskant.wmsnotes.model.folder.FolderCommandRequest
@@ -18,6 +19,7 @@ import info.maaskant.wmsnotes.model.note.NoteCommandRequest
 import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class NavigationViewModel @Inject constructor(
@@ -57,17 +59,25 @@ class NavigationViewModel @Inject constructor(
         }
     }
 
-    fun createNote() {
-        commandBus.requests.onNext(
-            NoteCommandRequest.of(
-                CreateNoteCommand(
-                    aggId = Note.randomAggId(),
-                    path = stackValue.peek()!!,
-                    title = newNoteTitle,
-                    content = ""
-                )
+    fun createNote(): String? {
+        return try {
+            val commandResult = CommandExecution.executeBlocking(
+                commandBus = commandBus,
+                commandRequest = NoteCommandRequest.of(
+                    CreateNoteCommand(
+                        aggId = Note.randomAggId(),
+                        path = stackValue.peek()!!,
+                        title = newNoteTitle,
+                        content = ""
+                    )
+                ),
+                timeout = CommandExecution.Duration(500, TimeUnit.MILLISECONDS)
             )
-        )
+            commandResult.newEvents.first().aggId
+        } catch (e: RuntimeException) {
+            logger.warn("Could not create new note", e)
+            null
+        }
     }
 
     fun getNodes(path: Path): Observable<List<Node>> {
