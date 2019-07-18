@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/viewer_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentEnd="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="info.maaskant.wmsnotes.android.ui.detail.DetailActivity"
     tools:showIn="@layout/detail_activity">
 
-    <ScrollView
-        android:layout_width="wrap_content"
+    <!-- See https://stackoverflow.com/a/45306799 for why to use padding instead of margin. -->
+    <TextView
+        android:id="@+id/viewer_textview"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true">
+        android:padding="8dp"
+        android:textColor="@android:color/primary_text_light" />
 
-        <TextView
-            android:id="@+id/viewer_textview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:textColor="@android:color/primary_text_light" />
-
-    </ScrollView>
-
-</RelativeLayout>
+</ScrollView>

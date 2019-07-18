@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
-import android.widget.ScrollView
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import dagger.android.support.AndroidSupportInjection
@@ -28,7 +27,6 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
     lateinit var detailViewModel: DetailViewModel
 
     private lateinit var contentField: EditText
-    private lateinit var scrollView: ScrollView
 
     private var listenForChanges: Boolean = true
 
@@ -61,7 +59,6 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.editor_fragment, container, false).apply {
-            scrollView = findViewById(R.id.editor_view)
             contentField = findViewById<EditText>(R.id.editor_content).apply {
                 isSaveEnabled = false
             }
