@@ -55,9 +55,9 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater?.inflate(R.menu.navigation_menu, menu)
+        inflater.inflate(R.menu.navigation_menu, menu)
     }
 
     override fun onCreateView(

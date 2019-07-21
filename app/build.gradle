@@ -64,12 +64,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha02'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // WMS Notes
 //    implementation group: 'info.maaskant.wmsnotes', name: 'shared', version: "0.0.3-SNAPSHOT", changing: true
@@ -88,7 +88,7 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$dagger"
 
     // Infrastructure - Leak Testing
-    final def leakcanary = "2.0-alpha-2"
+    final def leakcanary = "2.0-alpha-3"
     implementation "com.squareup.leakcanary:leaksentry:$leakcanary"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary"
 
@@ -101,8 +101,8 @@ dependencies {
     implementation "io.grpc:grpc-okhttp:1.16.1"
 
     // UI
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha02'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
     def materialdialogs = "2.8.1"
     implementation "com.afollestad.material-dialogs:core:$materialdialogs"
     implementation "com.afollestad.material-dialogs:input:$materialdialogs"
@@ -113,7 +113,7 @@ dependencies {
 
     // Testing
     // (Required) Writing and executing Unit Tests on the JUnit Platform
-    def junit = "5.4.1"
+    def junit = "5.5.1"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junit"
