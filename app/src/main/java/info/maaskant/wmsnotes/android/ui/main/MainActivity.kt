@@ -7,10 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.baurine.permissionutil.PermissionUtil
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
@@ -19,13 +15,11 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationWorker
 import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
 import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
 import info.maaskant.wmsnotes.android.ui.settings.SettingsActivity
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragment.Listener {
@@ -99,6 +93,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         PermissionUtil.onActivityResult(this, requestCode)
     }
 
@@ -146,20 +141,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
     }
 
     override fun onStartNavigatingButtonPressed() = navigateToNavigation()
-
-    private fun scheduleSynchronizationUsingWorkManager() {
-        val workRequest = PeriodicWorkRequestBuilder<SynchronizationWorker>(
-            repeatInterval = 10,
-            repeatIntervalTimeUnit = TimeUnit.SECONDS
-        )
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-            )
-            .build()
-        WorkManager.getInstance().enqueue(workRequest).get()
-    }
 
     override fun supportFragmentInjector() = fragmentInjector
 }

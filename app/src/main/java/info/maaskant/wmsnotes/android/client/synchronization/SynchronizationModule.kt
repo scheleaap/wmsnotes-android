@@ -45,7 +45,7 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Suppress("ConstantConditionIf")
-@Module(includes = [SynchronizationWorkerModule::class])
+@Module
 class SynchronizationModule {
 
     @Provides
@@ -195,8 +195,8 @@ class SynchronizationModule {
         MultipleMergeStrategy(
             EqualsMergeStrategy(),
             KeepBothMergeStrategy(
-                differenceAnalyzer=differenceAnalyzer,
-                differenceCompensator=differenceCompensator,
+                differenceAnalyzer = differenceAnalyzer,
+                differenceCompensator = differenceCompensator,
                 aggregateIdGenerator = { "n-" + UUID.randomUUID().toString() },
                 conflictedNoteTitleSuffix = " (conflict on Android)"
             )

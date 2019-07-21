@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.app.Service
 import androidx.fragment.app.Fragment
-import androidx.work.Worker
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
@@ -21,7 +20,6 @@ import dagger.android.HasActivityInjector
 import dagger.android.HasServiceInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.BuildConfig
-import info.maaskant.wmsnotes.android.app.di.workmanager.HasWorkerInjector
 import info.maaskant.wmsnotes.utilities.logger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -30,7 +28,7 @@ import java.nio.charset.Charset
 import javax.inject.Inject
 
 
-class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasServiceInjector, HasWorkerInjector {
+class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasServiceInjector {
     private val logger by logger()
 
 //    @Inject
@@ -44,9 +42,6 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
 
     @Inject
     lateinit var serviceInjector: DispatchingAndroidInjector<Service>
-
-    @Inject
-    lateinit var workerInjector: DispatchingAndroidInjector<Worker>
 
     private lateinit var component: AppComponent
 
@@ -168,5 +163,4 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
     override fun activityInjector(): AndroidInjector<Activity> = activityInjector
     override fun supportFragmentInjector() = fragmentInjector
     override fun serviceInjector(): AndroidInjector<Service> = serviceInjector
-    override fun workerInjector() = workerInjector
 }

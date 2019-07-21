@@ -5,7 +5,6 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.support.AndroidSupportInjectionModule
-import info.maaskant.wmsnotes.android.app.di.workmanager.AndroidWorkerInjectionModule
 import info.maaskant.wmsnotes.android.client.indexing.IndexingModule
 import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationModule
 import info.maaskant.wmsnotes.android.model.AggregateModule
@@ -20,7 +19,6 @@ import javax.inject.Singleton
         AggregateModule::class,
         AndroidInjectionModule::class,
         AndroidSupportInjectionModule::class,
-        AndroidWorkerInjectionModule::class,
         CommandModule::class,
         EventModule::class,
         IndexingModule::class,
