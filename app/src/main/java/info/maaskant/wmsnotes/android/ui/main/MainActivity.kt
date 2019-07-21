@@ -14,15 +14,17 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
+import info.maaskant.wmsnotes.BuildConfig
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
-import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
+import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
+import info.maaskant.wmsnotes.android.ui.debug.DebugFragment
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
 import info.maaskant.wmsnotes.android.ui.settings.SettingsActivity
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragment.Listener {
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     @Inject
     lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
 
@@ -66,7 +68,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
         val settingsDrawerItem = PrimaryDrawerItem().withIdentifier(2)
             .withName(R.string.drawer_item_settings).withSelectable(false)
         drawer = DrawerBuilder().withActivity(this).withToolbar(toolbar)
-            .addDrawerItems(/*debugDrawerItem,*/ notesDrawerItem, settingsDrawerItem)
+            .also {
+                if (BuildConfig.DEBUG) {
+                    it.addDrawerItems(debugDrawerItem)
+                }
+            }
+            .addDrawerItems(notesDrawerItem, settingsDrawerItem)
             .withOnDrawerItemClickListener { _, _, drawerItem ->
                 when (drawerItem) {
                     debugDrawerItem -> navigateToDebug()
@@ -82,7 +89,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
 
     private fun navigateToDebug() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, MainFragment())
+            .replace(R.id.main_container, DebugFragment())
             .commitNow()
     }
 
@@ -139,8 +146,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
         super.onStart()
         checkAndAskForPermissions()
     }
-
-    override fun onStartNavigatingButtonPressed() = navigateToNavigation()
 
     override fun supportFragmentInjector() = fragmentInjector
 }

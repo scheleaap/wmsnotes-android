@@ -43,7 +43,7 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
     @Inject
     lateinit var serviceInjector: DispatchingAndroidInjector<Service>
 
-    private lateinit var component: AppComponent
+    lateinit var component: AppComponent
 
     private fun createLogcatAppenderAndStart(loggerContext: LoggerContext): LogcatAppender {
         val encoder = PatternLayoutEncoder().also {

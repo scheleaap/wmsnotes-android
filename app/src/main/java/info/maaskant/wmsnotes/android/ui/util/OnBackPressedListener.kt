@@ -1,4 +1,4 @@
-package info.maaskant.wmsnotes.android.ui
+package info.maaskant.wmsnotes.android.ui.util
 
 interface OnBackPressedListener {
     /**

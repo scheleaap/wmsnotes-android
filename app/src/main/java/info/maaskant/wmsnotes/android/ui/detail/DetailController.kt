@@ -5,7 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.ui.RxAlertDialog
+import info.maaskant.wmsnotes.android.ui.util.RxAlertDialog
 import info.maaskant.wmsnotes.model.CommandBus
 import info.maaskant.wmsnotes.model.note.ChangeContentCommand
 import info.maaskant.wmsnotes.model.note.DeleteNoteCommand

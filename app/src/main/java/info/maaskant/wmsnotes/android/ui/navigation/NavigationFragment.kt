@@ -17,7 +17,7 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.ui.OnBackPressedListener
+import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.android.ui.main.MainActivity
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid

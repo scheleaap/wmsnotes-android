@@ -12,6 +12,7 @@ import info.maaskant.wmsnotes.android.model.CommandModule
 import info.maaskant.wmsnotes.android.model.EventModule
 import info.maaskant.wmsnotes.android.service.ServiceModule
 import info.maaskant.wmsnotes.android.ui.UiModule
+import info.maaskant.wmsnotes.android.ui.util.glide.GlideModule
 import javax.inject.Singleton
 
 @Component(
@@ -33,6 +34,8 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun inject(app: App)
+
+    fun inject(glide: GlideModule)
 
     @Component.Builder
     interface Builder {
