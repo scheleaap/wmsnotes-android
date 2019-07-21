@@ -35,21 +35,3 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-ext {
-    versions = [
-            kotlin         : kotlin_version,
-            gradle         : gradle_version,
-            leakcanary     : "1.6.3",
-            dagger         : "2.16",
-            materialdialogs: "2.8.1",
-            materialdrawer : "6.1.1",
-            permissionutil : "1.0.3",
-            workmanager    : "1.0.0-alpha10",
-            grpc           : "1.16.1",
-            markwon        : "2.0.0",
-            junit          : "5.4.1",
-            assertj        : "3.12.2",
-            mockk          : "1.9.2",
-    ]
-}

@@ -68,7 +68,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
@@ -81,43 +80,47 @@ dependencies {
     implementation "com.github.tony19:logback-android:2.0.0"
 
     // Infrastructure - Dependency Injection
-    implementation "com.google.dagger:dagger:$versions.dagger"
-    kapt "com.google.dagger:dagger-compiler:$versions.dagger"
-    implementation "com.google.dagger:dagger-android:$versions.dagger"
-    implementation "com.google.dagger:dagger-android-support:$versions.dagger"
-    kapt "com.google.dagger:dagger-android-processor:$versions.dagger"
+    final def dagger = "2.16"
+    implementation "com.google.dagger:dagger:$dagger"
+    kapt "com.google.dagger:dagger-compiler:$dagger"
+    implementation "com.google.dagger:dagger-android:$dagger"
+    implementation "com.google.dagger:dagger-android-support:$dagger"
+    kapt "com.google.dagger:dagger-android-processor:$dagger"
 
     // Infrastructure - Leak Testing
-    implementation 'com.squareup.leakcanary:leaksentry:2.0-alpha-2'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-2'
+    final def leakcanary = "2.0-alpha-2"
+    implementation "com.squareup.leakcanary:leaksentry:$leakcanary"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary"
 
     // RxJava and background execution.
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    implementation("android.arch.work:work-runtime-ktx:$versions.workmanager") {
+    implementation("android.arch.work:work-runtime-ktx:1.0.0-alpha10") {
         exclude group: 'com.google.guava', module: 'listenablefuture'
     }
     implementation 'io.sellmair:disposer:2.0.0'
 
     // gRPC
-    implementation "io.grpc:grpc-okhttp:$versions.grpc"
+    implementation "io.grpc:grpc-okhttp:1.16.1"
 
     // UI
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation "com.afollestad.material-dialogs:core:$versions.materialdialogs"
-    implementation "com.afollestad.material-dialogs:input:$versions.materialdialogs"
-    implementation "com.afollestad.material-dialogs:lifecycle:$versions.materialdialogs"
-    implementation "com.mikepenz:materialdrawer:$versions.materialdrawer"
-    implementation "com.github.baurine:permission-util:$versions.permissionutil"
-    implementation "ru.noties:markwon:$versions.markwon"
+    def materialdialogs = "2.8.1"
+    implementation "com.afollestad.material-dialogs:core:$materialdialogs"
+    implementation "com.afollestad.material-dialogs:input:$materialdialogs"
+    implementation "com.afollestad.material-dialogs:lifecycle:$materialdialogs"
+    implementation "com.mikepenz:materialdrawer:6.1.1"
+    implementation "com.github.baurine:permission-util:1.0.3"
+    implementation "ru.noties:markwon:2.0.0"
 
     // Testing
     // (Required) Writing and executing Unit Tests on the JUnit Platform
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$versions.junit"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$versions.junit"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:$versions.junit"
-    testImplementation("org.assertj:assertj-core:$versions.assertj")
+    def junit = "5.4.1"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit"
+    testImplementation("org.assertj:assertj-core:3.12.2")
     // See also https://blog.philipphauer.de/best-practices-unit-testing-kotlin/
-    testImplementation "io.mockk:mockk:$versions.mockk"
+    testImplementation "io.mockk:mockk:1.9.2"
 }
