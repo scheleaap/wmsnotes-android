@@ -11,13 +11,20 @@
     tools:context="info.maaskant.wmsnotes.android.ui.detail.DetailActivity"
     tools:showIn="@layout/detail_activity">
 
+    <!-- The LinearLayout is necessary to apply padding to, so that size calculations in the TextView (e.g. for images) work correctly -->
     <!-- See https://stackoverflow.com/a/45306799 for why to use padding instead of margin. -->
-    <TextView
-        android:id="@+id/viewer_textview"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:textColor="@android:color/primary_text_light"
-        android:textSize="18sp" />
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/viewer_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="18sp" />
+    </LinearLayout>
 
 </ScrollView>
