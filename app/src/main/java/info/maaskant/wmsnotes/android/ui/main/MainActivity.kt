@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
             createAndAddDrawer(toolbar)
         }
 
-        ApplicationServiceManager.ServiceBindingLifecycleObserver(this, lifecycle)
+        lifecycle.addObserver(ApplicationServiceManager.ServiceBindingLifecycleObserver(this))
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

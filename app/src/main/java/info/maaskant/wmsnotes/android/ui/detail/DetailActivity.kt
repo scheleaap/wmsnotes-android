@@ -72,7 +72,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         detailViewModel.restoreState(savedInstanceState)
 
         lifecycle.addObserver(detailController)
-        ApplicationServiceManager.ServiceBindingLifecycleObserver(this, lifecycle)
+        ApplicationServiceManager.ServiceBindingLifecycleObserver(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -92,19 +92,13 @@ class ApplicationServiceManager : Service() {
     }
 
     class ServiceBindingLifecycleObserver constructor(
-        private val context: Context,
-        lifecycle: Lifecycle
+        private val context: Context
     ) : ServiceConnection, LifecycleObserver {
 
         val isBound: Boolean
             get() = boundService != null
 
         var boundService: ApplicationServiceManager? = null
-
-
-        init {
-            lifecycle.addObserver(this)
-        }
 
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             boundService = (binder as Binder).service
