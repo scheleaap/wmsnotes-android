@@ -1,13 +1,24 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_server_hostname"
-        android:inputType="textCapWords"
-        android:key="server_hostname"
-        android:maxLines="1"
-        android:selectAllOnFocus="false"
-        android:singleLine="true"
-        android:title="@string/pref_title_server_hostname" />
+    <PreferenceCategory
+        app:key="@string/pref_category_synchronization_key"
+        app:title="@string/pref_category_synchronization_title">
 
-</PreferenceScreen>
+        <SwitchPreferenceCompat
+            app:key="@string/pref_synchronization_enabled_key"
+            app:title="@string/pref_synchronization_enabled_title" />
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:inputType="textCapWords"
+            android:maxLines="1"
+            android:selectAllOnFocus="false"
+            android:singleLine="true"
+            app:defaultValue="@string/pref_server_hostname_default"
+            app:key="@string/pref_server_hostname_key"
+            app:title="@string/pref_server_hostname_title"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

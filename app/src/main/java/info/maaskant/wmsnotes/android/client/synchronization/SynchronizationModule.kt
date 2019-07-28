@@ -1,15 +1,13 @@
 package info.maaskant.wmsnotes.android.client.synchronization
 
-import android.content.Context
-import android.preference.PreferenceManager
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util.Pool
+import com.f2prateek.rx.preferences2.Preference
 import dagger.Module
 import dagger.Provides
-import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.OtherModule
+import info.maaskant.wmsnotes.android.app.PreferencesModule.ServerHostname
 import info.maaskant.wmsnotes.android.app.di.Configuration.storeInMemory
-import info.maaskant.wmsnotes.android.ui.settings.SettingsFragment
 import info.maaskant.wmsnotes.client.api.GrpcCommandMapper
 import info.maaskant.wmsnotes.client.api.GrpcEventMapper
 import info.maaskant.wmsnotes.client.synchronization.*
@@ -47,17 +45,6 @@ import javax.inject.Singleton
 @Suppress("ConstantConditionIf")
 @Module
 class SynchronizationModule {
-
-    @Provides
-    @Singleton
-    @ServerHostname
-    fun serverHostname(context: Context): String = PreferenceManager
-        .getDefaultSharedPreferences(context)
-        .getString(
-            SettingsFragment.SERVER_HOSTNAME_KEY,
-            context.resources.getString(R.string.pref_default_server_hostname)
-        )!!
-
     @Provides
     @Singleton
     fun grpcDeadline() = Deadline.after(1, TimeUnit.SECONDS)
@@ -74,8 +61,8 @@ class SynchronizationModule {
 
     @Provides
     @Singleton
-    fun managedChannel(@ServerHostname hostname: String): ManagedChannel =
-        ManagedChannelBuilder.forAddress(hostname, 6565)
+    fun managedChannel(@ServerHostname hostname: Preference<String>): ManagedChannel =
+        ManagedChannelBuilder.forAddress(hostname.get(), 6565)
             // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
             // needing certificates.
             .usePlaintext()
@@ -268,11 +255,6 @@ class SynchronizationModule {
     ).apply {
         stateRepository.connect(this)
     }
-
-    @Qualifier
-    @MustBeDocumented
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class ServerHostname
 
     @Qualifier
     @MustBeDocumented

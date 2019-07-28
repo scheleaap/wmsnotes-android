@@ -1,46 +1,50 @@
 package info.maaskant.wmsnotes.android.ui.settings
 
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
+import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceFragmentCompat
+import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.app.PreferencesModule
+import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationUtils
+import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
+import io.sellmair.disposer.disposeBy
+import io.sellmair.disposer.onStop
+import javax.inject.Inject
 
-class SettingsFragment : PreferenceFragment() {
+class SettingsFragment : PreferenceFragmentCompat() {
+
+    @Inject
+    @field:PreferencesModule.SynchronizationEnabled // Thanks to JakeWharton, https://github.com/google/dagger/issues/848#issuecomment-323554193
+    lateinit var synchronizationEnabled: com.f2prateek.rx.preferences2.Preference<Boolean>
+
+    @Inject
+    lateinit var synchronizationTask: SynchronizationTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-
-        addPreferencesFromResource(R.xml.preferences)
-
-        bindPreferenceSummaryToValue(findPreference(SERVER_HOSTNAME_KEY))
     }
 
-    companion object {
-
-        var SERVER_HOSTNAME_KEY = "server_hostname"
-
-        private val BIND_PREFERENCE_SUMMARY_TO_VALUE_LISTENER = BindPreferenceSummaryToValueListener()
-
-        /**
-         * Binds a preference's summary to its value. More specifically, when the preference's value is
-         * changed, its summary (line of text below the preference title) is updated to reflect the
-         * value. The summary is also immediately updated upon calling this method.
-         *
-         * @see BindPreferenceSummaryToValueListener
-         */
-        private fun bindPreferenceSummaryToValue(preference: Preference) {
-            // Set the listener to watch for value changes.
-            preference.onPreferenceChangeListener = BIND_PREFERENCE_SUMMARY_TO_VALUE_LISTENER
-
-            // Trigger the listener immediately with the preference's
-            // current value.
-            BIND_PREFERENCE_SUMMARY_TO_VALUE_LISTENER.onPreferenceChange(
-                preference,
-                PreferenceManager.getDefaultSharedPreferences(preference.context)
-                    .getString(preference.key, "") as Any
-            )
-        }
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.preferences, rootKey)
+        setupServerHostnamePreference()
+        setupSynchronizationTask()
     }
 
+    private fun setupServerHostnamePreference() {
+        val serverHostnamePreference: EditTextPreference? = findPreference("server_hostname")
+        synchronizationEnabled.asObservable()
+            .subscribe {
+                serverHostnamePreference?.isEnabled = it
+            }
+            .disposeBy(onStop)
+    }
+
+    private fun setupSynchronizationTask() {
+        SynchronizationUtils.connectSynchronizationToPreference(
+            synchronizationEnabled,
+            lifecycle, synchronizationTask
+        )
+    }
 }

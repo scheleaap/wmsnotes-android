@@ -18,8 +18,16 @@
 
     <!-- Settings -->
     <string name="pref_header_general">General</string>
-    <string name="pref_title_server_hostname">Server</string>
-    <string name="pref_default_server_hostname" translatable="false">localhost</string> <!-- 10.0.2.2 -->
+
+    <string name="pref_category_synchronization_key" translatable="false">synchronization</string>
+    <string name="pref_category_synchronization_title">Synchronization</string>
+    <string name="pref_server_hostname_key" translatable="false">server_hostname</string>
+    <string name="pref_server_hostname_title">Server</string>
+    <string name="pref_server_hostname_summary">The hostname or IP address of the server to synchronize to</string>
+    <string name="pref_server_hostname_default" translatable="false" /> <!-- 10.0.2.2 -->
+    <string name="pref_synchronization_enabled_key" translatable="false">synchronization_enabled</string>
+    <string name="pref_synchronization_enabled_title">Enable synchronization</string>
+    <bool name="pref_synchronization_enabled_default" translatable="false">false</bool>
 
     <!-- MainActivity -->
     <string name="drawer_item_debug" translatable="false">Debug</string>

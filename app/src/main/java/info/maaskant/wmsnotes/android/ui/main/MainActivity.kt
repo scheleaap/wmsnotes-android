@@ -17,19 +17,15 @@ import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.BuildConfig
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
-import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.debug.DebugFragment
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
 import info.maaskant.wmsnotes.android.ui.settings.SettingsActivity
-import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
+import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     @Inject
     lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
-
-    @Inject
-    lateinit var synchronizationTask: SynchronizationTask
 
     private val permissionRequestCode: Int = 0
 

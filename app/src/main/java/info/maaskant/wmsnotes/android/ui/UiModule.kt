@@ -9,6 +9,7 @@ import info.maaskant.wmsnotes.android.ui.debug.DebugModule
 import info.maaskant.wmsnotes.android.ui.detail.DetailModule
 import info.maaskant.wmsnotes.android.ui.main.MainModule
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationModule
+import info.maaskant.wmsnotes.android.ui.settings.SettingsModule
 import javax.inject.Provider
 import javax.inject.Singleton
 
@@ -17,7 +18,8 @@ import javax.inject.Singleton
         DebugModule::class,
         DetailModule::class,
         MainModule::class,
-        NavigationModule::class
+        NavigationModule::class,
+        SettingsModule::class
     ]
 )
 class UiModule {

@@ -67,7 +67,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha02'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
@@ -75,11 +74,11 @@ dependencies {
 //    implementation group: 'info.maaskant.wmsnotes', name: 'shared', version: "0.0.3-SNAPSHOT", changing: true
     implementation "com.github.scheleaap:wmsnotes-desktop-and-server:8b26858516f8bea344aa20c9a2412145970f1bc6"
 
-    // Infrastructure - Logging
+    // Logging
     implementation "org.slf4j:slf4j-api:1.7.25"
     implementation "com.github.tony19:logback-android:2.0.0"
 
-    // Infrastructure - Dependency Injection
+    // Dependency Injection
     final def dagger = "2.16"
     implementation "com.google.dagger:dagger:$dagger"
     kapt "com.google.dagger:dagger-compiler:$dagger"
@@ -87,18 +86,22 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$dagger"
     kapt "com.google.dagger:dagger-android-processor:$dagger"
 
-    // Infrastructure - Leak Testing
+    // Leak Testing
     final def leakcanary = "2.0-alpha-3"
     implementation "com.squareup.leakcanary:leaksentry:$leakcanary"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary"
 
-    // RxJava and background execution.
+    // RxJava and background execution
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.sellmair:disposer:2.0.0'
 
     // gRPC
     implementation "io.grpc:grpc-okhttp:1.16.1"
+
+    // Preferences
+    implementation 'androidx.preference:preference-ktx:1.1.0-rc01'
+    implementation 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0'
 
     // UI
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha02'

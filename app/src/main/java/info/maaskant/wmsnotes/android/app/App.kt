@@ -20,7 +20,6 @@ import dagger.android.HasActivityInjector
 import dagger.android.HasServiceInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.BuildConfig
-import info.maaskant.wmsnotes.utilities.logger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -29,10 +28,7 @@ import javax.inject.Inject
 
 
 class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasServiceInjector {
-    private val logger by logger()
-
-//    @Inject
-//    internal var navigationViewModel: NavigationViewModel? = null
+    lateinit var component: AppComponent
 
     @Inject
     lateinit var activityInjector: DispatchingAndroidInjector<Activity>
@@ -42,8 +38,6 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
 
     @Inject
     lateinit var serviceInjector: DispatchingAndroidInjector<Service>
-
-    lateinit var component: AppComponent
 
     private fun createLogcatAppenderAndStart(loggerContext: LoggerContext): LogcatAppender {
         val encoder = PatternLayoutEncoder().also {
