@@ -5,11 +5,10 @@ branches:
   except:
     - /^\d+\.\d+\.\d+$/
 
-language: java
 os: linux
 dist: xenial
 group: edge
-
+language: java
 jdk:
   - openjdk8
 
@@ -46,9 +45,17 @@ before_install:
 
 install:
   # Accept Android licenses for all available packages that have not already been accepted
-  - yes | sdkmanager --licenses
+  - yes | sdkmanager --licenses > /dev/null
   # Install all Ruby dependencies
   - bundle install
+
+before_script:
+  # Create dir for gradle settings
+  - mkdir -p $HOME/.gradle
+  # Disable gradle daemon for current user
+  - echo "org.gradle.daemon=false" >> $HOME/.gradle/gradle.properties
+  # Set gradle log format to plain
+  - echo "org.gradle.console=plain" >> $HOME/.gradle/gradle.properties
 
 script:
   - ./build.sh
