@@ -7,8 +7,11 @@ branches:
 
 language: java
 os: linux
-dist: bionic
+dist: xenial
 group: edge
+
+jdk:
+  - openjdk8
 
 env:
   global:
