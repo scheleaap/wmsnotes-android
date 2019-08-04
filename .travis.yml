@@ -20,6 +20,8 @@ before_install:
   ## Android
   # Source: https://travis-ci.community/t/installing-android-dependencies-android-update-sdk-command-not-found/4138/5
 
+  - java -version
+  - javac -version
   # Set JAVA_HOME path
   - export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
   # Download and unzip Android SDK command line tools
