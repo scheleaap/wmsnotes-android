@@ -5,48 +5,44 @@ branches:
   except:
     - /^\d+\.\d+\.\d+$/
 
-language: minimal
-os: linux
-dist: bionic
-group: edge
+language: android
 
 env:
   global:
     secure: RoJBEPGe+7lTGMDz3nEGirvIMYoMmxZjc9b2cw2mzPXZLehhpmqj8u43w9Ox4L0rUD6iilwKnBiJ1iKvs1JEq4iYRb+o1l+zEcfgwOJvSZ6Akgr9NhXieDpv6uqVt/sCLHnuxf2XCMFpno3Cr3HGT2GmWRnLkP2ipgbe+5uxgE3FuIokpBfJFLu+f1+yQ1G4iuWDDP+CY+H1M2NSQ7x+uhzy6g47tXydIy28F9ZG5N5yPMhTk9UfVEWwIznfLE7ZfnV0Rl1559K6lzO3T5nd3Mdnn/1ppPPmmq5EPteu1evfBMPJY8AogO3mxfzf/Gm8xPpyorfMq4UjCUlQGCkKFycNpMEZfbmXWqd6BG2qj2sSVQcwEwTh0inWDC0WstgUrQRfNCwzlCycNhLcElpxCj+gx+YbZ8jOHunaO2V/dD7UVbJPKEznwa/g0Ej1UK9V+v1QJLhww+fuvd+P5HGYOryUWzPTH4sgKZZIFsQ5apdRAug99Mz696sWdWGjqU2U1/MxdHgdSOWFB3v6pCLSAynZg7lqdGDTZrlN2U3Ga1B7MGnJpn/SE+WA0SjN1MtRddb7ytpE/XON2+nq38+a4TrHJ+Ipt5WcD4pbigdoov+aRODAWs0I6Znn4f/F3lLBCQKJcSX+SPKS1tUun3Eq7bvghg8FN8XPE5yKi+FgDfw=
-    # for updates check developer.android.com/studio#downloads (current 26.1.1)
-    - ANDROID_SDK_TOOLS=sdk-tools-linux-4333796.zip
+
+android:
+  components:
+    # Uncomment the lines below if you want to
+    # use the latest revision of Android SDK Tools
+    # - tools
+    # - platform-tools
+
+    # The BuildTools version used by your project
+    - build-tools-28.0.3
+
+    # The SDK version used to compile your project
+    - android-23
+
+    # Additional components
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+
+    # Specify at least one system image,
+    # if you need to run emulator(s) during your tests
+    # - sys-img-x86-android-26
+    # - sys-img-armeabi-v7a-android-17
 
 before_install:
-  ## Android
-  # Source: https://travis-ci.community/t/installing-android-dependencies-android-update-sdk-command-not-found/4138/5
-
-  # Set JAVA_HOME path
-  - export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-  # Download and unzip Android SDK command line tools
-  - wget -nv https://dl.google.com/android/repository/$ANDROID_SDK_TOOLS
-  - unzip -q $ANDROID_SDK_TOOLS -d $HOME/sdk
-  # Set SDK tools path variable and ANDROID_HOME
-  - export PATH=$PATH:$HOME/sdk/tools/bin
-  - export ANDROID_HOME=$HOME/sdk
-  # Create empty config file to prevent sdkmanager warning message
-  - mkdir -p $HOME/.android && touch $HOME/.android/repositories.cfg
-
-  ## Ruby
-
-  # Install Bundler
   - gem install bundler -v 2.0.1
-
-  ## Other
-
-  # Decrypt and unpack secrets
+  # Source: https://stackoverflow.com/questions/52274229/travis-ci-android-28-licenses-have-not-been-accepted
+  - yes | sdkmanager "platforms;android-28"
   - openssl aes-256-cbc -K $encrypted_1358b77c8ff7_key -iv $encrypted_1358b77c8ff7_iv
     -in secrets.tar.enc -out secrets.tar -d
   - tar xvf secrets.tar
 
 install:
-  # Accept Android licenses for all available packages that have not already been accepted
-  - yes | sdkmanager --licenses >/dev/null
-  # Install all Ruby dependencies
   - bundle install
 
 script:
