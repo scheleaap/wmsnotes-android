@@ -5,7 +5,7 @@ branches:
   except:
     - /^\d+\.\d+\.\d+$/
 
-language: minimal # Not sure if this will always continue to include Java, but works for now.
+language: java
 os: linux
 dist: bionic
 group: edge
@@ -20,11 +20,6 @@ before_install:
   ## Android
   # Source: https://travis-ci.community/t/installing-android-dependencies-android-update-sdk-command-not-found/4138/5
 
-  - java -version
-  - javac -version
-  - echo $JAVA_HOME
-  # Set JAVA_HOME path
-  - export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
   # Download and unzip Android SDK command line tools
   - wget -nv https://dl.google.com/android/repository/$ANDROID_SDK_TOOLS
   - unzip -q $ANDROID_SDK_TOOLS -d $HOME/sdk
