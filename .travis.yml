@@ -45,7 +45,7 @@ before_install:
 
 install:
   # Accept Android licenses for all available packages that have not already been accepted
-  - yes | sdkmanager --licenses >/dev/null
+  - yes | sdkmanager --licenses
   # Install all Ruby dependencies
   - bundle install
 
