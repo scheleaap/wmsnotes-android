@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import dagger.android.AndroidInjection
+import info.maaskant.wmsnotes.android.client.synchronization.PreferenceBoundSynchronizationTask
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import info.maaskant.wmsnotes.model.folder.FolderCommandExecutor
@@ -37,7 +38,7 @@ class ApplicationServiceManager : Service() {
     lateinit var treeIndex: TreeIndex
 
     @Inject
-    lateinit var synchronizationTask: SynchronizationTask
+    lateinit var synchronizationTask: PreferenceBoundSynchronizationTask
 
     lateinit var services: List<ApplicationService>
 

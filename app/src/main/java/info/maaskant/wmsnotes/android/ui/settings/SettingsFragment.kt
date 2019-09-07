@@ -6,7 +6,6 @@ import androidx.preference.PreferenceFragmentCompat
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.PreferencesModule
-import info.maaskant.wmsnotes.android.client.synchronization.SynchronizationUtils
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import io.sellmair.disposer.disposeBy
 import io.sellmair.disposer.onStop
@@ -29,7 +28,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
         setupServerHostnamePreference()
-        setupSynchronizationTask()
     }
 
     private fun setupServerHostnamePreference() {
@@ -39,12 +37,5 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 serverHostnamePreference?.isEnabled = it
             }
             .disposeBy(onStop)
-    }
-
-    private fun setupSynchronizationTask() {
-        SynchronizationUtils.connectSynchronizationToPreference(
-            synchronizationEnabled,
-            lifecycle, synchronizationTask
-        )
     }
 }

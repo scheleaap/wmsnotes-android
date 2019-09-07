@@ -61,12 +61,12 @@ class SynchronizationModule {
 
     @Provides
     @Singleton
-    fun managedChannel(@ServerHostname hostname: Preference<String>): ManagedChannel =
-        ManagedChannelBuilder.forAddress(hostname.get(), 6565)
-            // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
-            // needing certificates.
+    fun managedChannel(@ServerHostname hostnamePreference: Preference<String>): ManagedChannel {
+        val hostname = if (hostnamePreference.get().isBlank()) "localhost" else hostnamePreference.get()
+        return ManagedChannelBuilder.forAddress(hostname, 6565)
             .usePlaintext()
             .build()
+    }
 
     @Provides
     @Singleton
