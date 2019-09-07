@@ -59,6 +59,20 @@ android {
 //    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 //}
 
+// See: https://stackoverflow.com/questions/52537170/how-do-you-use-gradles-exclude-to-replace-a-dependency
+//configurations {
+//    testCompile {
+//        exclude module: 'logback-android'
+//    }
+//}
+//configurations.all { config ->
+//    config.resolutionStrategy.dependencySubstitution {
+//        if (config.name.toLowerCase().contains('test')) {
+//            substitute module('com.github.tony19:logback-android:2.0.0') with module('ch.qos.logback:logback-classic:1.2.3')
+//        }
+//    }
+//}
+
 dependencies {
     // Default stuff
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -128,6 +142,8 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junit"
+    testImplementation "junit:junit:4.12"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junit"
     testImplementation("org.assertj:assertj-core:3.12.2")
     // See also https://blog.philipphauer.de/best-practices-unit-testing-kotlin/
     testImplementation "io.mockk:mockk:1.9.2"

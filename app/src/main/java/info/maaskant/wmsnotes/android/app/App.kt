@@ -20,12 +20,12 @@ import dagger.android.HasActivityInjector
 import dagger.android.HasServiceInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.BuildConfig
+import info.maaskant.wmsnotes.android.app.upgrades.ServerHostnameUpgrade
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.charset.Charset
 import javax.inject.Inject
-
 
 class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasServiceInjector {
     lateinit var component: AppComponent
@@ -38,6 +38,9 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
 
     @Inject
     lateinit var serviceInjector: DispatchingAndroidInjector<Service>
+
+    @Inject
+    lateinit var serverHostnameUpgrade: ServerHostnameUpgrade
 
     private fun createLogcatAppenderAndStart(loggerContext: LoggerContext): LogcatAppender {
         val encoder = PatternLayoutEncoder().also {
@@ -105,12 +108,7 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
 
         setupLogging()
         setupDependencyInjection()
-
-//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-//        val notebookPath = sharedPreferences.getString(
-//            SettingsFragment.NOTEBOOK_PATH_KEY,
-//            resources.getString(R.string.pref_default_notebook_path)
-//        )
+        serverHostnameUpgrade.run()
     }
 
     private fun setupDependencyInjection() {
