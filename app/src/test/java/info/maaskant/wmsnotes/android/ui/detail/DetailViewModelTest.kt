@@ -461,7 +461,7 @@ internal class DetailViewModelTest {
     }
 
     @Test
-    fun `restore state`() {
+    fun `restore state, view model also recreated`() {
         // Given
         val bundle: Bundle = mockk()
         every { bundle.containsKey("content") }.returns(true)
@@ -480,7 +480,34 @@ internal class DetailViewModelTest {
         assertThat(updatesObserver.values().toList()).isEqualTo(
             listOf(
                 updateFromViewModel(noteV1.content),
-                updateFromViewModel("Bundle Content")
+                updateFromRestoreState("Bundle Content")
+            )
+        )
+    }
+
+    @Test
+    fun `restore state, view model not recreated`() {
+        // Given
+        val bundle: Bundle = mockk()
+        every { bundle.containsKey("content") }.returns(true)
+        every { bundle.getString("content") }.returns("Bundle Content")
+        val model = DetailViewModel(noteRepository, ioScheduler = scheduler, computationScheduler = scheduler)
+        givenAProjectedNoteWithUpdates(aggId, Observable.just(noteV1))
+        model.setNote(aggId)
+        val dirtyObserver = model.isDirty().test()
+        val updatesObserver = model.getContentUpdates().test()
+
+        // When
+        model.restoreState(bundle)
+        model.restoreState(bundle) // twice
+
+        // Then
+        assertThat(dirtyObserver.values().toList()).isEqualTo(listOf(false,true))
+        assertThat(updatesObserver.values().toList()).isEqualTo(
+            listOf(
+                updateFromViewModel(noteV1.content),
+                updateFromRestoreState("Bundle Content"),
+                updateFromRestoreState("Bundle Content")
             )
         )
     }
@@ -499,6 +526,7 @@ internal class DetailViewModelTest {
         return projectedNoteWithUpdates
     }
 
-    private fun updateFromViewModel(value: String) = Update(value, Update.Origin.VIEW_MODEL)
+    private fun updateFromRestoreState(value: String) = Update(value, Update.Origin.RESTORE_STATE)
     private fun updateFromView(value: String) = Update(value, Update.Origin.VIEW)
+    private fun updateFromViewModel(value: String) = Update(value, Update.Origin.VIEW_MODEL)
 }

@@ -130,6 +130,8 @@ class DetailViewModel @VisibleForTesting constructor(
             this.contentUpdatesSubject.onNext(Update(content, origin))
             setContentDirty(!isSameAsNoteContent)
             logger.trace("Content set by user: {}", this.contentValue)
+        } else if (origin == Update.Origin.RESTORE_STATE) {
+            this.contentUpdatesSubject.onNext(Update(content, origin))
         }
     }
 
@@ -182,7 +184,7 @@ class DetailViewModel @VisibleForTesting constructor(
                 .firstOrError()
                 .map { bundle.getString(CONTENT_KEY)!! }
                 .subscribe(
-                    { setContentFromUser(it, origin = Update.Origin.VIEW_MODEL) },
+                    { setContentFromUser(it, origin = Update.Origin.RESTORE_STATE) },
                     { logger.warn("Error", it) }
                 )
             )
@@ -194,6 +196,6 @@ class DetailViewModel @VisibleForTesting constructor(
     }
 
     data class Update(val value: String, val origin: Origin) {
-        enum class Origin { VIEW, VIEW_MODEL }
+        enum class Origin { VIEW, VIEW_MODEL, RESTORE_STATE }
     }
 }
