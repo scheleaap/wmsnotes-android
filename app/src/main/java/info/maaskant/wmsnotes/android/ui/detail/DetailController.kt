@@ -105,7 +105,7 @@ class DetailController @VisibleForTesting constructor(
                     when (button) {
                         RxAlertDialog.Event.BUTTON_POSITIVE -> quitRequest.onNext(QuitRequestType.SAVE_AND_QUIT)
                         RxAlertDialog.Event.BUTTON_NEGATIVE -> quitRequest.onNext(QuitRequestType.DISCARD_AND_QUIT)
-                        RxAlertDialog.Event.DISMISS_ALERT -> println("dismiss")
+                        RxAlertDialog.Event.DISMISS_ALERT -> Unit
                         RxAlertDialog.Event.CANCEL_ALERT -> quitRequest.onNext(QuitRequestType.NO_REQUEST)
                         else -> throw IllegalArgumentException()
                     }
