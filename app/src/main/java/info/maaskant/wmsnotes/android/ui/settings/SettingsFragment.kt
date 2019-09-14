@@ -7,11 +7,14 @@ import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.PreferencesModule
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
+import info.maaskant.wmsnotes.utilities.logger
+import io.reactivex.rxkotlin.subscribeBy
 import io.sellmair.disposer.disposeBy
 import io.sellmair.disposer.onStop
 import javax.inject.Inject
 
 class SettingsFragment : PreferenceFragmentCompat() {
+    private val logger by logger()
 
     @Inject
     @field:PreferencesModule.SynchronizationEnabled // Thanks to JakeWharton, https://github.com/google/dagger/issues/848#issuecomment-323554193
@@ -33,9 +36,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setupServerHostnamePreference() {
         val serverHostnamePreference: EditTextPreference? = findPreference("server_hostname")
         synchronizationEnabled.asObservable()
-            .subscribe {
+            .subscribeBy(onNext = {
                 serverHostnamePreference?.isEnabled = it
-            }
+            }, onError = { logger.warn("Error", it) })
             .disposeBy(onStop)
     }
 }

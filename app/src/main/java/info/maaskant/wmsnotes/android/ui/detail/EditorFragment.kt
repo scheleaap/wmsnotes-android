@@ -16,6 +16,7 @@ import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.ui.detail.DetailViewModel.Update.Origin
 import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import io.sellmair.disposer.disposeBy
 import io.sellmair.disposer.onStop
 import javax.inject.Inject
@@ -83,7 +84,7 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
 
         detailViewModel.getContentUpdates()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribeBy(onNext = {
                 if (it.origin != Origin.VIEW) {
                     logger.trace("Updating content EditText: {}", it.value)
                     listenForChanges = false
@@ -92,7 +93,7 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
                 } else {
                     logger.trace("Content EditText not updated")
                 }
-            }
+            }, onError = { logger.warn("Error", it) })
             .disposeBy(onStop)
     }
 

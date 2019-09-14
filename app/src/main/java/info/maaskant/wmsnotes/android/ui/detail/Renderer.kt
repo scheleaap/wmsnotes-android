@@ -12,6 +12,7 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.target.Target
 import info.maaskant.wmsnotes.android.ui.util.glide.NoteAttachmentModel
+import info.maaskant.wmsnotes.utilities.logger
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
@@ -21,6 +22,7 @@ import io.noties.markwon.image.glide.GlideImagesPlugin
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.Observables
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 
@@ -29,6 +31,7 @@ internal class Renderer(
     context: Context,
     private val textView: TextView
 ) : LifecycleObserver {
+    private val logger by logger()
     private val markwon: Markwon = Markwon.builder(context)
         .usePlugin(StrikethroughPlugin.create())
         .usePlugin(TablePlugin.create(context))
@@ -78,9 +81,9 @@ internal class Renderer(
                 .map { markwon.parse(it) }
                 .map { markwon.render(it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribeBy(onNext = {
                     markwon.setParsedMarkdown(textView, it)
-                }
+                }, onError = { logger.warn("Error", it) })
         )
     }
 

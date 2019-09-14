@@ -17,11 +17,11 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.AndroidSupportInjection
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.android.ui.main.MainActivity
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
+import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
 import info.maaskant.wmsnotes.client.indexing.Folder
 import info.maaskant.wmsnotes.client.indexing.Note
 import info.maaskant.wmsnotes.model.Path
@@ -29,6 +29,7 @@ import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 import kotlin.reflect.KFunction1
 
@@ -141,7 +142,7 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
         val disposable = viewModel.getNodes(path)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { logger.trace("New folder contents: $it") }
-            .subscribe { listAdapter.items = it }
+            .subscribeBy(onNext = { listAdapter.items = it }, onError = { logger.warn("Error", it) })
         folderDisposables = folderDisposables + (path to disposable)
     }
 

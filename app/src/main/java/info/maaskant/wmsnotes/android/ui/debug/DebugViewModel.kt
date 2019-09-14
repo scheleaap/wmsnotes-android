@@ -20,7 +20,6 @@ class DebugViewModel @Inject constructor(
     private val logger by logger()
 
     fun createTestNote(): String? {
-
         return try {
             val aggId = Note.randomAggId()
             val commandResult = CommandExecution.executeBlocking(

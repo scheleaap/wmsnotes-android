@@ -10,10 +10,12 @@ import info.maaskant.wmsnotes.model.CommandBus
 import info.maaskant.wmsnotes.model.note.ChangeContentCommand
 import info.maaskant.wmsnotes.model.note.DeleteNoteCommand
 import info.maaskant.wmsnotes.model.note.NoteCommandRequest
+import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.Observables
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
@@ -26,6 +28,7 @@ class DetailController @VisibleForTesting constructor(
     private val computationScheduler: Scheduler,
     private val uiScheduler: Scheduler
 ) : LifecycleObserver {
+    private val logger by logger()
     private val quitRequest: Subject<QuitRequestType> = PublishSubject.create()
     private val quitFunction: () -> Unit = detailActivity::finish
 
@@ -63,7 +66,7 @@ class DetailController @VisibleForTesting constructor(
                     lastRevision = note.revision
                 )
             }
-            .subscribe { commandBus.requests.onNext(it) }
+            .subscribeBy(onNext = { commandBus.requests.onNext(it) }, onError = { logger.warn("Error", it) })
         )
         disposables.add(Observables.combineLatest(
             quitRequest,
@@ -78,7 +81,7 @@ class DetailController @VisibleForTesting constructor(
                     else -> false
                 }
             }
-            .subscribe { quitFunction() }
+            .subscribeBy(onNext = { quitFunction() }, onError = { logger.warn("Error", it) })
         )
 
         disposables.add(
@@ -98,7 +101,7 @@ class DetailController @VisibleForTesting constructor(
                         negativeButton = R.string.detail_dismiss_dialog_discard
                     )
                 }
-                .subscribe { button ->
+                .subscribeBy(onNext = { button ->
                     when (button) {
                         RxAlertDialog.Event.BUTTON_POSITIVE -> quitRequest.onNext(QuitRequestType.SAVE_AND_QUIT)
                         RxAlertDialog.Event.BUTTON_NEGATIVE -> quitRequest.onNext(QuitRequestType.DISCARD_AND_QUIT)
@@ -106,7 +109,7 @@ class DetailController @VisibleForTesting constructor(
                         RxAlertDialog.Event.CANCEL_ALERT -> quitRequest.onNext(QuitRequestType.NO_REQUEST)
                         else -> throw IllegalArgumentException()
                     }
-                }
+                }, onError = { logger.warn("Error", it) })
         )
 
     }
@@ -129,10 +132,10 @@ class DetailController @VisibleForTesting constructor(
                         lastRevision = note.revision
                     )
                 }
-                .subscribe {
+                .subscribeBy(onSuccess = {
                     commandBus.requests.onNext(it)
                     quitFunction()
-                }
+                }, onError = { logger.warn("Error", it) })
         )
     }
 
