@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.mikepenz.google_material_typeface_library.GoogleMaterial
+import com.mikepenz.iconics.IconicsDrawable
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.client.indexing.Folder
 import info.maaskant.wmsnotes.client.indexing.Node
@@ -54,10 +56,20 @@ internal class NodeListAdapter : RecyclerView.Adapter<NodeListAdapter.NodeViewHo
         holder.titleTextView.text = node.title
         when (node) {
             is Note -> {
-                holder.iconImageView.setImageResource(R.drawable.ic_insert_drive_file_black_24dp)
+                holder.iconImageView.setImageDrawable(
+                    IconicsDrawable(
+                        holder.iconImageView.context,
+                        GoogleMaterial.Icon.gmd_insert_drive_file
+                    )
+                )
             }
             is Folder -> {
-                holder.iconImageView.setImageResource(R.drawable.ic_folder_black_24dp)
+                holder.iconImageView.setImageDrawable(
+                    IconicsDrawable(
+                        holder.iconImageView.context,
+                        GoogleMaterial.Icon.gmd_folder
+                    )
+                )
             }
         }
     }
