@@ -8,9 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.baurine.permissionutil.PermissionUtil
+import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
@@ -65,10 +67,13 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         val debugDrawerItem = PrimaryDrawerItem().withIdentifier(debugDrawerItemId)
             .withName(R.string.drawer_item_debug)
+            .withIcon(GoogleMaterial.Icon.gmd_developer_mode)
         val notesDrawerItem = PrimaryDrawerItem().withIdentifier(notesDrawerItemId)
             .withName(R.string.drawer_item_notes)
+            .withIcon(GoogleMaterial.Icon.gmd_insert_drive_file)
         val settingsDrawerItem = PrimaryDrawerItem().withIdentifier(2)
             .withName(R.string.drawer_item_settings)
+            .withIcon(GoogleMaterial.Icon.gmd_settings)
             .withSelectable(false)
 
         drawer = DrawerBuilder()
@@ -80,7 +85,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
                     it.addDrawerItems(debugDrawerItem)
                 }
             }
-            .addDrawerItems(notesDrawerItem, settingsDrawerItem)
+            .addDrawerItems(notesDrawerItem, DividerDrawerItem(), settingsDrawerItem)
             .withOnDrawerItemClickListener { _, _, drawerItem ->
                 when (drawerItem) {
                     debugDrawerItem -> navigateToDebug()
