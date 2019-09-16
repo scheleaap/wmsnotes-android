@@ -57,19 +57,23 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
      * @param toolbar
      * The activity's [Toolbar].
      */
-    private fun createAndAddDrawer(toolbar: Toolbar) {
-        val debugDrawerItem = PrimaryDrawerItem().withIdentifier(0)
+    private fun createAndAddDrawer(toolbar: Toolbar, currentSelection: Long?) {
         val header = AccountHeaderBuilder()
             .withActivity(this)
             .withHeaderBackground(R.drawable.drawer_header)
             .build()
 
+        val debugDrawerItem = PrimaryDrawerItem().withIdentifier(debugDrawerItemId)
             .withName(R.string.drawer_item_debug)
-        val notesDrawerItem = PrimaryDrawerItem().withIdentifier(1)
+        val notesDrawerItem = PrimaryDrawerItem().withIdentifier(notesDrawerItemId)
             .withName(R.string.drawer_item_notes)
         val settingsDrawerItem = PrimaryDrawerItem().withIdentifier(2)
-            .withName(R.string.drawer_item_settings).withSelectable(false)
-        drawer = DrawerBuilder().withActivity(this).withToolbar(toolbar)
+            .withName(R.string.drawer_item_settings)
+            .withSelectable(false)
+
+        drawer = DrawerBuilder()
+            .withActivity(this)
+            .withToolbar(toolbar)
             .withAccountHeader(header)
             .also {
                 if (BuildConfig.DEBUG) {
@@ -84,7 +88,13 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
                     settingsDrawerItem -> startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
                 }
                 false
-            }.build()
+            }
+            .also {
+                if (currentSelection != null) {
+                    it.withSelectedItem(currentSelection)
+                }
+            }
+            .build()
     }
 
     private fun hasAllRequiredPermissions() =
@@ -94,12 +104,14 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, DebugFragment())
             .commitNow()
+        drawer.setSelection(debugDrawerItemId, false)
     }
 
     private fun navigateToNavigation() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, NavigationFragment())
             .commitNow()
+        drawer.setSelection(notesDrawerItemId, false)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -129,20 +141,26 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         if (!hasAllRequiredPermissions()) return
 
         setContentView(R.layout.main_activity)
-        if (savedInstanceState == null) {
-            navigateToNavigation()
-        }
 
         findViewById<Toolbar>(R.id.toolbar).let { toolbar ->
             setSupportActionBar(toolbar)
-            createAndAddDrawer(toolbar)
+            createAndAddDrawer(toolbar, savedInstanceState?.getLong(NAVIGATION_DRAWER_CURRENT_SELECTION))
         }
 
         lifecycle.addObserver(ApplicationServiceManager.ServiceBindingLifecycleObserver(this))
+
+        if (savedInstanceState == null) {
+            navigateToNavigation()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         PermissionUtil.onRequestPermissionResult(this, requestCode, permissions, grantResults);
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putLong(NAVIGATION_DRAWER_CURRENT_SELECTION, drawer.currentSelection)
     }
 
     override fun onStart() {
@@ -151,4 +169,10 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
     override fun supportFragmentInjector() = fragmentInjector
+
+    companion object {
+        val NAVIGATION_DRAWER_CURRENT_SELECTION = "navigationDrawerCurrentSelection"
+        val debugDrawerItemId: Long = 0
+        val notesDrawerItemId: Long = 1
+    }
 }
