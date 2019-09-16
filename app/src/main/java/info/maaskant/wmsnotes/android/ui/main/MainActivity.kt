@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.baurine.permissionutil.PermissionUtil
+import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
@@ -58,12 +59,18 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
      */
     private fun createAndAddDrawer(toolbar: Toolbar) {
         val debugDrawerItem = PrimaryDrawerItem().withIdentifier(0)
+        val header = AccountHeaderBuilder()
+            .withActivity(this)
+            .withHeaderBackground(R.drawable.drawer_header)
+            .build()
+
             .withName(R.string.drawer_item_debug)
         val notesDrawerItem = PrimaryDrawerItem().withIdentifier(1)
             .withName(R.string.drawer_item_notes)
         val settingsDrawerItem = PrimaryDrawerItem().withIdentifier(2)
             .withName(R.string.drawer_item_settings).withSelectable(false)
         drawer = DrawerBuilder().withActivity(this).withToolbar(toolbar)
+            .withAccountHeader(header)
             .also {
                 if (BuildConfig.DEBUG) {
                     it.addDrawerItems(debugDrawerItem)

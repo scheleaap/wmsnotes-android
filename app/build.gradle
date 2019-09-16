@@ -124,7 +124,7 @@ dependencies {
     implementation "com.afollestad.material-dialogs:core:$materialdialogs"
     implementation "com.afollestad.material-dialogs:input:$materialdialogs"
     implementation "com.afollestad.material-dialogs:lifecycle:$materialdialogs"
-    implementation "com.mikepenz:materialdrawer:6.1.1"
+    implementation "com.mikepenz:materialdrawer:6.1.2"
     implementation "com.github.baurine:permission-util:1.0.3"
     def glide = "4.9.0"
     implementation "com.github.bumptech.glide:glide:$glide"
