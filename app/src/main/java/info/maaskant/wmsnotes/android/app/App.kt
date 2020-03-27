@@ -1,8 +1,10 @@
 package info.maaskant.wmsnotes.android.app
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.Service
+import android.util.Log
 import androidx.fragment.app.Fragment
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
@@ -25,7 +27,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.charset.Charset
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasServiceInjector {
     lateinit var component: AppComponent
@@ -56,7 +62,8 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
             it.pattern = "wmsnotes"
             it.start()
         }
-        val logcatAppender = LogcatAppender().also {
+
+        @Suppress("UnnecessaryVariable") val logcatAppender = LogcatAppender().also {
             it.context = loggerContext
             it.encoder = encoder
             it.tagEncoder = tagEncoder
@@ -103,9 +110,23 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
         return rollingFileAppender
     }
 
+    @SuppressLint("SimpleDateFormat")
+    private fun exitIfEmergencyBrakeWasPulled() {
+        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val currentDate = dateFormat.format(Date())
+        val basePath = File("/storage/emulated/0/wmsnotes")
+        val brakePath = basePath.resolve("emergency")
+        val brakeOverridePath = basePath.resolve("emergency.${currentDate}")
+        if (brakePath.exists() && !brakeOverridePath.exists()) {
+            Log.e("wmsnotes", "Emergency brake was pulled, exiting")
+            exitProcess(1)
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
 
+        exitIfEmergencyBrakeWasPulled()
         setupLogging()
         setupDependencyInjection()
         serverHostnameUpgrade.run()
