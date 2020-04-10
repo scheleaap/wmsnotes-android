@@ -1,6 +1,5 @@
 package info.maaskant.wmsnotes.android.app
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.Service
@@ -23,13 +22,12 @@ import dagger.android.HasServiceInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.BuildConfig
 import info.maaskant.wmsnotes.android.app.upgrades.ServerHostnameUpgrade
+import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake
+import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake.EmergencyFileStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.charset.Charset
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -110,14 +108,8 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
         return rollingFileAppender
     }
 
-    @SuppressLint("SimpleDateFormat")
     private fun exitIfEmergencyBrakeWasPulled() {
-        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
-        val currentDate = dateFormat.format(Date())
-        val basePath = File("/storage/emulated/0/wmsnotes")
-        val brakePath = basePath.resolve("emergency")
-        val brakeOverridePath = basePath.resolve("emergency.${currentDate}")
-        if (brakePath.exists() && !brakeOverridePath.exists()) {
+        if (EmergencyBrake.getEmergencyFileStatus() == EmergencyFileStatus.EmergencyActive) {
             Log.e("wmsnotes", "Emergency brake was pulled, exiting")
             exitProcess(1)
         }

@@ -11,9 +11,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import dagger.android.AndroidInjection
+import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake
 import info.maaskant.wmsnotes.android.client.synchronization.PreferenceBoundSynchronizationTask
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
-import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import info.maaskant.wmsnotes.model.folder.FolderCommandExecutor
 import info.maaskant.wmsnotes.model.note.NoteCommandExecutor
 import info.maaskant.wmsnotes.model.note.policy.NoteTitlePolicy
@@ -24,6 +24,9 @@ import javax.inject.Inject
 
 class ApplicationServiceManager : Service() {
     private val logger by logger()
+
+    @Inject
+    lateinit var emergencyBrake: EmergencyBrake
 
     @Inject
     lateinit var folderCommandExecutor: FolderCommandExecutor
@@ -57,6 +60,7 @@ class ApplicationServiceManager : Service() {
         AndroidInjection.inject(this)
         // Not sure why injecting services directly does not work.
         services = listOf(
+            emergencyBrake,
             folderCommandExecutor,
             noteCommandExecutor,
             noteTitlePolicy,
