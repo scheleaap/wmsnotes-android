@@ -19,8 +19,8 @@ keytool -genkey -v -keystore scheleaap.jks -alias wmsnotes -keyalg RSA -keysize 
 The secrets file was created as follows:
 ```bash
 tar cvf secrets.tar scheleaap.jks keystore.properties google-services.json
-travis login --org
-travis encrypt-file secrets.tar --add
+travis login --com
+travis encrypt-file --com --add secrets.tar
 ```
 
 Fastlane Supply was set up as follows:
