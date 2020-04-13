@@ -56,6 +56,6 @@ version_number=$(get_version_number_from_gradle)
 create_changelogs_if_not_present ${version_code}
 ./gradlew clean bundleRelease
 if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-    bundle exec fastlane deploy
+    bundle exec fastlane deploy version_code:${version_code}
     tag_git_with_version_number ${version_number}
 fi

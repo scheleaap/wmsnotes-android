@@ -14,7 +14,7 @@ jdk:
 
 env:
   global:
-    - secure: RoJBEPGe+7lTGMDz3nEGirvIMYoMmxZjc9b2cw2mzPXZLehhpmqj8u43w9Ox4L0rUD6iilwKnBiJ1iKvs1JEq4iYRb+o1l+zEcfgwOJvSZ6Akgr9NhXieDpv6uqVt/sCLHnuxf2XCMFpno3Cr3HGT2GmWRnLkP2ipgbe+5uxgE3FuIokpBfJFLu+f1+yQ1G4iuWDDP+CY+H1M2NSQ7x+uhzy6g47tXydIy28F9ZG5N5yPMhTk9UfVEWwIznfLE7ZfnV0Rl1559K6lzO3T5nd3Mdnn/1ppPPmmq5EPteu1evfBMPJY8AogO3mxfzf/Gm8xPpyorfMq4UjCUlQGCkKFycNpMEZfbmXWqd6BG2qj2sSVQcwEwTh0inWDC0WstgUrQRfNCwzlCycNhLcElpxCj+gx+YbZ8jOHunaO2V/dD7UVbJPKEznwa/g0Ej1UK9V+v1QJLhww+fuvd+P5HGYOryUWzPTH4sgKZZIFsQ5apdRAug99Mz696sWdWGjqU2U1/MxdHgdSOWFB3v6pCLSAynZg7lqdGDTZrlN2U3Ga1B7MGnJpn/SE+WA0SjN1MtRddb7ytpE/XON2+nq38+a4TrHJ+Ipt5WcD4pbigdoov+aRODAWs0I6Znn4f/F3lLBCQKJcSX+SPKS1tUun3Eq7bvghg8FN8XPE5yKi+FgDfw=
+    - secure: "oEt98tzosYyP4fqK/tzen14TP96BnGpPSN5rhIDWjcrn2Vd4EzcECoCGjJSx55xyOT9YD1+iPbZFwA4rRswZ+EJPmDpU5x+iKnFtOETh0KB0Y1c141BgTQZVPA67bwdKhADVwTMU2S7IkeKM1vFPyxxZ8wWLg4hLT5aOaokbS59qvLVsxglpEvC8w4q5AgeMgaqmRbtiWD4k7m3fN3RKaOKMRTQZ2X41bvrbJ0hNG+oicVl6oJff4Da1nO/a1/eZJar2gtThe3+td5Idt48zniWsyjKRAf2yIgNz/gPQjBo0ibrhiPYJU+LJv1mp4lK7HDPhlJ2EnfUH1BkXwNfMWanvwfTZ9tHJ2CueCqpIO6l97D2Y7rStrx1nl23rmuQEazefUEnRO6ggWZFbJXVyki5ls6zdQ0XSnvX9uo1zCvWO4GE4AW2OEN52ILPpLxsHzCcNee2xRJJ6pkZj19m5grJpyKxMJ34D02qHde58hscY1pbjjrApquDCMCvYKGTQy3lTLdtUb18vVToKcTamz4nOgaK1ySI9hJ1hFlbubBQywiKkP4dTvnnIu7bbYH6yPRGDOuRVpHR5o1OtEPiUMLwRMzcEZcEJ2LJB5hJ48lDPlxZPZe79L9jfkMbyg9VBBjxaCRpvF+lqCi3wX18hBC62NVaT8Rmxv13zYmxH2nw="
     # for updates check developer.android.com/studio#downloads (current 26.1.1)
     - ANDROID_SDK_TOOLS=sdk-tools-linux-4333796.zip
 
@@ -41,6 +41,9 @@ install:
 
   ## Ruby
 
+  # https://bundler.io/blog/2019/05/14/solutions-for-cant-find-gem-bundler-with-executable-bundle.html
+  # https://github.com/rubygems/rubygems/issues/3068
+  - gem update --system 3.0.6
   # Install Bundler
   - gem install bundler -v 2.0.1
   # Install all Ruby dependencies

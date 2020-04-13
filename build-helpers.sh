@@ -58,7 +58,7 @@ function travis_push() {
         remote=https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG
     fi
     if ! git push --quiet --follow-tags "$remote" "$push_what" > /dev/null 2>&1; then
-        err "failed to push git changes"
+        err "failed to push git changes, did you forget to configure a GitHub token?"
         return 1
     fi
 }
