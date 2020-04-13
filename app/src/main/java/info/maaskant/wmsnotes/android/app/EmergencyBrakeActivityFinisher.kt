@@ -27,8 +27,7 @@ class EmergencyBrakeActivityFinisher constructor(
                     onNext = {
                         logger.error("Emergency brake was pulled, finishing activity $activity")
                         activity.finishAndRemoveTask()
-                    }
-                    ,
+                    },
                     onError = { logger.warn("Error", it) })
         )
     }

@@ -11,6 +11,8 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.app.EmergencyBrakeActivityFinisher
+import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake
 import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
 import info.maaskant.wmsnotes.utilities.logger
@@ -30,6 +32,9 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     @Inject
     lateinit var detailController: DetailController
+
+    @Inject
+    lateinit var emergencyBrake: EmergencyBrake
 
     @Inject
     lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
@@ -73,6 +78,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         lifecycle.addObserver(detailController)
         lifecycle.addObserver(ApplicationServiceManager.ServiceBindingLifecycleObserver(this))
+        lifecycle.addObserver(EmergencyBrakeActivityFinisher(emergencyBrake,this))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
