@@ -2,6 +2,7 @@ package info.maaskant.wmsnotes.android.client.synchronization
 
 import android.annotation.SuppressLint
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
+import info.maaskant.wmsnotes.model.CommandError
 import info.maaskant.wmsnotes.utilities.ApplicationService
 import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.Observable
@@ -12,7 +13,6 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.Subject
 import java.io.File
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -36,7 +36,10 @@ class EmergencyBrake @Inject constructor(
         )
             .observeOn(Schedulers.computation())
             .filter { (emergencyFileStatus, synchronizationResult) ->
-                emergencyFileStatus != EmergencyFileStatus.OverrideActive && !synchronizationResult.success
+                emergencyFileStatus != EmergencyFileStatus.OverrideActive &&
+                        synchronizationResult.errors.any { (_, commandError) ->
+                            commandError !is CommandError.NetworkError
+                        }
             }
             .distinct()
             .subscribeBy(
