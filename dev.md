@@ -3,7 +3,7 @@
 ## Signing and Deploying
 
 The Travis CLI was installed as follows (on Ubuntu 16.04):
-```bash
+```sh
 sudo apt-get install ruby ruby-dev
 sudo apt-get purge ruby-bundler
 sudo gem install bundler -NV
@@ -12,20 +12,26 @@ sudo bundle install
 ```
 
 The signing key was created as follows:
-```bash
+```sh
 keytool -genkey -v -keystore scheleaap.jks -alias wmsnotes -keyalg RSA -keysize 2048 -validity 10000
 ```
 
 The secrets file was created as follows:
-```bash
+```sh
 tar cvf secrets.tar scheleaap.jks keystore.properties google-services.json
 travis login --com
 travis encrypt-file --com --add secrets.tar
 ```
 
 Fastlane Supply was set up as follows:
-```bash
+```sh
 supply init -j google-services.json -p info.maaskant.wmsnotes
+```
+
+The GitHub token was set up as follows:
+```sh
+bundle exec travis login --com
+bundle exec travis encrypt --com GITHUB_TOKEN=<token>
 ```
 
 ### References
