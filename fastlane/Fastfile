@@ -17,23 +17,33 @@ platform :android do
   lane :deploy do
     gradle(task: "bundleRelease")
     upload_to_play_store(track: "production")
+    # Source: https://github.com/fastlane/fastlane/issues/15745#issuecomment-567608145
+    versions = google_play_track_version_codes(track: "production")
+    version_code = versions[0]
     upload_to_play_store(
       track: "production",
       skip_upload_aab: true,
       skip_upload_apk: true,
       skip_upload_images: true,
+      skip_upload_metadata: true,
       skip_upload_screenshots: true
+      version_code: version_code
     )
   end
 
   desc "Update changelogs"
   lane :update_changelogs do
+    # Source: https://github.com/fastlane/fastlane/issues/15745#issuecomment-567608145
+    versions = google_play_track_version_codes(track: "production")
+    version_code = versions[0]
     upload_to_play_store(
       track: "production",
       skip_upload_aab: true,
       skip_upload_apk: true,
       skip_upload_images: true,
-      skip_upload_screenshots: true
+      skip_upload_metadata: true,
+      skip_upload_screenshots: true,
+      version_code: version_code
     )
   end
 end

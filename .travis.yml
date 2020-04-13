@@ -41,6 +41,8 @@ install:
 
   ## Ruby
 
+  # https://bundler.io/blog/2019/05/14/solutions-for-cant-find-gem-bundler-with-executable-bundle.html
+  # https://github.com/rubygems/rubygems/issues/3068
   - gem update --system 3.0.6
   # Install Bundler
   - gem install bundler -v 2.0.1

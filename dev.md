@@ -7,8 +7,8 @@ The Travis CLI was installed as follows (on Ubuntu 16.04):
 sudo apt-get install ruby ruby-dev
 sudo apt-get purge ruby-bundler
 sudo gem install bundler -NV
-sudo gem install travis -v 1.8.9 --no-rdoc --no-ri
-sudo gem install fastlane -v 2.119.0 -NV
+sudo gem update --system 3.0.6
+sudo bundle install
 ```
 
 The signing key was created as follows:
