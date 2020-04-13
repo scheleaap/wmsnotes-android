@@ -41,6 +41,7 @@ install:
 
   ## Ruby
 
+  - gem update --system 3.0.6
   # Install Bundler
   - gem install bundler -v 2.0.1
   # Install all Ruby dependencies
