@@ -3,6 +3,7 @@ package info.maaskant.wmsnotes.android.app
 import android.app.Activity
 import android.app.Application
 import android.app.Service
+import android.util.Log
 import androidx.fragment.app.Fragment
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
@@ -23,11 +24,14 @@ import dagger.android.HasServiceInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.BuildConfig
 import info.maaskant.wmsnotes.android.app.upgrades.ServerHostnameUpgrade
+import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake
+import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake.EmergencyFileStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.charset.Charset
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasServiceInjector {
     lateinit var component: AppComponent
@@ -58,7 +62,8 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
             it.pattern = "wmsnotes"
             it.start()
         }
-        val logcatAppender = LogcatAppender().also {
+
+        @Suppress("UnnecessaryVariable") val logcatAppender = LogcatAppender().also {
             it.context = loggerContext
             it.encoder = encoder
             it.tagEncoder = tagEncoder
@@ -125,9 +130,17 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
             it.start()
         }
 
+    private fun exitIfEmergencyBrakeWasPulled() {
+        if (EmergencyBrake.getEmergencyFileStatus() == EmergencyFileStatus.EmergencyActive) {
+            Log.e("wmsnotes", "Emergency brake was pulled, exiting")
+            exitProcess(1)
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
 
+        exitIfEmergencyBrakeWasPulled()
         setupLogging()
         setupDependencyInjection()
         serverHostnameUpgrade.run()

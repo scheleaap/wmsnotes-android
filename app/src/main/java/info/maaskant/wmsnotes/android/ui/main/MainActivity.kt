@@ -19,6 +19,8 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import info.maaskant.wmsnotes.BuildConfig
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.android.app.EmergencyBrakeActivityFinisher
+import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake
 import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
 import info.maaskant.wmsnotes.android.ui.debug.DebugFragment
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
@@ -30,9 +32,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     @Inject
     lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
 
-    private val permissionRequestCode: Int = 0
+    @Inject
+    lateinit var emergencyBrake: EmergencyBrake
 
     private lateinit var drawer: Drawer
+
+    private val permissionRequestCode: Int = 0
 
     private fun checkAndAskForPermissions() {
         if (!hasAllRequiredPermissions()) {
@@ -153,6 +158,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         }
 
         lifecycle.addObserver(ApplicationServiceManager.ServiceBindingLifecycleObserver(this))
+        lifecycle.addObserver(EmergencyBrakeActivityFinisher(emergencyBrake, this))
 
         if (savedInstanceState == null) {
             navigateToNavigation()
