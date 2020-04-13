@@ -85,8 +85,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // WMS Notes
-    implementation group: 'info.maaskant.wmsnotes', name: 'shared', version: "0.0.3-SNAPSHOT", changing: true
-//    implementation "com.github.scheleaap:wmsnotes-desktop-and-server:597d013f8ab19bcdf1b4728dc661d3f446c3ee7e"
+//    implementation group: 'info.maaskant.wmsnotes', name: 'shared', version: "0.0.3-SNAPSHOT", changing: true
+    implementation "com.github.scheleaap:wmsnotes-desktop-and-server:af9dd5b000dd7681cd8c7e44859c005e85debc06"
 
     // Logging
     implementation "org.slf4j:slf4j-api:1.7.25"

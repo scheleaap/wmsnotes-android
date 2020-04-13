@@ -78,7 +78,7 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         lifecycle.addObserver(detailController)
         lifecycle.addObserver(ApplicationServiceManager.ServiceBindingLifecycleObserver(this))
-        lifecycle.addObserver(EmergencyBrakeActivityFinisher(emergencyBrake,this))
+        lifecycle.addObserver(EmergencyBrakeActivityFinisher(emergencyBrake, this))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         }
 
         lifecycle.addObserver(ApplicationServiceManager.ServiceBindingLifecycleObserver(this))
-        lifecycle.addObserver(EmergencyBrakeActivityFinisher(emergencyBrake,this))
+        lifecycle.addObserver(EmergencyBrakeActivityFinisher(emergencyBrake, this))
 
         if (savedInstanceState == null) {
             navigateToNavigation()
