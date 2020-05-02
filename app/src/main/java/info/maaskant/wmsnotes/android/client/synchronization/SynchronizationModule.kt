@@ -16,16 +16,21 @@ import info.maaskant.wmsnotes.client.synchronization.commandexecutor.RemoteComma
 import info.maaskant.wmsnotes.client.synchronization.eventrepository.FileModifiableEventRepository
 import info.maaskant.wmsnotes.client.synchronization.eventrepository.InMemoryModifiableEventRepository
 import info.maaskant.wmsnotes.client.synchronization.eventrepository.ModifiableEventRepository
-import info.maaskant.wmsnotes.client.synchronization.strategy.LocalOnlySynchronizationStrategy
-import info.maaskant.wmsnotes.client.synchronization.strategy.MultipleSynchronizationStrategy
-import info.maaskant.wmsnotes.client.synchronization.strategy.RemoteOnlySynchronizationStrategy
-import info.maaskant.wmsnotes.client.synchronization.strategy.SynchronizationStrategy
-import info.maaskant.wmsnotes.client.synchronization.strategy.merge.*
+import info.maaskant.wmsnotes.client.synchronization.strategy.*
+import info.maaskant.wmsnotes.client.synchronization.strategy.merge.EqualsMergeStrategy
+import info.maaskant.wmsnotes.client.synchronization.strategy.merge.MergeStrategy
+import info.maaskant.wmsnotes.client.synchronization.strategy.merge.MultipleMergeStrategy
+import info.maaskant.wmsnotes.client.synchronization.strategy.merge.folder.FolderMergingSynchronizationStrategy
+import info.maaskant.wmsnotes.client.synchronization.strategy.merge.note.DifferenceAnalyzer
+import info.maaskant.wmsnotes.client.synchronization.strategy.merge.note.DifferenceCompensator
+import info.maaskant.wmsnotes.client.synchronization.strategy.merge.note.KeepBothMergeStrategy
+import info.maaskant.wmsnotes.client.synchronization.strategy.merge.note.NoteMergingSynchronizationStrategy
 import info.maaskant.wmsnotes.model.CommandBus
 import info.maaskant.wmsnotes.model.CommandExecution
 import info.maaskant.wmsnotes.model.Event
 import info.maaskant.wmsnotes.model.aggregaterepository.AggregateRepository
 import info.maaskant.wmsnotes.model.eventstore.EventStore
+import info.maaskant.wmsnotes.model.folder.Folder
 import info.maaskant.wmsnotes.model.note.Note
 import info.maaskant.wmsnotes.server.command.grpc.CommandServiceGrpc
 import info.maaskant.wmsnotes.server.command.grpc.EventServiceGrpc
@@ -62,8 +67,7 @@ class SynchronizationModule {
     @Provides
     @Singleton
     fun managedChannel(@ServerHostname hostnamePreference: Preference<String>): ManagedChannel {
-        val hostname =
-            if (hostnamePreference.get().isBlank()) "localhost" else hostnamePreference.get()
+        val hostname = if (hostnamePreference.get().isBlank()) "localhost" else hostnamePreference.get()
         return ManagedChannelBuilder.forAddress(hostname, 6565)
             .usePlaintext()
             .build()
@@ -72,10 +76,7 @@ class SynchronizationModule {
     @Provides
     @Singleton
     @ForLocalEvents
-    fun localEventRepository(
-        @OtherModule.AppDirectory appDirectory: File,
-        eventSerializer: Serializer<Event>
-    ) =
+    fun localEventRepository(@OtherModule.AppDirectory appDirectory: File, eventSerializer: Serializer<Event>) =
         if (storeInMemory) {
             InMemoryModifiableEventRepository()
         } else {
@@ -88,10 +89,7 @@ class SynchronizationModule {
     @Provides
     @Singleton
     @ForRemoteEvents
-    fun remoteEventRepository(
-        @OtherModule.AppDirectory appDirectory: File,
-        eventSerializer: Serializer<Event>
-    ) =
+    fun remoteEventRepository(@OtherModule.AppDirectory appDirectory: File, eventSerializer: Serializer<Event>) =
         if (storeInMemory) {
             InMemoryModifiableEventRepository()
         } else {
@@ -109,14 +107,10 @@ class SynchronizationModule {
     @Provides
     @Singleton
     @ForLocalEvents
-    fun localEventImporterStateRepository(
-        @OtherModule.AppDirectory appDirectory: File,
-        serializer: Serializer<EventImporterState>
-    ): StateRepository<EventImporterState> =
+    fun localEventImporterStateRepository(@OtherModule.AppDirectory appDirectory: File, serializer: Serializer<EventImporterState>): StateRepository<EventImporterState> =
         FileStateRepository(
             serializer = serializer,
-            file = appDirectory.resolve("synchronization").resolve("local_events")
-                .resolve(".state"),
+            file = appDirectory.resolve("synchronization").resolve("local_events").resolve(".state"),
             scheduler = Schedulers.io(),
             timeout = 1,
             unit = TimeUnit.SECONDS
@@ -125,14 +119,10 @@ class SynchronizationModule {
     @Provides
     @Singleton
     @ForRemoteEvents
-    fun remoteEventImporterStateRepository(
-        @OtherModule.AppDirectory appDirectory: File,
-        serializer: Serializer<EventImporterState>
-    ): StateRepository<EventImporterState> =
+    fun remoteEventImporterStateRepository(@OtherModule.AppDirectory appDirectory: File, serializer: Serializer<EventImporterState>): StateRepository<EventImporterState> =
         FileStateRepository(
             serializer = serializer,
-            file = appDirectory.resolve("synchronization").resolve("remote_events")
-                .resolve(".state"),
+            file = appDirectory.resolve("synchronization").resolve("remote_events").resolve(".state"),
             scheduler = Schedulers.io(),
             timeout = 1,
             unit = TimeUnit.SECONDS
@@ -175,26 +165,32 @@ class SynchronizationModule {
     @Provides
     @Singleton
     fun synchronizationStrategy(
-        mergeStrategy: MergeStrategy,
-        aggregateRepository: AggregateRepository<Note>
+        folderMergeStrategy: MergeStrategy<Folder>,
+        folderRepository: AggregateRepository<Folder>,
+        noteMergeStrategy: MergeStrategy<Note>,
+        noteRepository: AggregateRepository<Note>
     ): SynchronizationStrategy =
         SkippingIdenticalDelegatingSynchronizationStrategy(
             MultipleSynchronizationStrategy(
                 LocalOnlySynchronizationStrategy(),
                 RemoteOnlySynchronizationStrategy(),
-                MergingSynchronizationStrategy(
-                    mergeStrategy = mergeStrategy,
-                    noteRepository = aggregateRepository
+                NoteMergingSynchronizationStrategy(
+                    mergeStrategy = noteMergeStrategy,
+                    aggregateRepository = noteRepository
+                ),
+                FolderMergingSynchronizationStrategy(
+                    mergeStrategy = folderMergeStrategy,
+                    aggregateRepository = folderRepository
                 )
             )
         )
 
     @Provides
     @Singleton
-    fun mergeStrategy(
+    fun noteMergeStrategy(
         differenceAnalyzer: DifferenceAnalyzer,
         differenceCompensator: DifferenceCompensator
-    ): MergeStrategy =
+    ): MergeStrategy<Note> =
         MultipleMergeStrategy(
             EqualsMergeStrategy(),
             KeepBothMergeStrategy(
@@ -204,6 +200,11 @@ class SynchronizationModule {
                 conflictedNoteTitleSuffix = " (conflict on Android)"
             )
         )
+
+    @Provides
+    @Singleton
+    fun folderMergeStrategy(): MergeStrategy<Folder> =
+        EqualsMergeStrategy()
 
     @Singleton
     @Provides
@@ -241,10 +242,7 @@ class SynchronizationModule {
 
     @Provides
     @Singleton
-    fun synchronizerStateRepository(
-        @OtherModule.AppDirectory appDirectory: File,
-        kryoPool: Pool<Kryo>
-    ): StateRepository<SynchronizerState> =
+    fun synchronizerStateRepository(@OtherModule.AppDirectory appDirectory: File, kryoPool: Pool<Kryo>): StateRepository<SynchronizerState> =
         FileStateRepository(
             serializer = KryoSynchronizerStateSerializer(kryoPool),
             file = appDirectory.resolve("synchronization").resolve("synchronizer.state"),
