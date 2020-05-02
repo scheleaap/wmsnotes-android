@@ -62,7 +62,8 @@ class SynchronizationModule {
     @Provides
     @Singleton
     fun managedChannel(@ServerHostname hostnamePreference: Preference<String>): ManagedChannel {
-        val hostname = if (hostnamePreference.get().isBlank()) "localhost" else hostnamePreference.get()
+        val hostname =
+            if (hostnamePreference.get().isBlank()) "localhost" else hostnamePreference.get()
         return ManagedChannelBuilder.forAddress(hostname, 6565)
             .usePlaintext()
             .build()
@@ -71,7 +72,10 @@ class SynchronizationModule {
     @Provides
     @Singleton
     @ForLocalEvents
-    fun localEventRepository(@OtherModule.AppDirectory appDirectory: File, eventSerializer: Serializer<Event>) =
+    fun localEventRepository(
+        @OtherModule.AppDirectory appDirectory: File,
+        eventSerializer: Serializer<Event>
+    ) =
         if (storeInMemory) {
             InMemoryModifiableEventRepository()
         } else {
@@ -84,7 +88,10 @@ class SynchronizationModule {
     @Provides
     @Singleton
     @ForRemoteEvents
-    fun remoteEventRepository(@OtherModule.AppDirectory appDirectory: File, eventSerializer: Serializer<Event>) =
+    fun remoteEventRepository(
+        @OtherModule.AppDirectory appDirectory: File,
+        eventSerializer: Serializer<Event>
+    ) =
         if (storeInMemory) {
             InMemoryModifiableEventRepository()
         } else {
@@ -102,10 +109,14 @@ class SynchronizationModule {
     @Provides
     @Singleton
     @ForLocalEvents
-    fun localEventImporterStateRepository(@OtherModule.AppDirectory appDirectory: File, serializer: Serializer<EventImporterState>): StateRepository<EventImporterState> =
+    fun localEventImporterStateRepository(
+        @OtherModule.AppDirectory appDirectory: File,
+        serializer: Serializer<EventImporterState>
+    ): StateRepository<EventImporterState> =
         FileStateRepository(
             serializer = serializer,
-            file = appDirectory.resolve("synchronization").resolve("local_events").resolve(".state"),
+            file = appDirectory.resolve("synchronization").resolve("local_events")
+                .resolve(".state"),
             scheduler = Schedulers.io(),
             timeout = 1,
             unit = TimeUnit.SECONDS
@@ -114,10 +125,14 @@ class SynchronizationModule {
     @Provides
     @Singleton
     @ForRemoteEvents
-    fun remoteEventImporterStateRepository(@OtherModule.AppDirectory appDirectory: File, serializer: Serializer<EventImporterState>): StateRepository<EventImporterState> =
+    fun remoteEventImporterStateRepository(
+        @OtherModule.AppDirectory appDirectory: File,
+        serializer: Serializer<EventImporterState>
+    ): StateRepository<EventImporterState> =
         FileStateRepository(
             serializer = serializer,
-            file = appDirectory.resolve("synchronization").resolve("remote_events").resolve(".state"),
+            file = appDirectory.resolve("synchronization").resolve("remote_events")
+                .resolve(".state"),
             scheduler = Schedulers.io(),
             timeout = 1,
             unit = TimeUnit.SECONDS
@@ -163,14 +178,15 @@ class SynchronizationModule {
         mergeStrategy: MergeStrategy,
         aggregateRepository: AggregateRepository<Note>
     ): SynchronizationStrategy =
-        MultipleSynchronizationStrategy(
-            LocalOnlySynchronizationStrategy(),
-            RemoteOnlySynchronizationStrategy(),
-            MergingSynchronizationStrategy(
-                mergeStrategy = mergeStrategy,
-                noteRepository = aggregateRepository
+        SkippingIdenticalDelegatingSynchronizationStrategy(
+            MultipleSynchronizationStrategy(
+                LocalOnlySynchronizationStrategy(),
+                RemoteOnlySynchronizationStrategy(),
+                MergingSynchronizationStrategy(
+                    mergeStrategy = mergeStrategy,
+                    noteRepository = aggregateRepository
+                )
             )
-
         )
 
     @Provides
@@ -225,7 +241,10 @@ class SynchronizationModule {
 
     @Provides
     @Singleton
-    fun synchronizerStateRepository(@OtherModule.AppDirectory appDirectory: File, kryoPool: Pool<Kryo>): StateRepository<SynchronizerState> =
+    fun synchronizerStateRepository(
+        @OtherModule.AppDirectory appDirectory: File,
+        kryoPool: Pool<Kryo>
+    ): StateRepository<SynchronizerState> =
         FileStateRepository(
             serializer = KryoSynchronizerStateSerializer(kryoPool),
             file = appDirectory.resolve("synchronization").resolve("synchronizer.state"),
