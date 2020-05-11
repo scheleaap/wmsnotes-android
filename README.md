@@ -1,4 +1,4 @@
-# WMS Notes Android App [![Build Status](https://travis-ci.com/scheleaap/wmsnotes-android.svg?branch=master)](https://travis-ci.org/scheleaap/wmsnotes-android)
+# WMS Notes Android App [![Build Status](https://travis-ci.com/scheleaap/wmsnotes-android.svg?branch=master)](https://travis-ci.com/scheleaap/wmsnotes-android)
 
 The Android app for WMS Notes, a hierarchical (tree-based) note-taking application.
 
