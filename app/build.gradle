@@ -86,7 +86,7 @@ dependencies {
 
     // WMS Notes
 //    implementation group: 'info.maaskant.wmsnotes', name: 'shared', version: "0.0.3-SNAPSHOT", changing: true
-    implementation "com.github.scheleaap:wmsnotes-desktop-and-server:6384f1f5fa048406aa7574e661ce4d056ec79777"
+    implementation "com.github.scheleaap:wmsnotes-desktop-and-server:1508a75b7202d0e3c54879f70bf41a514833ad95"
 
     // Logging
     implementation "org.slf4j:slf4j-api:1.7.25"
