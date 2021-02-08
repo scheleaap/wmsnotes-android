@@ -65,7 +65,7 @@ internal class Renderer(
         BehaviorSubject.create()
 
     init {
-        textView.movementMethod = LinkMovementMethod.getInstance();
+        textView.movementMethod = LinkMovementMethod.getInstance()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

@@ -1,4 +1,4 @@
-package info.maaskant.wmsnotes.android.app;
+package info.maaskant.wmsnotes.android.app
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle

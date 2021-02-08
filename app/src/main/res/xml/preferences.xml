@@ -10,7 +10,6 @@
             app:title="@string/pref_synchronization_enabled_title" />
 
         <EditTextPreference
-            android:capitalize="words"
             android:inputType="textCapWords"
             android:maxLines="1"
             android:selectAllOnFocus="false"

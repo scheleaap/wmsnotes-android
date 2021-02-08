@@ -15,7 +15,7 @@ class NoteAttachmentModelLoader(
         width: Int,
         height: Int,
         options: Options
-    ): ModelLoader.LoadData<ByteBuffer>? {
+    ): ModelLoader.LoadData<ByteBuffer> {
         return ModelLoader.LoadData(
             ObjectKey(model),
             NoteAttachmentDataFetcher(
@@ -24,7 +24,7 @@ class NoteAttachmentModelLoader(
                 revision = model.revision,
                 attachmentName = model.attachmentName
             )
-        );
+        )
     }
 
     override fun handles(model: NoteAttachmentModel): Boolean =

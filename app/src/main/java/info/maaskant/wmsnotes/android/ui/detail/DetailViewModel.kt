@@ -156,7 +156,6 @@ class DetailViewModel @VisibleForTesting constructor(
             this.titleUpdatesSubject.onNext(Update(title, origin = Update.Origin.VIEW))
             setTitleDirty(!isSameAsNoteTitle)
             logger.trace("Title set by user: {}", this.titleValue)
-        } else {
         }
     }
 

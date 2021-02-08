@@ -41,7 +41,7 @@ class ImmutableStack<T> private constructor(private val _items: List<T>) {
 
     companion object {
         fun <T> empty(): ImmutableStack<T> =
-            ImmutableStack(emptyList<T>())
+            ImmutableStack(emptyList())
 
         fun <T> from(vararg items: T): ImmutableStack<T> =
             ImmutableStack(items.toMutableList())

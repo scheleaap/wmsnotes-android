@@ -52,7 +52,7 @@ import javax.inject.Singleton
 class SynchronizationModule {
     @Provides
     @Singleton
-    fun grpcDeadline() = Deadline.after(1, TimeUnit.SECONDS)
+    fun grpcDeadline(): Deadline = Deadline.after(1, TimeUnit.SECONDS)
 
     @Provides
     @Singleton

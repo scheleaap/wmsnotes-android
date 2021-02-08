@@ -166,7 +166,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        PermissionUtil.onRequestPermissionResult(this, requestCode, permissions, grantResults);
+        PermissionUtil.onRequestPermissionResult(this, requestCode, permissions, grantResults)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -125,7 +125,7 @@ class ApplicationServiceManager : Service() {
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
         fun onStop() {
             if (isBound) {
-                context.unbindService(this);
+                context.unbindService(this)
             }
         }
     }

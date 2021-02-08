@@ -1,8 +1,9 @@
 package info.maaskant.wmsnotes.android.ui.detail
 
 /**
- * Cam be implemented by [Fragment]s within [DetailActivity]'s [androidx.viewpager.widget.ViewPager] to be notified when
- * the page they are in is selected or deselected.
+ * Cam be implemented by [androidx.fragment.app.Fragment]s within [DetailActivity]'s
+ * [androidx.viewpager.widget.ViewPager] to be notified when the page they are in is selected or
+ * deselected.
  */
 interface OnPageSelectedListener {
     /**

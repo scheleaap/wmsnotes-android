@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:contentDescription="@string/navigation_create_note"
         app:srcCompat="@drawable/ic_add_white_24dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

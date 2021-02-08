@@ -5,7 +5,6 @@ import com.f2prateek.rx.preferences2.Preference
 import info.maaskant.wmsnotes.R
 import io.mockk.*
 import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 
 internal class ServerHostnameUpgradeTest {
