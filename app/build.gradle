@@ -2,8 +2,6 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 
-apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'kotlin-kapt'
 
 apply plugin: 'de.mannodermaus.android-junit5'
@@ -15,13 +13,13 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     defaultConfig {
         applicationId "info.maaskant.wmsnotes"
         minSdkVersion 27
-        targetSdkVersion 28
-        versionCode 29
-        versionName "0.0.29"
+        targetSdkVersion 30
+        versionCode 30
+        versionName "0.0.30"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -139,7 +137,7 @@ dependencies {
 
     // Testing
     // (Required) Writing and executing Unit Tests on the JUnit Platform
-    def junit = "5.5.1"
+    def junit = "5.7.1"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junit"
