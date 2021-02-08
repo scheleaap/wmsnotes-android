@@ -74,20 +74,20 @@ android {
 dependencies {
     // Default stuff
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    // implementation "androidx.core:core-ktx:1.3.2"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // WMS Notes
 //    implementation group: 'info.maaskant.wmsnotes', name: 'shared', version: "0.0.3-SNAPSHOT", changing: true
     implementation "com.github.scheleaap:wmsnotes-desktop-and-server:1508a75b7202d0e3c54879f70bf41a514833ad95"
 
     // Logging
-    implementation "org.slf4j:slf4j-api:1.7.25"
+    implementation "org.slf4j:slf4j-api:1.7.30"
     implementation "com.github.tony19:logback-android:2.0.0"
 
     // Dependency Injection
@@ -105,19 +105,19 @@ dependencies {
 
     // RxJava and background execution
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.sellmair:disposer:2.0.0'
 
     // gRPC
-    implementation "io.grpc:grpc-okhttp:1.16.1"
+    implementation "io.grpc:grpc-okhttp:1.35.0"
 
     // Preferences
-    implementation 'androidx.preference:preference-ktx:1.1.0-rc01'
-    implementation 'com.f2prateek.rx.preferences2:rx-preferences:2.0.0'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'com.f2prateek.rx.preferences2:rx-preferences:2.0.1'
 
     // UI
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha02'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     def materialdialogs = "2.8.1"
     implementation "com.afollestad.material-dialogs:core:$materialdialogs"
     implementation "com.afollestad.material-dialogs:input:$materialdialogs"
@@ -141,9 +141,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junit"
-    testImplementation "junit:junit:4.12"
+    testImplementation "junit:junit:4.13.1"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junit"
-    testImplementation("org.assertj:assertj-core:3.12.2")
+    testImplementation("org.assertj:assertj-core:3.19.0")
     // See also https://blog.philipphauer.de/best-practices-unit-testing-kotlin/
-    testImplementation "io.mockk:mockk:1.9.2"
+    testImplementation "io.mockk:mockk:1.10.5"
 }

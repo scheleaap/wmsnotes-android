@@ -2,7 +2,7 @@ package info.maaskant.wmsnotes.android.app
 
 import android.content.Context
 import android.content.res.Resources
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import com.f2prateek.rx.preferences2.Preference
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import dagger.Module
@@ -31,7 +31,10 @@ class PreferencesModule {
     @Provides
     @Singleton
     @ServerHostname
-    fun preference001(rxPreferences: RxSharedPreferences, resources: Resources): Preference<String> =
+    fun preference001(
+        rxPreferences: RxSharedPreferences,
+        resources: Resources
+    ): Preference<String> =
         rxPreferences.getString(
             resources.getString(R.string.pref_server_hostname_key),
             resources.getString(R.string.pref_server_hostname_default)
@@ -45,7 +48,10 @@ class PreferencesModule {
     @Provides
     @Singleton
     @SynchronizationEnabled
-    fun preference002(rxPreferences: RxSharedPreferences, resources: Resources): Preference<Boolean> =
+    fun preference002(
+        rxPreferences: RxSharedPreferences,
+        resources: Resources
+    ): Preference<Boolean> =
         rxPreferences.getBoolean(
             resources.getString(R.string.pref_synchronization_enabled_key),
             resources.getBoolean(R.bool.pref_synchronization_enabled_default)
