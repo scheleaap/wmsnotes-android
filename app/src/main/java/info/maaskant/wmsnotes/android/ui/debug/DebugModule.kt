@@ -2,7 +2,6 @@ package info.maaskant.wmsnotes.android.ui.debug
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -34,6 +33,6 @@ abstract class DebugModule {
             factory: ViewModelProvider.Factory,
             target: DebugFragment
         ): DebugViewModel =
-            ViewModelProviders.of(target, factory).get(DebugViewModel::class.java)
+            ViewModelProvider(target, factory).get(DebugViewModel::class.java)
     }
 }

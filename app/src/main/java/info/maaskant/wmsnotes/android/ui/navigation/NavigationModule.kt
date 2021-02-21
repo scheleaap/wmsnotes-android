@@ -2,7 +2,6 @@ package info.maaskant.wmsnotes.android.ui.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -34,6 +33,6 @@ abstract class NavigationModule {
             factory: ViewModelProvider.Factory,
             target: NavigationFragment
         ): NavigationViewModel =
-            ViewModelProviders.of(target, factory).get(NavigationViewModel::class.java)
+            ViewModelProvider(target, factory).get(NavigationViewModel::class.java)
     }
 }

@@ -2,7 +2,6 @@ package info.maaskant.wmsnotes.android.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,14 +29,8 @@ abstract class DetailModule {
     @Module
     class InjectViewModel {
         @Provides
-        fun provide(
-            factory: ViewModelProvider.Factory,
-            target: DetailActivity
-        ): DetailViewModel {
-            @Suppress("UnnecessaryVariable")
-            val viewModel = ViewModelProviders.of(target, factory).get(DetailViewModel::class.java)
-            return viewModel
-        }
+        fun provide(factory: ViewModelProvider.Factory, target: DetailActivity): DetailViewModel =
+            ViewModelProvider(target, factory).get(DetailViewModel::class.java)
     }
 
     @Module
