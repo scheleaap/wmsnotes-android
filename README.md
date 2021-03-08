@@ -9,3 +9,7 @@ See https://github.com/scheleaap/wmsnotes-desktop-java for general information a
 ## Issues
 
 The issue tracker of https://github.com/scheleaap/wmsnotes-desktop-java is used to track issues regarding all components.
+
+## Credits
+
+Much thanks to Ravi Tamada for his article on [Android Creating Gmail Like Inbox using RecyclerView](https://www.androidhive.info/2017/02/android-creating-gmail-like-inbox-using-recyclerview/)!
