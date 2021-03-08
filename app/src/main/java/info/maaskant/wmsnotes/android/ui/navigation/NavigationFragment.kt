@@ -24,6 +24,7 @@ import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTi
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
 import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
 import info.maaskant.wmsnotes.client.indexing.Folder
+import info.maaskant.wmsnotes.client.indexing.Node
 import info.maaskant.wmsnotes.client.indexing.Note
 import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.utilities.logger
@@ -160,24 +161,20 @@ class NavigationFragment @Inject constructor(
 
     private fun createAndAddFolder(path: Path) {
         logger.trace("Creating and adding folder $path")
-        val listAdapter = NodeListAdapter()
-        lateinit var recyclerView: RecyclerView
+        val listAdapter = NodeListAdapter(
+            NodeClickListener(
+                ::navigateToFolder,
+                ::openNote
+            )
+        )
         val view = inflater.inflate(R.layout.navigation_folder, folderViewContainer, false).apply {
             visibility = GONE
-            recyclerView = findViewById<RecyclerView>(R.id.node_list_view).apply {
+            findViewById<RecyclerView>(R.id.node_list_view).apply {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(context)
                 adapter = listAdapter
             }
         }
-        listAdapter.setListener(
-            NodeClickListener(
-                recyclerView,
-                listAdapter,
-                ::navigateToFolder,
-                ::openNote
-            )
-        )
         foldersByPath = foldersByPath + (path to FolderContainer(view, listAdapter))
         folderViewContainer.addView(view)
         bindFolderToViewModel(path)
@@ -248,24 +245,19 @@ class NavigationFragment @Inject constructor(
     }
 
     private class NodeClickListener(
-        private val recyclerView: RecyclerView,
-        private val nodeListAdapter: NodeListAdapter,
         private val navigateToFolder: KFunction1<Path, Unit>,
         private val openNote: KFunction1<String, Unit>
     ) : NodeListAdapter.NodeListAdapterListener {
-        override fun onClick(view: View) {
-            val itemPosition = recyclerView.getChildAdapterPosition(view)
-            val node = nodeListAdapter.getItem(itemPosition)
+        override fun onClick(node: Node) {
             when (node) {
                 is Folder -> navigateToFolder(node.path)
                 is Note -> openNote(node.aggId)
             }
         }
 
-        override fun onLongClick(view: View): Boolean {
+        override fun onLongClick(node: Node) {
             // TODO
             println("--- LONG CLICK ---")
-            return true
         }
     }
 
