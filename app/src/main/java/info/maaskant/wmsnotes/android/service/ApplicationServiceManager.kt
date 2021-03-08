@@ -19,7 +19,7 @@ import info.maaskant.wmsnotes.model.note.NoteCommandExecutor
 import info.maaskant.wmsnotes.model.note.policy.NoteTitlePolicy
 import info.maaskant.wmsnotes.utilities.ApplicationService
 import info.maaskant.wmsnotes.utilities.logger
-import leakcanary.LeakSentry
+import leakcanary.AppWatcher
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -80,7 +80,10 @@ class ApplicationServiceManager : Service() {
     override fun onDestroy() {
         logger.trace("onDestroy")
         super.onDestroy()
-        LeakSentry.refWatcher.watch(this)
+        AppWatcher.objectWatcher.expectWeaklyReachable(
+            watchedObject = this,
+            description = "${this::class.simpleName}.onDestroy was called"
+        )
     }
 
     class Binder(applicationServiceManager: ApplicationServiceManager) : android.os.Binder() {

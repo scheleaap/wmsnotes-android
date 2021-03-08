@@ -44,6 +44,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        useIR = true
     }
     testOptions {
         unitTests.all {
@@ -101,9 +102,7 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     // Leak Testing
-    final def leakcanary = "2.0-alpha-3"
-    implementation "com.squareup.leakcanary:leaksentry:$leakcanary"
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.6"
 
     // RxJava and background execution
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
@@ -129,7 +128,7 @@ dependencies {
     implementation "com.mikepenz:materialdrawer:6.1.2"
     implementation "com.mikepenz:google-material-typeface:3.0.1.3.original@aar"
     implementation "com.github.baurine:permission-util:1.0.3"
-    def glide = "4.9.0"
+    def glide = "4.12.0"
     implementation "com.github.bumptech.glide:glide:$glide"
     kapt "com.github.bumptech.glide:compiler:$glide"
     final def markwon = "4.0.2"
