@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="node_icon_size">40dp</dimen>
+    <dimen name="node_list_item_height">64dp</dimen>
+    <dimen name="node_list_item_padding_bottom">12dp</dimen>
+    <dimen name="node_list_item_padding_top">12dp</dimen>
+</resources>
