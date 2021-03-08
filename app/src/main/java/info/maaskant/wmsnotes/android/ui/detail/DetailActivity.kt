@@ -3,22 +3,23 @@ package info.maaskant.wmsnotes.android.ui.detail
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import dagger.android.AndroidInjection
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.hilt.android.AndroidEntryPoint
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.EmergencyBrakeActivityFinisher
 import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake
 import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
+import info.maaskant.wmsnotes.android.ui.di.DefaultFragmentFactory
 import info.maaskant.wmsnotes.client.synchronization.SynchronizationTask
+import info.maaskant.wmsnotes.model.CommandBus
 import info.maaskant.wmsnotes.utilities.logger
 import javax.inject.Inject
 
-class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
+@AndroidEntryPoint
+class DetailActivity : AppCompatActivity() {
     companion object {
         const val AGG_ID_KEY = "aggId"
         private const val EDITOR_FRAGMENT_KEY = "editorFragment"
@@ -27,17 +28,15 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     private val logger by logger()
 
-    @Inject
-    lateinit var detailViewModel: DetailViewModel
+    private val detailViewModel: DetailViewModel by viewModels()
 
-    @Inject
     lateinit var detailController: DetailController
 
     @Inject
-    lateinit var emergencyBrake: EmergencyBrake
+    lateinit var commandBus: CommandBus
 
     @Inject
-    lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
+    lateinit var emergencyBrake: EmergencyBrake
 
     @Inject
     lateinit var synchronizationTask: SynchronizationTask
@@ -50,13 +49,17 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         logger.trace(
-            "onCreate (hash: {}, savedInstanceState: {})",
+            "onCreate (this: {}, savedInstanceState: {})",
             System.identityHashCode(this),
             savedInstanceState
         )
-        AndroidInjection.inject(this)
-        logger.trace("DetailActivity: vm={}", detailViewModel)
+
+        DefaultFragmentFactory.setUp(this)
         super.onCreate(savedInstanceState)
+
+        logger.trace("DetailActivity: vm={}", detailViewModel)
+
+        detailController = DetailController(detailViewModel, commandBus, this)
 
         setContentView(R.layout.detail_activity)
         setupSupportActionBar()
@@ -99,7 +102,10 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
      */
     private fun getOrCreateEditorFragment(savedInstanceState: Bundle?): EditorFragment {
         return if (savedInstanceState == null) {
-            EditorFragment()
+            supportFragmentManager.fragmentFactory.instantiate(
+                classLoader,
+                EditorFragment::class.java.name
+            ) as EditorFragment
         } else {
             supportFragmentManager.getFragment(
                 savedInstanceState,
@@ -117,7 +123,10 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
      */
     private fun getOrCreateViewerFragment(savedInstanceState: Bundle?): ViewerFragment {
         return if (savedInstanceState == null) {
-            ViewerFragment()
+            supportFragmentManager.fragmentFactory.instantiate(
+                classLoader,
+                ViewerFragment::class.java.name
+            ) as ViewerFragment
         } else {
             supportFragmentManager.getFragment(
                 savedInstanceState,
@@ -189,6 +198,4 @@ class DetailActivity : AppCompatActivity(), HasSupportFragmentInjector {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
-
-    override fun supportFragmentInjector() = fragmentInjector
 }

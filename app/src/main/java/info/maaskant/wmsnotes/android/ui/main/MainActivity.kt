@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
 import com.baurine.permissionutil.PermissionUtil
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
@@ -14,24 +13,21 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import dagger.android.AndroidInjection
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.hilt.android.AndroidEntryPoint
 import info.maaskant.wmsnotes.BuildConfig
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.EmergencyBrakeActivityFinisher
 import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake
 import info.maaskant.wmsnotes.android.service.ApplicationServiceManager
 import info.maaskant.wmsnotes.android.ui.debug.DebugFragment
+import info.maaskant.wmsnotes.android.ui.di.DefaultFragmentFactory
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationFragment
 import info.maaskant.wmsnotes.android.ui.settings.SettingsActivity
 import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
-    @Inject
-    lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
-
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var emergencyBrake: EmergencyBrake
 
@@ -49,7 +45,8 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
                 getString(R.string.storage_permission_denied)
             ) { success ->
                 if (!success) {
-                    Toast.makeText(this, R.string.storage_permission_denied, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.storage_permission_denied, Toast.LENGTH_SHORT)
+                        .show()
                     this@MainActivity.moveTaskToBack(true)
                 } else {
                     recreate()
@@ -95,7 +92,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
                 when (drawerItem) {
                     debugDrawerItem -> navigateToDebug()
                     notesDrawerItem -> navigateToNavigation()
-                    settingsDrawerItem -> startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+                    settingsDrawerItem -> startActivity(
+                        Intent(
+                            this@MainActivity,
+                            SettingsActivity::class.java
+                        )
+                    )
                 }
                 false
             }
@@ -112,14 +114,25 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     private fun navigateToDebug() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, DebugFragment())
+            .replace(
+                R.id.main_container,
+                supportFragmentManager.fragmentFactory.instantiate(
+                    classLoader,
+                    DebugFragment::class.java.name
+                )
+            )
             .commitNow()
         drawer.setSelection(debugDrawerItemId, false)
     }
 
     private fun navigateToNavigation() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, NavigationFragment())
+            .replace(
+                R.id.main_container, supportFragmentManager.fragmentFactory.instantiate(
+                    classLoader,
+                    NavigationFragment::class.java.name
+                )
+            )
             .commitNow()
         drawer.setSelection(notesDrawerItemId, false)
     }
@@ -134,11 +147,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
             drawer.closeDrawer()
         } else {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.main_container)
-            val handledByFragment = if (currentFragment != null && currentFragment is OnBackPressedListener) {
-                currentFragment.onBackPressed()
-            } else {
-                false
-            }
+            val handledByFragment =
+                if (currentFragment != null && currentFragment is OnBackPressedListener) {
+                    currentFragment.onBackPressed()
+                } else {
+                    false
+                }
             if (!handledByFragment) {
                 super.onBackPressed()
             }
@@ -146,7 +160,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
+        DefaultFragmentFactory.setUp(this)
         super.onCreate(savedInstanceState)
         if (!hasAllRequiredPermissions()) return
 
@@ -154,7 +168,10 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
         findViewById<Toolbar>(R.id.toolbar).let { toolbar ->
             setSupportActionBar(toolbar)
-            createAndAddDrawer(toolbar, savedInstanceState?.getLong(NAVIGATION_DRAWER_CURRENT_SELECTION))
+            createAndAddDrawer(
+                toolbar,
+                savedInstanceState?.getLong(NAVIGATION_DRAWER_CURRENT_SELECTION)
+            )
         }
 
         lifecycle.addObserver(ApplicationServiceManager.ServiceBindingLifecycleObserver(this))
@@ -165,7 +182,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         PermissionUtil.onRequestPermissionResult(this, requestCode, permissions, grantResults)
     }
 
@@ -178,8 +200,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         super.onStart()
         checkAndAskForPermissions()
     }
-
-    override fun supportFragmentInjector() = fragmentInjector
 
     companion object {
         val NAVIGATION_DRAWER_CURRENT_SELECTION = "navigationDrawerCurrentSelection"

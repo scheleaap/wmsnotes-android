@@ -11,7 +11,8 @@ import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import dagger.android.support.AndroidSupportInjection
+import androidx.fragment.app.activityViewModels
+import dagger.hilt.android.AndroidEntryPoint
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.ui.detail.DetailViewModel.Update.Origin
 import info.maaskant.wmsnotes.utilities.logger
@@ -21,11 +22,11 @@ import io.sellmair.disposer.disposeBy
 import io.sellmair.disposer.onStop
 import javax.inject.Inject
 
-class EditorFragment : Fragment(), OnPageSelectedListener {
+@AndroidEntryPoint
+class EditorFragment @Inject constructor() : Fragment(), OnPageSelectedListener {
     private val logger by logger()
 
-    @Inject
-    lateinit var detailViewModel: DetailViewModel
+    private val detailViewModel: DetailViewModel by activityViewModels()
 
     private lateinit var contentField: EditText
 
@@ -51,7 +52,7 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidSupportInjection.inject(this)
+        logger.trace("onCreate (this: {})", System.identityHashCode(this))
         super.onCreate(savedInstanceState)
     }
 
@@ -59,6 +60,11 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        logger.trace(
+            "onCreateView (this: {}, vm: {})",
+            System.identityHashCode(this),
+            System.identityHashCode(detailViewModel)
+        )
         return inflater.inflate(R.layout.editor_fragment, container, false).apply {
             contentField = findViewById<EditText>(R.id.editor_content).apply {
                 isSaveEnabled = false
@@ -67,6 +73,7 @@ class EditorFragment : Fragment(), OnPageSelectedListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        logger.trace("onViewCreated (this: {})", System.identityHashCode(this))
         super.onViewCreated(view, savedInstanceState)
         contentField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

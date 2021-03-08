@@ -34,7 +34,6 @@ class DetailController @VisibleForTesting constructor(
 
     private val disposables = CompositeDisposable()
 
-    @Inject
     constructor(
         detailViewModel: DetailViewModel,
         commandBus: CommandBus,

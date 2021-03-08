@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake
 import info.maaskant.wmsnotes.android.client.synchronization.PreferenceBoundSynchronizationTask
 import info.maaskant.wmsnotes.client.indexing.TreeIndex
@@ -22,6 +22,7 @@ import info.maaskant.wmsnotes.utilities.logger
 import leakcanary.LeakSentry
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class ApplicationServiceManager : Service() {
     private val logger by logger()
 
@@ -57,8 +58,8 @@ class ApplicationServiceManager : Service() {
     }
 
     override fun onCreate() {
-        AndroidInjection.inject(this)
-        // Not sure why injecting services directly does not work.
+        logger.trace("onCreate")
+        super.onCreate()
         services = listOf(
             emergencyBrake,
             folderCommandExecutor,
@@ -67,8 +68,6 @@ class ApplicationServiceManager : Service() {
             treeIndex,
             synchronizationTask
         )
-        logger.trace("onCreate")
-        super.onCreate()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {

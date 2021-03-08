@@ -5,25 +5,35 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
-import info.maaskant.wmsnotes.android.app.App
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 import info.maaskant.wmsnotes.model.aggregaterepository.AggregateRepository
 import info.maaskant.wmsnotes.model.note.Note
 import java.nio.ByteBuffer
-import javax.inject.Inject
 
+// Source: https://github.com/bumptech/glide/issues/2002#issuecomment-683222928
 @GlideModule
 class GlideModule : AppGlideModule() {
-    @Inject
-    lateinit var noteRepository: AggregateRepository<Note>
+
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    internal interface GlideModuleEntryPoint {
+        fun getNoteRepository(): AggregateRepository<Note>
+    }
+
+    override fun isManifestParsingEnabled(): Boolean = false
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
-        // This solutions does not feel very clean.
-        // Source: https://github.com/bumptech/glide/issues/2002#issuecomment-312521168
-        (context.applicationContext as App).component.inject(this)
+        val appContext = context.applicationContext
+        val entryPoint: GlideModuleEntryPoint =
+            EntryPointAccessors.fromApplication(appContext, GlideModuleEntryPoint::class.java)
+
         registry.append(
             NoteAttachmentModel::class.java,
             ByteBuffer::class.java,
-            NoteAttachmentModelLoaderFactory(noteRepository)
+            NoteAttachmentModelLoaderFactory(entryPoint.getNoteRepository())
         )
     }
 }

@@ -5,9 +5,11 @@ import com.esotericsoftware.kryo.util.Pool
 import com.f2prateek.rx.preferences2.Preference
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import info.maaskant.wmsnotes.android.app.OtherModule
 import info.maaskant.wmsnotes.android.app.PreferencesModule.ServerHostname
-import info.maaskant.wmsnotes.android.app.di.Configuration.storeInMemory
+import info.maaskant.wmsnotes.android.app.Configuration.storeInMemory
 import info.maaskant.wmsnotes.client.api.GrpcCommandMapper
 import info.maaskant.wmsnotes.client.api.GrpcEventMapper
 import info.maaskant.wmsnotes.client.synchronization.*
@@ -47,8 +49,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-@Suppress("ConstantConditionIf")
 @Module
+@InstallIn(SingletonComponent::class)
 class SynchronizationModule {
     @Provides
     @Singleton

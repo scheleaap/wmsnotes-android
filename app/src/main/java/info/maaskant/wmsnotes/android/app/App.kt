@@ -1,10 +1,7 @@
 package info.maaskant.wmsnotes.android.app
 
-import android.app.Activity
 import android.app.Application
-import android.app.Service
 import android.util.Log
-import androidx.fragment.app.Fragment
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
@@ -17,11 +14,7 @@ import ch.qos.logback.core.rolling.RollingFileAppender
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy
 import ch.qos.logback.core.util.FileSize
 import ch.qos.logback.core.util.StatusPrinter
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import dagger.android.HasServiceInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.hilt.android.HiltAndroidApp
 import info.maaskant.wmsnotes.BuildConfig
 import info.maaskant.wmsnotes.android.app.upgrades.ServerHostnameUpgrade
 import info.maaskant.wmsnotes.android.client.synchronization.EmergencyBrake
@@ -33,18 +26,8 @@ import java.nio.charset.Charset
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
-class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasServiceInjector {
-    lateinit var component: AppComponent
-
-    @Inject
-    lateinit var activityInjector: DispatchingAndroidInjector<Activity>
-
-    @Inject
-    lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
-
-    @Inject
-    lateinit var serviceInjector: DispatchingAndroidInjector<Service>
-
+@HiltAndroidApp
+class App : Application() {
     @Inject
     lateinit var serverHostnameUpgrade: ServerHostnameUpgrade
 
@@ -142,16 +125,7 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
 
         exitIfEmergencyBrakeWasPulled()
         setupLogging()
-        setupDependencyInjection()
         serverHostnameUpgrade.run()
-    }
-
-    private fun setupDependencyInjection() {
-        component = DaggerAppComponent.builder()
-            .application(this)
-            .context(this)
-            .build()
-        component.inject(this)
     }
 
     private fun setupLogging() {
@@ -199,8 +173,4 @@ class App : Application(), HasActivityInjector, HasSupportFragmentInjector, HasS
 //        logger.warn("TEST WARN MESSAGE")
 //        logger.error("TEST ERROR MESSAGE")
     }
-
-    override fun activityInjector(): AndroidInjector<Activity> = activityInjector
-    override fun supportFragmentInjector() = fragmentInjector
-    override fun serviceInjector(): AndroidInjector<Service> = serviceInjector
 }

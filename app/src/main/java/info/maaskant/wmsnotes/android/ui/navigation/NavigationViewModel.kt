@@ -2,6 +2,8 @@ package info.maaskant.wmsnotes.android.ui.navigation
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.StringsModule.StringId
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid
@@ -22,6 +24,7 @@ import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+@HiltViewModel
 class NavigationViewModel @Inject constructor(
     private val commandBus: CommandBus,
     private val treeIndex: TreeIndex,

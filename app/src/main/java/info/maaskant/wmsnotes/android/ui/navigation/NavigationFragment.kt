@@ -6,6 +6,7 @@ import android.text.InputType
 import android.view.*
 import android.view.View.GONE
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -15,7 +16,7 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.android.ui.main.MainActivity
@@ -33,11 +34,12 @@ import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 import kotlin.reflect.KFunction1
 
-class NavigationFragment : Fragment(), OnBackPressedListener {
+@AndroidEntryPoint
+class NavigationFragment @Inject constructor(
+) : Fragment(), OnBackPressedListener {
     private val logger by logger()
 
-    @Inject
-    lateinit var viewModel: NavigationViewModel
+    private val viewModel: NavigationViewModel by viewModels()
 
     private lateinit var mainDisposable: CompositeDisposable
 
@@ -51,7 +53,6 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
     private var folderDisposables: Map<Path, Disposable> = mapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
@@ -82,13 +83,8 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
         }
     }
 
-    override fun onBackPressed(): Boolean {
-        return if (this::viewModel.isInitialized) {
-            viewModel.navigateUp()
-        } else {
-            false
-        }
-    }
+    override fun onBackPressed(): Boolean =
+        viewModel.navigateUp()
 
     private fun onCreateFolderClicked() {
         MaterialDialog(requireContext()).show {
@@ -142,7 +138,9 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
         val disposable = viewModel.getNodes(path)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { logger.trace("New folder contents: $it") }
-            .subscribeBy(onNext = { listAdapter.items = it }, onError = { logger.warn("Error", it) })
+            .subscribeBy(
+                onNext = { listAdapter.items = it },
+                onError = { logger.warn("Error", it) })
         folderDisposables = folderDisposables + (path to disposable)
     }
 
@@ -172,7 +170,14 @@ class NavigationFragment : Fragment(), OnBackPressedListener {
                 adapter = listAdapter
             }
         }
-        listAdapter.setOnClickListener(NodeClickListener(recyclerView, listAdapter, ::navigateToFolder, ::openNote))
+        listAdapter.setOnClickListener(
+            NodeClickListener(
+                recyclerView,
+                listAdapter,
+                ::navigateToFolder,
+                ::openNote
+            )
+        )
         foldersByPath = foldersByPath + (path to FolderContainer(view, listAdapter))
         folderViewContainer.addView(view)
         bindFolderToViewModel(path)

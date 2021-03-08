@@ -1,7 +1,10 @@
 package info.maaskant.wmsnotes.android.ui.debug
 
 import android.util.Base64
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import dagger.assisted.Assisted
+import dagger.hilt.android.lifecycle.HiltViewModel
 import info.maaskant.wmsnotes.model.CommandBus
 import info.maaskant.wmsnotes.model.CommandExecution
 import info.maaskant.wmsnotes.model.CommandOrigin
@@ -11,9 +14,11 @@ import info.maaskant.wmsnotes.model.note.CreateNoteCommand
 import info.maaskant.wmsnotes.model.note.Note
 import info.maaskant.wmsnotes.model.note.NoteCommandRequest
 import info.maaskant.wmsnotes.utilities.logger
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+@HiltViewModel
 class DebugViewModel @Inject constructor(
     private val commandBus: CommandBus
 ) : ViewModel() {
@@ -49,6 +54,8 @@ class DebugViewModel @Inject constructor(
             null
         }
     }
+
+    fun createText() : String = UUID.randomUUID().toString()
 
     companion object {
         private const val attachmentName = "test"

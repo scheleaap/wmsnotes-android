@@ -3,11 +3,14 @@ package info.maaskant.wmsnotes.android.app
 import android.content.res.Resources
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import info.maaskant.wmsnotes.R
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class StringsModule {
     @Qualifier
     @MustBeDocumented

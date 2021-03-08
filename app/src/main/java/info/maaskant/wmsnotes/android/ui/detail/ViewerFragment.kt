@@ -6,17 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import dagger.android.support.AndroidSupportInjection
+import androidx.fragment.app.activityViewModels
+import dagger.hilt.android.AndroidEntryPoint
 import info.maaskant.wmsnotes.R
+import info.maaskant.wmsnotes.utilities.logger
 import javax.inject.Inject
 
-class ViewerFragment : Fragment() {
+@AndroidEntryPoint
+class ViewerFragment @Inject constructor() : Fragment() {
+    private val logger by logger()
 
-    @Inject
-    lateinit var detailViewModel: DetailViewModel
+    private val detailViewModel: DetailViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidSupportInjection.inject(this)
+        logger.trace("onCreate (this: {})", System.identityHashCode(this))
         super.onCreate(savedInstanceState)
     }
 
@@ -24,10 +27,16 @@ class ViewerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        logger.trace(
+            "onCreateView (this: {}, vm: {})",
+            System.identityHashCode(this),
+            System.identityHashCode(detailViewModel)
+        )
         return inflater.inflate(R.layout.viewer_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        logger.trace("onViewCreated (this: {})", System.identityHashCode(this))
         super.onViewCreated(view, savedInstanceState)
         val textView = view.findViewById<TextView>(R.id.viewer_textview)
         lifecycle.addObserver(Renderer(detailViewModel, requireContext(), textView))

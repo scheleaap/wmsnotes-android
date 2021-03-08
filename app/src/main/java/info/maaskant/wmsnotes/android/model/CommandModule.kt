@@ -2,6 +2,8 @@ package info.maaskant.wmsnotes.android.model
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import info.maaskant.wmsnotes.model.CommandBus
 import info.maaskant.wmsnotes.model.CommandExecution
 import info.maaskant.wmsnotes.model.aggregaterepository.AggregateRepository
@@ -19,6 +21,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class CommandModule {
     @Provides
     @Singleton

@@ -1,4 +1,4 @@
-package info.maaskant.wmsnotes.android.app.di
+package info.maaskant.wmsnotes.android.app
 
 object Configuration {
     const val storeInMemory =

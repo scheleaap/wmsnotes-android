@@ -4,6 +4,8 @@ import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util.Pool
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import info.maaskant.wmsnotes.android.app.OtherModule
 import info.maaskant.wmsnotes.client.indexing.DefaultNodeSortingStrategy
 import info.maaskant.wmsnotes.client.indexing.KryoTreeIndexStateSerializer
@@ -18,6 +20,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class IndexingModule {
     @Provides
     @Singleton

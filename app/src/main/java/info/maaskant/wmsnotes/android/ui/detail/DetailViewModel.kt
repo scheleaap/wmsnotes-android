@@ -3,6 +3,7 @@ package info.maaskant.wmsnotes.android.ui.detail
 import android.os.Bundle
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import info.maaskant.wmsnotes.model.aggregaterepository.AggregateRepository
 import info.maaskant.wmsnotes.model.note.Note
 import info.maaskant.wmsnotes.utilities.logger
@@ -14,6 +15,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.Subject
 import javax.inject.Inject
 
+@HiltViewModel
 class DetailViewModel @VisibleForTesting constructor(
     private val noteRepository: AggregateRepository<Note>,
     ioScheduler: Scheduler,
@@ -42,6 +44,8 @@ class DetailViewModel @VisibleForTesting constructor(
     private val disposables = CompositeDisposable()
 
     init {
+        logger.trace("init (this: {})", System.identityHashCode(this))
+
         disposables.add(noteId
             .observeOn(computationScheduler)
             .firstElement()
