@@ -15,6 +15,7 @@ import info.maaskant.wmsnotes.client.indexing.Folder
 import info.maaskant.wmsnotes.client.indexing.Node
 import info.maaskant.wmsnotes.client.indexing.Note
 import kotlin.properties.Delegates
+import kotlin.random.Random
 
 internal class NodeListAdapter : RecyclerView.Adapter<NodeListAdapter.NodeViewHolder>(),
     AutoUpdatableAdapter {
@@ -59,6 +60,7 @@ internal class NodeListAdapter : RecyclerView.Adapter<NodeListAdapter.NodeViewHo
 
     override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
         val node = items[position]
+        holder.main.isActivated = Random.nextBoolean()
         holder.title.text = node.title
         when (node) {
             is Note -> {

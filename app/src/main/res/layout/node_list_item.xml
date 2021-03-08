@@ -5,6 +5,7 @@
     android:id="@+id/node_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/node_list_item_background"
     android:orientation="horizontal"
     android:paddingStart="?listPreferredItemPaddingStart"
     android:paddingTop="@dimen/node_list_item_padding_top"
@@ -42,6 +43,28 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/icon_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="@dimen/node_icon_size"
+                android:layout_height="@dimen/node_icon_size"
+                android:src="@drawable/node_icon_back_circle"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:layout_width="@dimen/node_icon_size"
+                android:layout_height="@dimen/node_icon_size"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/navigation_file_type"
+                android:padding="8dp"
+                app:tint="@color/node_icon_front_foreground"
+                tools:src="@drawable/ic_insert_drive_file_black_24dp" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
