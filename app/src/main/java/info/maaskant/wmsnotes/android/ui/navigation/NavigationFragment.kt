@@ -170,7 +170,7 @@ class NavigationFragment @Inject constructor(
                 adapter = listAdapter
             }
         }
-        listAdapter.setOnClickListener(
+        listAdapter.setListener(
             NodeClickListener(
                 recyclerView,
                 listAdapter,
@@ -229,7 +229,8 @@ class NavigationFragment @Inject constructor(
 
     private fun updateFoldersAccordingToStack(stack: List<Path>) {
         // TODO Replace ugly hack with something better
-        (activity as MainActivity?)?.supportActionBar?.title = stack.lastOrNull()?.elements?.lastOrNull() ?: "WMS Notes"
+        (activity as MainActivity?)?.supportActionBar?.title =
+            stack.lastOrNull()?.elements?.lastOrNull() ?: "WMS Notes"
         removeFoldersNotInStack(stack)
         ensureFolderExistsAndIsVisible(stack.last())
     }
@@ -251,14 +252,20 @@ class NavigationFragment @Inject constructor(
         private val nodeListAdapter: NodeListAdapter,
         private val navigateToFolder: KFunction1<Path, Unit>,
         private val openNote: KFunction1<String, Unit>
-    ) : View.OnClickListener {
-        override fun onClick(v: View) {
-            val itemPosition = recyclerView.getChildAdapterPosition(v)
+    ) : NodeListAdapter.NodeListAdapterListener {
+        override fun onClick(view: View) {
+            val itemPosition = recyclerView.getChildAdapterPosition(view)
             val node = nodeListAdapter.getItem(itemPosition)
             when (node) {
                 is Folder -> navigateToFolder(node.path)
                 is Note -> openNote(node.aggId)
             }
+        }
+
+        override fun onLongClick(view: View): Boolean {
+            // TODO
+            println("--- LONG CLICK ---")
+            return true
         }
     }
 

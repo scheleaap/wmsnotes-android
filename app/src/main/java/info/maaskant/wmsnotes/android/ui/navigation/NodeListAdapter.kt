@@ -1,10 +1,11 @@
 package info.maaskant.wmsnotes.android.ui.navigation
 
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
@@ -23,7 +24,7 @@ internal class NodeListAdapter : RecyclerView.Adapter<NodeListAdapter.NodeViewHo
         autoNotify(oldList, newList) { o, n -> o.aggId == n.aggId }
     }
 
-    private lateinit var onClickListener: OnClickListener
+    private lateinit var listener: NodeListAdapterListener
 
     init {
         setHasStableIds(true)
@@ -45,28 +46,33 @@ internal class NodeListAdapter : RecyclerView.Adapter<NodeListAdapter.NodeViewHo
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.node_list_item, parent, false).apply {
-            setOnClickListener(onClickListener)
-        }
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.node_list_item, parent, false)
+            .apply {
+                setOnClickListener(listener::onClick)
+                setOnLongClickListener {
+                    it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                    listener.onLongClick(it)
+                }
+            }
         return NodeViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
         val node = items[position]
-        holder.titleTextView.text = node.title
+        holder.title.text = node.title
         when (node) {
             is Note -> {
-                holder.iconImageView.setImageDrawable(
+                holder.icon.setImageDrawable(
                     IconicsDrawable(
-                        holder.iconImageView.context,
+                        holder.icon.context,
                         GoogleMaterial.Icon.gmd_insert_drive_file
                     )
                 )
             }
             is Folder -> {
-                holder.iconImageView.setImageDrawable(
+                holder.icon.setImageDrawable(
                     IconicsDrawable(
-                        holder.iconImageView.context,
+                        holder.icon.context,
                         GoogleMaterial.Icon.gmd_folder
                     )
                 )
@@ -74,13 +80,21 @@ internal class NodeListAdapter : RecyclerView.Adapter<NodeListAdapter.NodeViewHo
         }
     }
 
-    fun setOnClickListener(onClickListener: OnClickListener) {
-        this.onClickListener = onClickListener
+    // TODO: Move this to constructor argument?
+    fun setListener(listener: NodeListAdapterListener) {
+        this.listener = listener
+    }
+
+    interface NodeListAdapterListener {
+        fun onClick(view: View): Unit
+        fun onLongClick(view: View): Boolean
     }
 
     class NodeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val iconImageView: ImageView = view.findViewById(R.id.icon)
-        val titleTextView: TextView = view.findViewById(R.id.title)
+        //  TODO: Consider storing adapter position here and returning that in the NodeListAdapterListener instead of the view
+        val main: LinearLayout = view.findViewById(R.id.node_item)
+        val icon: ImageView = view.findViewById(R.id.icon)
+        val title: TextView = view.findViewById(R.id.title)
     }
 
 }
