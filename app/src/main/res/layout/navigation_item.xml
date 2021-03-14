@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/node_item"
+    android:id="@+id/navigation_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/node_list_item_background"
+    android:background="@drawable/navigation_item_background"
     android:orientation="horizontal"
     android:paddingStart="?listPreferredItemPaddingStart"
-    android:paddingTop="@dimen/node_list_item_padding_top"
+    android:paddingTop="@dimen/navigation_item_padding_top"
     android:paddingEnd="?listPreferredItemPaddingEnd"
-    android:paddingBottom="@dimen/node_list_item_padding_bottom">
+    android:paddingBottom="@dimen/navigation_item_padding_bottom">
 
     <RelativeLayout
         android:id="@+id/icon_container"
@@ -26,19 +26,19 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="@dimen/node_icon_size"
-                android:layout_height="@dimen/node_icon_size"
-                android:src="@drawable/node_icon_front_circle"
+                android:layout_width="@dimen/navigation_item_icon_size"
+                android:layout_height="@dimen/navigation_item_icon_size"
+                android:src="@drawable/navigation_item_icon_front_circle"
                 tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/icon"
-                android:layout_width="@dimen/node_icon_size"
-                android:layout_height="@dimen/node_icon_size"
+                android:layout_width="@dimen/navigation_item_icon_size"
+                android:layout_height="@dimen/navigation_item_icon_size"
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/navigation_file_type"
                 android:padding="8dp"
-                app:tint="@color/node_icon_front_foreground"
+                app:tint="@color/navigation_item_icon_front_foreground"
                 tools:src="@drawable/ic_insert_drive_file_black_24dp" />
 
         </RelativeLayout>
@@ -50,18 +50,18 @@
             android:visibility="gone">
 
             <ImageView
-                android:layout_width="@dimen/node_icon_size"
-                android:layout_height="@dimen/node_icon_size"
-                android:src="@drawable/node_icon_back_circle"
+                android:layout_width="@dimen/navigation_item_icon_size"
+                android:layout_height="@dimen/navigation_item_icon_size"
+                android:src="@drawable/navigation_item_icon_back_circle"
                 tools:ignore="ContentDescription" />
 
             <ImageView
-                android:layout_width="@dimen/node_icon_size"
-                android:layout_height="@dimen/node_icon_size"
+                android:layout_width="@dimen/navigation_item_icon_size"
+                android:layout_height="@dimen/navigation_item_icon_size"
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/navigation_file_type"
                 android:padding="8dp"
-                app:tint="@color/node_icon_front_foreground"
+                app:tint="@color/navigation_item_icon_front_foreground"
                 tools:src="@drawable/ic_insert_drive_file_black_24dp" />
 
         </RelativeLayout>
@@ -75,7 +75,7 @@
         android:layout_gravity="center"
         android:textColor="@android:color/primary_text_light"
         android:textSize="18sp"
-        tools:text="Node Title" />
+        tools:text="Navigation Item Title" />
     <!--android:fontFamily="sans-serif-light"-->
 
 </LinearLayout>

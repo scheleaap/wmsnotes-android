@@ -23,9 +23,6 @@ import info.maaskant.wmsnotes.android.ui.main.MainActivity
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
 import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
-import info.maaskant.wmsnotes.client.indexing.Folder
-import info.maaskant.wmsnotes.client.indexing.Node
-import info.maaskant.wmsnotes.client.indexing.Note
 import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -33,11 +30,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
-import kotlin.reflect.KFunction1
 
 @AndroidEntryPoint
 class NavigationFragment @Inject constructor(
-) : Fragment(), OnBackPressedListener {
+) : Fragment(), OnBackPressedListener, NavigationListAdapter.NavigationItemListAdapterListener {
     private val logger by logger()
 
     private val viewModel: NavigationViewModel by viewModels()
@@ -136,7 +132,7 @@ class NavigationFragment @Inject constructor(
     private fun bindFolderToViewModel(path: Path) {
         logger.trace("Binding folder $path to view model")
         val listAdapter = (foldersByPath[path] ?: error("Folder $path not present")).listAdapter
-        val disposable = viewModel.getNodes(path)
+        val disposable = viewModel.getNavigationItems(path)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { logger.trace("New folder contents: $it") }
             .subscribeBy(
@@ -161,12 +157,7 @@ class NavigationFragment @Inject constructor(
 
     private fun createAndAddFolder(path: Path) {
         logger.trace("Creating and adding folder $path")
-        val listAdapter = NodeListAdapter(
-            NodeClickListener(
-                ::navigateToFolder,
-                ::openNote
-            )
-        )
+        val listAdapter = NavigationListAdapter(this)
         val view = inflater.inflate(R.layout.navigation_folder, folderViewContainer, false).apply {
             visibility = GONE
             findViewById<RecyclerView>(R.id.node_list_view).apply {
@@ -187,8 +178,19 @@ class NavigationFragment @Inject constructor(
         ensureOnlyOneChildIsVisible(folderViewContainer, foldersByPath.getValue(path).view)
     }
 
-    private fun navigateToFolder(path: Path) {
-        viewModel.navigateTo(path)
+    override fun onClick(navigationItem: NavigationItem) {
+        if (viewModel.isSelectionModeEnabled().blockingFirst()) {
+            viewModel.toggleSelection(navigationItem)
+        } else {
+            when (navigationItem) {
+                is Folder -> viewModel.navigateTo(navigationItem.path)
+                is Note -> openNote(navigationItem.aggId)
+            }
+        }
+    }
+
+    override fun onLongClick(navigationItem: NavigationItem): Boolean {
+        return viewModel.toggleSelection(navigationItem)
     }
 
     private fun openNote(aggId: String) {
@@ -244,22 +246,5 @@ class NavigationFragment @Inject constructor(
         }
     }
 
-    private class NodeClickListener(
-        private val navigateToFolder: KFunction1<Path, Unit>,
-        private val openNote: KFunction1<String, Unit>
-    ) : NodeListAdapter.NodeListAdapterListener {
-        override fun onClick(node: Node) {
-            when (node) {
-                is Folder -> navigateToFolder(node.path)
-                is Note -> openNote(node.aggId)
-            }
-        }
-
-        override fun onLongClick(node: Node) {
-            // TODO
-            println("--- LONG CLICK ---")
-        }
-    }
-
-    private data class FolderContainer(val view: View, val listAdapter: NodeListAdapter)
+    private data class FolderContainer(val view: View, val listAdapter: NavigationListAdapter)
 }

@@ -9,13 +9,23 @@ import info.maaskant.wmsnotes.model.Path
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.shouldHaveThrown
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import info.maaskant.wmsnotes.android.ui.navigation.Folder as NIFolder
+import info.maaskant.wmsnotes.android.ui.navigation.Note as NINote
+import info.maaskant.wmsnotes.client.indexing.Folder as TIFolder
+import info.maaskant.wmsnotes.client.indexing.Note as TINote
 
 internal class NavigationViewModelTest {
+    private val path = Path()
+    private val aggId1 = "agg-1"
+    private val aggId2 = "agg-2"
+    private val title = "Title"
+
     private val commandBus: CommandBus = mockk()
 
     private val treeIndex: TreeIndex = mockk()
@@ -26,6 +36,9 @@ internal class NavigationViewModelTest {
             commandBus,
             treeIndex
         )
+
+        every { treeIndex.getEvents(any()) }.returns(Observable.empty())
+        every { treeIndex.getNodes(any()) }.returns(Observable.empty())
     }
 
     @Test
@@ -156,7 +169,76 @@ internal class NavigationViewModelTest {
         assertThat(model.isValidFolderTitle("title")).isEqualTo(Valid)
         assertThat(model.isValidFolderTitle("")).isEqualTo(Invalid(titleMustNotBeEmptyText))
         assertThat(model.isValidFolderTitle("")).isEqualTo(Invalid(titleMustNotBeEmptyText))
-        assertThat(model.isValidFolderTitle("tit/le")).isEqualTo(Invalid(titleMustNotContainSlashText))
+        assertThat(model.isValidFolderTitle("tit/le")).isEqualTo(
+            Invalid(
+                titleMustNotContainSlashText
+            )
+        )
+    }
+
+    @Test
+    fun getNavigationItems() {
+        // Given
+        every { treeIndex.getNodes(path) }.returns(
+            Observable.fromIterable(
+                listOf(
+                    TINote(aggId1, null, path, title),
+                    TIFolder(aggId2, null, path, title)
+                ).withIndex()
+            )
+        )
+        val model = createInstance()
+        val observer: TestObserver<List<NavigationItem>> = model.getNavigationItems(path).test()
+
+        // When
+
+        // Then
+        assertThat(observer.values().toList()).isEqualTo(
+            listOf(
+                listOf(
+                    NINote(aggId1, path, title, false),
+                    NIFolder(aggId2, path, title, false)
+                ),
+            )
+        )
+    }
+
+    @Test
+    fun `select notes`() {
+        // Given
+        val treeIndexNode1 = TINote(aggId1, null, path, title)
+        val treeIndexNode2 = TINote(aggId2, null, path, title)
+        val navigationItemNode1 =
+            NINote(treeIndexNode1.aggId, treeIndexNode1.path, treeIndexNode1.title, false)
+        val navigationItemNode2 =
+            NINote(treeIndexNode2.aggId, treeIndexNode2.path, treeIndexNode2.title, false)
+        every { treeIndex.getNodes(path) }.returns(
+            Observable.fromIterable(listOf(treeIndexNode1, treeIndexNode2).withIndex())
+        )
+        val model = createInstance()
+        val navigationItemsObserver: TestObserver<List<NavigationItem>> =
+            model.getNavigationItems(path).test()
+        val selectionModeEnabledObserver: TestObserver<Boolean> =
+            model.isSelectionModeEnabled().test()
+
+        // When
+        val result1 = model.toggleSelection(navigationItemNode1)
+        val result2 = model.toggleSelection(navigationItemNode2)
+        val result3 = model.toggleSelection(navigationItemNode1)
+
+        // Then
+        assertThat(listOf(result1, result2, result3)).isEqualTo(listOf(true, true, true))
+        assertThat(
+            navigationItemsObserver.values().toList() zip
+                    selectionModeEnabledObserver.values().toList()
+        ).isEqualTo(
+            listOf(
+                listOf(unselected(navigationItemNode1), unselected(navigationItemNode2)) to false,
+                listOf(selected(navigationItemNode1), unselected(navigationItemNode2)) to true,
+                listOf(selected(navigationItemNode1), selected(navigationItemNode2)) to true,
+                listOf(unselected(navigationItemNode1), selected(navigationItemNode2)) to true,
+            )
+        )
     }
 
     private fun createInstance(
@@ -171,4 +253,10 @@ internal class NavigationViewModelTest {
             titleMustNotBeEmptyText,
             titleMustNotContainSlashText
         )
+
+    private fun selected(note: NINote) =
+        NINote(note.aggId, note.path, note.title, isSelected = true)
+
+    private fun unselected(note: NINote) =
+        NINote(note.aggId, note.path, note.title, isSelected = false)
 }

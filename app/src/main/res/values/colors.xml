@@ -3,8 +3,8 @@
     <color name="color_primary">#008577</color>
     <color name="color_primary_dark">#00574B</color>
     <color name="color_accent">#D81B60</color>
-    <color name="node_icon_front_foreground">@color/md_white_1000</color>
-    <color name="node_icon_front_background">@color/primary_light</color>
+    <color name="navigation_item_icon_front_foreground">@color/md_white_1000</color>
+    <color name="node_icon_front_background">@color/color_primary</color>
     <color name="node_icon_back_foreground">@color/md_black_1000</color>
-    <color name="node_icon_back_background">@color/accent</color>
+    <color name="node_icon_back_background">@color/color_accent</color>
 </resources>

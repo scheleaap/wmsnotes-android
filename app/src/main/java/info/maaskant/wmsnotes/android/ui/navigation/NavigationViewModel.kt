@@ -2,7 +2,6 @@ package info.maaskant.wmsnotes.android.ui.navigation
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.app.StringsModule.StringId
@@ -20,6 +19,7 @@ import info.maaskant.wmsnotes.model.note.Note
 import info.maaskant.wmsnotes.model.note.NoteCommandRequest
 import info.maaskant.wmsnotes.utilities.logger
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -40,6 +40,9 @@ class NavigationViewModel @Inject constructor(
     private val stackSubject: BehaviorSubject<ImmutableStack<Path>> = BehaviorSubject.create()
     private lateinit var stackValue: ImmutableStack<Path>
 
+    private val selectionSubject: BehaviorSubject<List<String>> =
+        BehaviorSubject.createDefault(emptyList())
+
     init {
         setStack(ImmutableStack.from(initialPath))
     }
@@ -54,7 +57,10 @@ class NavigationViewModel @Inject constructor(
         )
     }
 
-    private fun createNavigationStack(stack: ImmutableStack<Path>, path: Path): ImmutableStack<Path> {
+    private fun createNavigationStack(
+        stack: ImmutableStack<Path>,
+        path: Path
+    ): ImmutableStack<Path> {
         return if (path != rootPath) {
             createNavigationStack(stack, path.parent()).push(path)
         } else {
@@ -83,16 +89,22 @@ class NavigationViewModel @Inject constructor(
         }
     }
 
-    fun getNodes(path: Path): Observable<List<Node>> {
-        return Observable.concat(
+    fun getNavigationItems(path: Path): Observable<List<NavigationItem>> {
+        // For every change to the tree index, get the nodes in the folder.
+        val nodesList: Observable<List<Node>> = Observable.concat(
             Observable.just(Unit),
-            treeIndex.getEvents(filterByFolder = path)
-                .map { Unit }
-        )
-            .map {
-                treeIndex.getNodes(filterByFolder = path)
-                    .map { it.value }.toList().blockingGet()
-            }
+            treeIndex.getEvents(filterByFolder = path).map { Unit }
+        ).map {
+            treeIndex.getNodes(filterByFolder = path)
+                .map { it.value }.toList().blockingGet()
+        }
+
+        return Observables.combineLatest(
+            nodesList,
+            selectionSubject
+        ).map { (nodes, selections) ->
+            nodes.map { node -> NavigationItem.fromNode(node, selections.contains(node.aggId)) }
+        }
     }
 
     fun getStack(): Observable<ImmutableStack<Path>> = stackSubject
@@ -106,6 +118,9 @@ class NavigationViewModel @Inject constructor(
         bundle.putSerializable(CURRENT_PATH_KEY, stackValue.peek().toString())
         return bundle
     }
+
+    fun isSelectionModeEnabled(): Observable<Boolean> =
+        selectionSubject.map { it.isNotEmpty()}
 
     fun isValidFolderTitle(title: String): FolderTitleValidity =
         when {
@@ -151,6 +166,17 @@ class NavigationViewModel @Inject constructor(
     private fun setStack(stack: ImmutableStack<Path>) {
         this.stackValue = stack
         this.stackSubject.onNext(stack)
+    }
+
+    fun toggleSelection(navigationItem: NavigationItem): Boolean {
+        val oldSelection = selectionSubject.value!!
+        val newSelection = if (oldSelection.contains(navigationItem.id)) {
+            oldSelection - navigationItem.id
+        } else {
+            oldSelection + navigationItem.id
+        }
+        selectionSubject.onNext(newSelection)
+        return true
     }
 
     companion object {

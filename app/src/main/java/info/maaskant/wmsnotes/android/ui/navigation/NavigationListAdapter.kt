@@ -11,21 +11,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import info.maaskant.wmsnotes.R
-import info.maaskant.wmsnotes.client.indexing.Folder
-import info.maaskant.wmsnotes.client.indexing.Node
-import info.maaskant.wmsnotes.client.indexing.Note
 import kotlin.properties.Delegates
-import kotlin.random.Random
 
-internal class NodeListAdapter(
-    private val listener: NodeListAdapterListener
+internal class NavigationListAdapter(
+    private val listener: NavigationItemListAdapterListener
 ) :
-    RecyclerView.Adapter<NodeListAdapter.NodeViewHolder>(),
+    RecyclerView.Adapter<NavigationListAdapter.NavigationItemViewHolder>(),
     AutoUpdatableAdapter {
 
     // Source: https://github.com/antoniolg/diffutil-recyclerview-kotlin/blob/master/app/src/main/java/com/antonioleiva/diffutilkotlin/ContentAdapter.kt
-    var items: List<Node> by Delegates.observable(emptyList()) { _, oldList, newList ->
-        autoNotify(oldList, newList) { o, n -> o.aggId == n.aggId }
+    var items: List<NavigationItem> by Delegates.observable(emptyList()) { _, oldList, newList ->
+        autoNotify(oldList, newList) { o, n -> o.id == n.id }
     }
 
     init {
@@ -39,34 +35,34 @@ internal class NodeListAdapter(
 
     override fun getItemId(position: Int): Long {
         // This is not really correct, since two different objects may have the same hash code. However, we are going
-        // to rely on our implementation in Note/Folder.hashCode()
+        // to rely on our implementation in NavigationItem.hashCode()
         return items[position].hashCode().toLong()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NavigationItemViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.node_list_item, parent, false)
-        return NodeViewHolder(view, listener)
+            LayoutInflater.from(parent.context).inflate(R.layout.navigation_item, parent, false)
+        return NavigationItemViewHolder(view, listener)
     }
 
-    override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: NavigationItemViewHolder, position: Int) {
         holder.bind(items[position])
     }
 
-    interface NodeListAdapterListener {
-        fun onClick(node: Node)
-        fun onLongClick(node: Node)
+    interface NavigationItemListAdapterListener {
+        fun onClick(navigationItem: NavigationItem)
+        fun onLongClick(navigationItem: NavigationItem):Boolean
     }
 
-    class NodeViewHolder(
+    class NavigationItemViewHolder(
         view: View,
-        private val listener: NodeListAdapterListener
+        private val listener: NavigationItemListAdapterListener
     ) :
         RecyclerView.ViewHolder(view),
         View.OnClickListener,
         View.OnLongClickListener {
-        private lateinit var node: Node
-        private val main: LinearLayout = view.findViewById(R.id.node_item)
+        private lateinit var navigationItem: NavigationItem
+        private val main: LinearLayout = view.findViewById(R.id.navigation_item)
         private val icon: ImageView = view.findViewById(R.id.icon)
         private val title: TextView = view.findViewById(R.id.title)
 
@@ -75,12 +71,12 @@ internal class NodeListAdapter(
             view.setOnLongClickListener(this)
         }
 
-        fun bind(node: Node) {
-            this.node = node
-            main.isActivated = Random.nextBoolean()
-            title.text = node.title
-            when (node) {
+        fun bind(navigationItem: NavigationItem) {
+            this.navigationItem = navigationItem
+            main.isActivated = navigationItem.isSelected
+            when (navigationItem) {
                 is Note -> {
+                    title.text = navigationItem.title
                     icon.setImageDrawable(
                         IconicsDrawable(
                             icon.context,
@@ -89,6 +85,7 @@ internal class NodeListAdapter(
                     )
                 }
                 is Folder -> {
+                    title.text = navigationItem.title
                     icon.setImageDrawable(
                         IconicsDrawable(
                             icon.context,
@@ -100,13 +97,15 @@ internal class NodeListAdapter(
         }
 
         override fun onClick(view: View) {
-            listener.onClick(node)
+            listener.onClick(navigationItem)
         }
 
         override fun onLongClick(view: View): Boolean {
-            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-            listener.onLongClick(node)
-            return true
+            val consumed = listener.onLongClick(navigationItem)
+            if (consumed) {
+                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            }
+            return consumed
         }
     }
 }

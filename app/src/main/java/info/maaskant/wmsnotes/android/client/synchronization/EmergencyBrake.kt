@@ -70,9 +70,10 @@ class EmergencyBrake @Inject constructor(
     fun triggered(): Observable<Unit> = triggered
 
     companion object {
+        private val basePath = File("/storage/emulated/0/wmsnotes")
+
         @SuppressLint("SimpleDateFormat")
         fun getEmergencyFileStatus(): EmergencyFileStatus {
-            val basePath = File("/storage/emulated/0/wmsnotes")
             val brakeExists = basePath.walk().filter { it.name.startsWith("emergency") }.any()
             val currentDate = SimpleDateFormat("yyyy-MM-dd").format(Date())
             val brakeOverrideExists = basePath.resolve("emergency.$currentDate").exists()
@@ -87,7 +88,6 @@ class EmergencyBrake @Inject constructor(
         }
 
         fun writeEmergencyFile() {
-            val basePath = File("/storage/emulated/0/wmsnotes")
             val brakePath = basePath.resolve("emergency")
             if (!brakePath.exists()) {
                 brakePath.createNewFile()
