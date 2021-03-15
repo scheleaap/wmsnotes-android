@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import info.maaskant.wmsnotes.R
 import info.maaskant.wmsnotes.android.ui.detail.DetailActivity
 import info.maaskant.wmsnotes.android.ui.main.MainActivity
+import info.maaskant.wmsnotes.android.ui.navigation.NavigationListAdapter.*
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Invalid
 import info.maaskant.wmsnotes.android.ui.navigation.NavigationViewModel.FolderTitleValidity.Valid
 import info.maaskant.wmsnotes.android.ui.util.OnBackPressedListener
@@ -34,7 +35,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class NavigationFragment @Inject constructor(
-) : Fragment(), OnBackPressedListener, NavigationListAdapter.NavigationItemListAdapterListener {
+) : Fragment(), OnBackPressedListener, NavigationListAdapterListener {
     private val logger by logger()
 
     private val viewModel: NavigationViewModel by viewModels()
@@ -163,49 +164,13 @@ class NavigationFragment @Inject constructor(
             visibility = GONE
             findViewById<RecyclerView>(R.id.node_list_view).apply {
                 setHasFixedSize(true)
-                layoutManager = LinearLayoutManager(context)
-                adapter = listAdapter
-                itemAnimator = object : DefaultItemAnimator() {
-                    // Source: https://medium.com/swlh/recyclerview-item-change-animations-ebe2383bb481
-
-                    override fun canReuseUpdatedViewHolder(
-                        viewHolder: RecyclerView.ViewHolder,
-                        payloads: MutableList<Any>
-                    ): Boolean {
-                        val decision =
-                            super.canReuseUpdatedViewHolder(viewHolder, payloads)
-                        logger.info("--- CRUVH: $payloads -> $decision ---")
-                        return decision
-                    }
-
-                    override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
-                        val decision = super.canReuseUpdatedViewHolder(viewHolder)
-                        logger.info("--- CRUVH: -> $decision---")
-                        return decision
-                    }
-
-                    override fun animateChange(
-                        oldHolder: RecyclerView.ViewHolder,
-                        newHolder: RecyclerView.ViewHolder,
-                        preInfo: ItemHolderInfo,
-                        postInfo: ItemHolderInfo
-                    ): Boolean {
-                        return super.animateChange(oldHolder, newHolder, preInfo, postInfo)
-                    }
-
-                    override fun animateChange(
-                        oldHolder: RecyclerView.ViewHolder,
-                        newHolder: RecyclerView.ViewHolder,
-                        fromX: Int,
-                        fromY: Int,
-                        toX: Int,
-                        toY: Int
-                    ): Boolean {
-                        TODO()
+                layoutManager = object : LinearLayoutManager(context) {
+                    override fun supportsPredictiveItemAnimations(): Boolean {
+                        return false
                     }
                 }
-//                itemAnimator=null
-//                TODO HIER BEZIG: Probeer https://medium.com/swlh/recyclerview-item-change-animations-ebe2383bb481
+                adapter = listAdapter
+                itemAnimator = NavigationItemAnimator()
             }
         }
         foldersByPath = foldersByPath + (path to FolderContainer(view, listAdapter))

@@ -22,10 +22,10 @@ interface AutoUpdatableAdapter<T> {
             override fun getNewListSize() = new.size
 
             override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? =
-                    this@AutoUpdatableAdapter.getChangePayload(
-                        old[oldItemPosition],
-                        new[newItemPosition]
-                    )
+                this@AutoUpdatableAdapter.getChangePayload(
+                    old[oldItemPosition],
+                    new[newItemPosition]
+                )
         })
 
         diff.dispatchUpdatesTo(this)

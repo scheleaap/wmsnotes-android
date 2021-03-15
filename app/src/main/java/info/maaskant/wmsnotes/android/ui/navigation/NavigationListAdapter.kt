@@ -1,22 +1,15 @@
 package info.maaskant.wmsnotes.android.ui.navigation
 
-import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.google_material_typeface_library.GoogleMaterial
-import com.mikepenz.iconics.IconicsDrawable
 import info.maaskant.wmsnotes.R
 import kotlin.properties.Delegates
 
 internal class NavigationListAdapter(
-    private val listener: NavigationItemListAdapterListener
+    private val listener: NavigationListAdapterListener
 ) :
-    RecyclerView.Adapter<NavigationListAdapter.NavigationItemViewHolder>(),
+    RecyclerView.Adapter<NavigationItemViewHolder>(),
     AutoUpdatableAdapter<NavigationItem> {
 
     // Source: https://github.com/antoniolg/diffutil-recyclerview-kotlin/blob/master/app/src/main/java/com/antonioleiva/diffutilkotlin/ContentAdapter.kt
@@ -29,12 +22,8 @@ internal class NavigationListAdapter(
         this.items = emptyList()
     }
 
-    override fun getChangePayload(oldItem: NavigationItem, newItem: NavigationItem): Any? =
-        if (oldItem.equalsIgnoringSelection(newItem) && oldItem.isSelected != newItem.isSelected) {
-            "isSelected"
-        } else {
-            null
-        }
+    override fun getChangePayload(oldItem: NavigationItem, newItem: NavigationItem): Any =
+        oldItem to newItem
 
     override fun getItemCount(): Int {
         return items.size
@@ -58,10 +47,10 @@ internal class NavigationListAdapter(
         payloads: List<Any>
     ) {
         val navigationItem = items[position]
-        if (payloads.isNotEmpty() && payloads[0] == "isSelected") {
-            holder.setSelection(navigationItem.isSelected)
-        } else {
+        if (payloads.isEmpty()) {
             holder.bind(navigationItem)
+        } else {
+            TODO("Unexpected payload in onBindViewHolder: $payloads")
         }
     }
 
@@ -69,67 +58,8 @@ internal class NavigationListAdapter(
         onBindViewHolder(holder, position, emptyList())
     }
 
-    interface NavigationItemListAdapterListener {
+    interface NavigationListAdapterListener {
         fun onClick(navigationItem: NavigationItem)
         fun onLongClick(navigationItem: NavigationItem): Boolean
-    }
-
-    class NavigationItemViewHolder(
-        view: View,
-        private val listener: NavigationItemListAdapterListener
-    ) :
-        RecyclerView.ViewHolder(view),
-        View.OnClickListener,
-        View.OnLongClickListener {
-        private lateinit var navigationItem: NavigationItem
-        private val main: LinearLayout = view.findViewById(R.id.navigation_item)
-        private val icon: ImageView = view.findViewById(R.id.icon)
-        private val title: TextView = view.findViewById(R.id.title)
-
-        init {
-            view.setOnClickListener(this)
-            view.setOnLongClickListener(this)
-        }
-
-        fun bind(navigationItem: NavigationItem) {
-            this.navigationItem = navigationItem
-            main.isActivated = navigationItem.isSelected
-            when (navigationItem) {
-                is Note -> {
-                    title.text = navigationItem.title
-                    icon.setImageDrawable(
-                        IconicsDrawable(
-                            icon.context,
-                            GoogleMaterial.Icon.gmd_insert_drive_file
-                        )
-                    )
-                }
-                is Folder -> {
-                    title.text = navigationItem.title
-                    icon.setImageDrawable(
-                        IconicsDrawable(
-                            icon.context,
-                            GoogleMaterial.Icon.gmd_folder
-                        )
-                    )
-                }
-            }
-        }
-
-        fun setSelection(isSelected: Boolean) {
-            main.isActivated = isSelected
-        }
-
-        override fun onClick(view: View) {
-            listener.onClick(navigationItem)
-        }
-
-        override fun onLongClick(view: View): Boolean {
-            val consumed = listener.onLongClick(navigationItem)
-            if (consumed) {
-                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-            }
-            return consumed
-        }
     }
 }
