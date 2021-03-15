@@ -1,13 +1,21 @@
 package info.maaskant.wmsnotes.android.ui.navigation
 
 import au.com.console.kassava.kotlinEquals
-import au.com.console.kassava.kotlinHashCode
-import au.com.console.kassava.kotlinToString
 import info.maaskant.wmsnotes.model.Path
 
 sealed interface NavigationItem {
     val id: String
+    val path: Path
+    val title: String
     val isSelected: Boolean
+
+    fun equalsIgnoringSelection(other: Any?) = kotlinEquals(
+        other, arrayOf(
+            NavigationItem::id,
+            NavigationItem::path,
+            NavigationItem::title
+        )
+    )
 
     companion object {
         fun fromNode(node: info.maaskant.wmsnotes.client.indexing.Node, isSelected: Boolean) =
@@ -28,48 +36,16 @@ sealed interface NavigationItem {
     }
 }
 
-class Folder(
-    val aggId: String,
-    val path: Path,
-    val title: String,
+data class Folder(
+    override val id: String,
+    override val path: Path,
+    override val title: String,
     override val isSelected: Boolean
-) :
-    NavigationItem {
-    override val id = aggId
+) : NavigationItem
 
-    override fun equals(other: Any?) = kotlinEquals(other, properties)
-    override fun toString() = kotlinToString(properties)
-    override fun hashCode() = kotlinHashCode(properties)
-
-    companion object {
-        private val properties = arrayOf(
-            Folder::aggId,
-            Folder::path,
-            Folder::title,
-            Folder::isSelected
-        )
-    }
-}
-
-class Note(
-    val aggId: String,
-    val path: Path,
-    val title: String,
+data class Note(
+    override val id: String,
+    override val path: Path,
+    override val title: String,
     override val isSelected: Boolean
-) :
-    NavigationItem {
-    override val id = aggId
-
-    override fun equals(other: Any?) = kotlinEquals(other, properties)
-    override fun toString() = kotlinToString(properties)
-    override fun hashCode() = kotlinHashCode(properties)
-
-    companion object {
-        private val properties = arrayOf(
-            Note::aggId,
-            Note::path,
-            Note::title,
-            Note::isSelected
-        )
-    }
-}
+) : NavigationItem

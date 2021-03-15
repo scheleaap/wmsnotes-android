@@ -17,7 +17,7 @@ internal class NavigationListAdapter(
     private val listener: NavigationItemListAdapterListener
 ) :
     RecyclerView.Adapter<NavigationListAdapter.NavigationItemViewHolder>(),
-    AutoUpdatableAdapter {
+    AutoUpdatableAdapter<NavigationItem> {
 
     // Source: https://github.com/antoniolg/diffutil-recyclerview-kotlin/blob/master/app/src/main/java/com/antonioleiva/diffutilkotlin/ContentAdapter.kt
     var items: List<NavigationItem> by Delegates.observable(emptyList()) { _, oldList, newList ->
@@ -28,6 +28,13 @@ internal class NavigationListAdapter(
         setHasStableIds(true)
         this.items = emptyList()
     }
+
+    override fun getChangePayload(oldItem: NavigationItem, newItem: NavigationItem): Any? =
+        if (oldItem.equalsIgnoringSelection(newItem) && oldItem.isSelected != newItem.isSelected) {
+            "isSelected"
+        } else {
+            null
+        }
 
     override fun getItemCount(): Int {
         return items.size
@@ -45,13 +52,26 @@ internal class NavigationListAdapter(
         return NavigationItemViewHolder(view, listener)
     }
 
+    override fun onBindViewHolder(
+        holder: NavigationItemViewHolder,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        val navigationItem = items[position]
+        if (payloads.isNotEmpty() && payloads[0] == "isSelected") {
+            holder.setSelection(navigationItem.isSelected)
+        } else {
+            holder.bind(navigationItem)
+        }
+    }
+
     override fun onBindViewHolder(holder: NavigationItemViewHolder, position: Int) {
-        holder.bind(items[position])
+        onBindViewHolder(holder, position, emptyList())
     }
 
     interface NavigationItemListAdapterListener {
         fun onClick(navigationItem: NavigationItem)
-        fun onLongClick(navigationItem: NavigationItem):Boolean
+        fun onLongClick(navigationItem: NavigationItem): Boolean
     }
 
     class NavigationItemViewHolder(
@@ -94,6 +114,10 @@ internal class NavigationListAdapter(
                     )
                 }
             }
+        }
+
+        fun setSelection(isSelected: Boolean) {
+            main.isActivated = isSelected
         }
 
         override fun onClick(view: View) {

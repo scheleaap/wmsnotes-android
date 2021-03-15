@@ -7,6 +7,7 @@ import android.view.*
 import android.view.View.GONE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -164,6 +165,47 @@ class NavigationFragment @Inject constructor(
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(context)
                 adapter = listAdapter
+                itemAnimator = object : DefaultItemAnimator() {
+                    // Source: https://medium.com/swlh/recyclerview-item-change-animations-ebe2383bb481
+
+                    override fun canReuseUpdatedViewHolder(
+                        viewHolder: RecyclerView.ViewHolder,
+                        payloads: MutableList<Any>
+                    ): Boolean {
+                        val decision =
+                            super.canReuseUpdatedViewHolder(viewHolder, payloads)
+                        logger.info("--- CRUVH: $payloads -> $decision ---")
+                        return decision
+                    }
+
+                    override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
+                        val decision = super.canReuseUpdatedViewHolder(viewHolder)
+                        logger.info("--- CRUVH: -> $decision---")
+                        return decision
+                    }
+
+                    override fun animateChange(
+                        oldHolder: RecyclerView.ViewHolder,
+                        newHolder: RecyclerView.ViewHolder,
+                        preInfo: ItemHolderInfo,
+                        postInfo: ItemHolderInfo
+                    ): Boolean {
+                        return super.animateChange(oldHolder, newHolder, preInfo, postInfo)
+                    }
+
+                    override fun animateChange(
+                        oldHolder: RecyclerView.ViewHolder,
+                        newHolder: RecyclerView.ViewHolder,
+                        fromX: Int,
+                        fromY: Int,
+                        toX: Int,
+                        toY: Int
+                    ): Boolean {
+                        TODO()
+                    }
+                }
+//                itemAnimator=null
+//                TODO HIER BEZIG: Probeer https://medium.com/swlh/recyclerview-item-change-animations-ebe2383bb481
             }
         }
         foldersByPath = foldersByPath + (path to FolderContainer(view, listAdapter))
@@ -184,7 +226,7 @@ class NavigationFragment @Inject constructor(
         } else {
             when (navigationItem) {
                 is Folder -> viewModel.navigateTo(navigationItem.path)
-                is Note -> openNote(navigationItem.aggId)
+                is Note -> openNote(navigationItem.id)
             }
         }
     }
