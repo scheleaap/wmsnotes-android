@@ -7,7 +7,6 @@ import android.view.*
 import android.view.View.GONE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -164,13 +163,9 @@ class NavigationFragment @Inject constructor(
             visibility = GONE
             findViewById<RecyclerView>(R.id.node_list_view).apply {
                 setHasFixedSize(true)
-                layoutManager = object : LinearLayoutManager(context) {
-                    override fun supportsPredictiveItemAnimations(): Boolean {
-                        return false
-                    }
-                }
+                layoutManager = LinearLayoutManager(context)
                 adapter = listAdapter
-                itemAnimator = NavigationItemAnimator()
+                itemAnimator = NavigationItemAnimator(context)
             }
         }
         foldersByPath = foldersByPath + (path to FolderContainer(view, listAdapter))

@@ -169,6 +169,7 @@ class NavigationViewModel @Inject constructor(
     }
 
     fun toggleSelection(navigationItem: NavigationItem): Boolean {
+        logger.trace("Toggle selection for $navigationItem")
         val oldSelection = selectionSubject.value!!
         val newSelection = if (oldSelection.contains(navigationItem.id)) {
             oldSelection - navigationItem.id

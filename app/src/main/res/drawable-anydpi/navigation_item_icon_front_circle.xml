@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <solid android:color="@color/node_icon_front_background" />
+    <solid android:color="@color/navigation_item_icon_front_background" />
 
     <size
         android:width="120dp"

@@ -16,7 +16,7 @@
 
     <!-- Half-way through the rotation (see startOffset), set the alpha to 1. -->
     <objectAnimator
-        android:duration="1"
+        android:duration="0"
         android:propertyName="alpha"
         android:startOffset="@integer/card_flip_time_half"
         android:valueFrom="0.0"

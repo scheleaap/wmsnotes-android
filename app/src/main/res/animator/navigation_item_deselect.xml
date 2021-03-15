@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@integer/card_flip_time_full"
+    android:propertyName="backgroundColor"
+    android:valueFrom="@color/navigation_item_selected_background"
+    android:valueTo="@color/navigation_item_default_background"
+    android:valueType="colorType" />
