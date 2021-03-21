@@ -47,6 +47,17 @@ class NavigationViewModel @Inject constructor(
         setStack(ImmutableStack.from(initialPath))
     }
 
+    fun clearSelection(): Boolean {
+        logger.trace("Clear selection")
+        val oldSelection = selectionSubject.value!!
+        if (oldSelection.isNotEmpty()) {
+            selectionSubject.onNext(emptyList())
+            return true
+        } else {
+            return false
+        }
+    }
+
     fun createFolder(title: String) {
         commandBus.requests.onNext(
             FolderCommandRequest.of(
@@ -120,7 +131,7 @@ class NavigationViewModel @Inject constructor(
     }
 
     fun isSelectionModeEnabled(): Observable<Boolean> =
-        selectionSubject.map { it.isNotEmpty()}
+        selectionSubject.map { it.isNotEmpty() }.distinctUntilChanged()
 
     fun isValidFolderTitle(title: String): FolderTitleValidity =
         when {

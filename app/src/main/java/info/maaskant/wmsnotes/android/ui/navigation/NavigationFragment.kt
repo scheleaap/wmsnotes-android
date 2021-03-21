@@ -30,6 +30,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
+import io.sellmair.disposer.disposeBy
+import io.sellmair.disposer.onStop
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,6 +49,7 @@ class NavigationFragment @Inject constructor(
 
     private lateinit var inflater: LayoutInflater
 
+    private var actionMode:ActionMode? = null
     private var foldersByPath: Map<Path, FolderContainer> = mapOf()
     private var folderDisposables: Map<Path, Disposable> = mapOf()
 
@@ -71,6 +74,38 @@ class NavigationFragment @Inject constructor(
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.isSelectionModeEnabled()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = {isEnabled ->
+                if (isEnabled && actionMode == null) {
+                    actionMode = activity?.startActionMode(object : ActionMode.Callback {
+                        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean =
+                            true
+
+                        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean =
+                            false
+
+                        override fun onActionItemClicked(
+                            mode: ActionMode,
+                            item: MenuItem
+                        ): Boolean =
+                            false
+
+                        override fun onDestroyActionMode(mode: ActionMode) {
+                            viewModel.clearSelection()
+                        }
+                    })
+                } else if (!isEnabled) {
+                    actionMode?.finish()
+                    actionMode = null
+                }
+            }, onError = { logger.warn("Error", it) })
+            .disposeBy(onStop)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.restoreState(savedInstanceState)
@@ -82,7 +117,7 @@ class NavigationFragment @Inject constructor(
     }
 
     override fun onBackPressed(): Boolean =
-        viewModel.navigateUp()
+        viewModel.clearSelection() || viewModel.navigateUp()
 
     private fun onCreateFolderClicked() {
         MaterialDialog(requireContext()).show {

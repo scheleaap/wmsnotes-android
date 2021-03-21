@@ -23,7 +23,6 @@ class NavigationItemAnimator(private val context: Context) : DefaultItemAnimator
         postInfo: ItemHolderInfo
     ): Boolean {
         return if (oldHolder is NavigationItemViewHolder && preInfo is NavigationItemHolderInfo) {
-            logger.info("--- ${oldHolder == newHolder}")
             if (preInfo.old.isSelected != preInfo.new.isSelected) {
                 val main = (AnimatorInflater.loadAnimator(
                     context,

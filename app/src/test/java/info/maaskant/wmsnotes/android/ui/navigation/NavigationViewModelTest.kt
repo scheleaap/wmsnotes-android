@@ -228,18 +228,62 @@ internal class NavigationViewModelTest {
 
         // Then
         assertThat(listOf(result1, result2, result3)).isEqualTo(listOf(true, true, true))
-        assertThat(
-            navigationItemsObserver.values().toList() zip
-                    selectionModeEnabledObserver.values().toList()
-        ).isEqualTo(
+        assertThat(navigationItemsObserver.values().toList()).isEqualTo(
             listOf(
-                listOf(unselected(navigationItemNode1), unselected(navigationItemNode2)) to false,
-                listOf(selected(navigationItemNode1), unselected(navigationItemNode2)) to true,
-                listOf(selected(navigationItemNode1), selected(navigationItemNode2)) to true,
-                listOf(unselected(navigationItemNode1), selected(navigationItemNode2)) to true,
+                listOf(unselected(navigationItemNode1), unselected(navigationItemNode2)),
+                listOf(selected(navigationItemNode1), unselected(navigationItemNode2)),
+                listOf(selected(navigationItemNode1), selected(navigationItemNode2)),
+                listOf(unselected(navigationItemNode1), selected(navigationItemNode2)),
+            )
+        )
+        assertThat(selectionModeEnabledObserver.values().toList()).isEqualTo(
+            listOf(
+                false,
+                true
             )
         )
     }
+
+    @Test
+    fun `deselect notes`() {
+        // Given
+        val treeIndexNode1 = TINote(aggId1, null, path, title)
+        val treeIndexNode2 = TINote(aggId2, null, path, title)
+        val navigationItemNode1 =
+            NINote(treeIndexNode1.aggId, treeIndexNode1.path, treeIndexNode1.title, false)
+        val navigationItemNode2 =
+            NINote(treeIndexNode2.aggId, treeIndexNode2.path, treeIndexNode2.title, false)
+        every { treeIndex.getNodes(path) }.returns(
+            Observable.fromIterable(listOf(treeIndexNode1, treeIndexNode2).withIndex())
+        )
+        val model = createInstance()
+        model.toggleSelection(navigationItemNode1)
+        model.toggleSelection(navigationItemNode2)
+        val navigationItemsObserver: TestObserver<List<NavigationItem>> =
+            model.getNavigationItems(path).test()
+        val selectionModeEnabledObserver: TestObserver<Boolean> =
+            model.isSelectionModeEnabled().test()
+
+        // When
+        val result1 = model.clearSelection()
+        val result2 = model.clearSelection()
+
+        // Then
+        assertThat(listOf(result1, result2)).isEqualTo(listOf(true, false))
+        assertThat(navigationItemsObserver.values().toList()).isEqualTo(
+            listOf(
+                listOf(selected(navigationItemNode1), selected(navigationItemNode2)),
+                listOf(unselected(navigationItemNode1), unselected(navigationItemNode2)),
+            )
+        )
+        assertThat(selectionModeEnabledObserver.values().toList()).isEqualTo(
+            listOf(
+                true,
+                false
+            )
+        )
+    }
+
 
     private fun createInstance(
         newNoteTitle: String = "",
@@ -255,8 +299,8 @@ internal class NavigationViewModelTest {
         )
 
     private fun selected(note: NINote) =
-        NINote(note.aggId, note.path, note.title, isSelected = true)
+        NINote(note.id, note.path, note.title, isSelected = true)
 
     private fun unselected(note: NINote) =
-        NINote(note.aggId, note.path, note.title, isSelected = false)
+        NINote(note.id, note.path, note.title, isSelected = false)
 }
