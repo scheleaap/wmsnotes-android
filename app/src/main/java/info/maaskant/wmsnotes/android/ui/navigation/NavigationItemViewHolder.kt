@@ -29,8 +29,10 @@ internal class NavigationItemViewHolder(
     val title: TextView = view.findViewById(R.id.title)
 
     init {
-        view.setOnClickListener(this)
-        view.setOnLongClickListener(this)
+        main.setOnClickListener(this)
+        main.setOnLongClickListener(this)
+        iconFront.setOnClickListener(this)
+        iconBack.setOnClickListener(this)
     }
 
     fun bind(navigationItem: NavigationItem) {
@@ -42,11 +44,15 @@ internal class NavigationItemViewHolder(
     }
 
     override fun onClick(view: View) {
-        listener.onClick(navigationItem)
+        when (view) {
+            iconBack, iconFront -> listener.onIconClick(navigationItem)
+            else -> listener.onItemClick(navigationItem)
+        }
+
     }
 
     override fun onLongClick(view: View): Boolean {
-        val consumed = listener.onLongClick(navigationItem)
+        val consumed = listener.onItemLongClick(navigationItem)
         if (consumed) {
             view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
         }

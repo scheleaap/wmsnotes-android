@@ -180,7 +180,11 @@ class NavigationFragment @Inject constructor(
         ensureOnlyOneChildIsVisible(folderViewContainer, foldersByPath.getValue(path).view)
     }
 
-    override fun onClick(navigationItem: NavigationItem) {
+    override fun onIconClick(navigationItem: NavigationItem) {
+        viewModel.toggleSelection(navigationItem)
+    }
+
+    override fun onItemClick(navigationItem: NavigationItem) {
         if (viewModel.isSelectionModeEnabled().blockingFirst()) {
             viewModel.toggleSelection(navigationItem)
         } else {
@@ -191,7 +195,7 @@ class NavigationFragment @Inject constructor(
         }
     }
 
-    override fun onLongClick(navigationItem: NavigationItem): Boolean {
+    override fun onItemLongClick(navigationItem: NavigationItem): Boolean {
         return viewModel.toggleSelection(navigationItem)
     }
 

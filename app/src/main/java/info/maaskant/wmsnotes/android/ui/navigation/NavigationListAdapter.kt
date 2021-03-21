@@ -29,7 +29,7 @@ internal class NavigationListAdapter(
         items.size
 
     override fun getItemId(position: Int): Long =
-        items[position].id.map { it.toLong() }.sum()
+        items[position].id.map { it.toLong() }.sum() // TODO
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NavigationItemViewHolder {
@@ -43,7 +43,8 @@ internal class NavigationListAdapter(
     }
 
     interface NavigationListAdapterListener {
-        fun onClick(navigationItem: NavigationItem)
-        fun onLongClick(navigationItem: NavigationItem): Boolean
+        fun onIconClick(navigationItem: NavigationItem)
+        fun onItemClick(navigationItem: NavigationItem)
+        fun onItemLongClick(navigationItem: NavigationItem): Boolean
     }
 }
