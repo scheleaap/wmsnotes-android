@@ -5,7 +5,6 @@
     android:id="@+id/navigation_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/navigation_item_background"
     android:orientation="horizontal"
     android:paddingStart="?listPreferredItemPaddingStart"
     android:paddingTop="@dimen/navigation_item_padding_top"
@@ -36,7 +35,7 @@
                 android:layout_width="@dimen/navigation_item_icon_size"
                 android:layout_height="@dimen/navigation_item_icon_size"
                 android:layout_centerInParent="true"
-                android:contentDescription="@string/navigation_file_type"
+                android:contentDescription="@string/navigation_item_icon"
                 android:padding="8dp"
                 app:tint="@color/navigation_item_icon_front_foreground"
                 tools:src="@drawable/ic_insert_drive_file_black_24dp" />
@@ -59,10 +58,10 @@
                 android:layout_width="@dimen/navigation_item_icon_size"
                 android:layout_height="@dimen/navigation_item_icon_size"
                 android:layout_centerInParent="true"
-                android:contentDescription="@string/navigation_file_type"
+                android:contentDescription="@string/navigation_item_icon"
                 android:padding="8dp"
-                app:tint="@color/navigation_item_icon_front_foreground"
-                tools:src="@drawable/ic_insert_drive_file_black_24dp" />
+                android:src="@drawable/ic_check_white_24dp"
+                app:tint="@color/navigation_item_icon_front_foreground" />
 
         </RelativeLayout>
 
