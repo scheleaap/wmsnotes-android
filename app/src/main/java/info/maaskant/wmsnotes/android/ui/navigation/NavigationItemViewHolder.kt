@@ -36,27 +36,9 @@ internal class NavigationItemViewHolder(
     fun bind(navigationItem: NavigationItem) {
         logger.trace("Binding (old: ${if (this::navigationItem.isInitialized) this.navigationItem else null}, new: $navigationItem)")
         this.navigationItem = navigationItem
-        main.isActivated = navigationItem.isSelected
-        when (navigationItem) {
-            is Note -> {
-                title.text = navigationItem.title
-                iconFrontIcon.setImageDrawable(
-                    IconicsDrawable(
-                        iconFrontIcon.context,
-                        GoogleMaterial.Icon.gmd_insert_drive_file
-                    )
-                )
-            }
-            is Folder -> {
-                title.text = navigationItem.title
-                iconFrontIcon.setImageDrawable(
-                    IconicsDrawable(
-                        iconFrontIcon.context,
-                        GoogleMaterial.Icon.gmd_folder
-                    )
-                )
-            }
-        }
+        setText(navigationItem)
+        setIcon(navigationItem)
+        setBackgroundColor(navigationItem)
     }
 
     override fun onClick(view: View) {
@@ -69,5 +51,49 @@ internal class NavigationItemViewHolder(
             view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
         }
         return consumed
+    }
+
+    private fun setBackgroundColor(navigationItem: NavigationItem) {
+        main.setBackgroundColor(
+            main.context.getColor(
+                if (navigationItem.isSelected) {
+                    R.color.navigation_item_selected_background
+                } else {
+                    R.color.navigation_item_default_background
+                }
+            )
+        )
+    }
+
+    private fun setIcon(navigationItem: NavigationItem) {
+        if (navigationItem.isSelected) {
+            iconBack.alpha = 1f
+            iconFront.alpha = 0f
+        } else {
+            iconBack.alpha = 0f
+            iconFront.alpha = 1f
+        }
+        when (navigationItem) {
+            is Note -> {
+                iconFrontIcon.setImageDrawable(
+                    IconicsDrawable(
+                        iconFrontIcon.context,
+                        GoogleMaterial.Icon.gmd_insert_drive_file
+                    )
+                )
+            }
+            is Folder -> {
+                iconFrontIcon.setImageDrawable(
+                    IconicsDrawable(
+                        iconFrontIcon.context,
+                        GoogleMaterial.Icon.gmd_folder
+                    )
+                )
+            }
+        }
+    }
+
+    private fun setText(navigationItem: NavigationItem) {
+        title.text = navigationItem.title
     }
 }

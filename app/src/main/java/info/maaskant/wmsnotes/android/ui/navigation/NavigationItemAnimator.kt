@@ -3,6 +3,7 @@ package info.maaskant.wmsnotes.android.ui.navigation
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
@@ -21,35 +22,40 @@ class NavigationItemAnimator(private val context: Context) : DefaultItemAnimator
         preInfo: ItemHolderInfo,
         postInfo: ItemHolderInfo
     ): Boolean {
-        return if (preInfo is NavigationItemHolderInfo && postInfo is NavigationItemHolderInfo && oldHolder is NavigationItemViewHolder) {
+        return if (oldHolder is NavigationItemViewHolder && preInfo is NavigationItemHolderInfo) {
             logger.info("--- ${oldHolder == newHolder}")
-//            val main = (AnimatorInflater.loadAnimator(
-//                context,
-//                if (postInfo.isSelected) R.animator.navigation_item_select else R.animator.navigation_item_deselect
-//            ) as ObjectAnimator).apply { target = oldHolder.main }
+            if (preInfo.old.isSelected != preInfo.new.isSelected) {
+                val main = (AnimatorInflater.loadAnimator(
+                    context,
+                    if (preInfo.new.isSelected) R.animator.navigation_item_select else R.animator.navigation_item_deselect
+                ) as ObjectAnimator).apply { target = oldHolder.main }
 
-            val iconFront = (AnimatorInflater.loadAnimator(
-                context,
-                if (postInfo.isSelected) R.animator.navigation_item_icon_flip_out else R.animator.navigation_item_icon_flip_in
-            ) as AnimatorSet).apply { setTarget(oldHolder.iconFront) }
+                val iconFront = (AnimatorInflater.loadAnimator(
+                    context,
+                    if (preInfo.new.isSelected) R.animator.navigation_item_icon_flip_out else R.animator.navigation_item_icon_flip_in
+                ) as AnimatorSet).apply { setTarget(oldHolder.iconFront) }
 
-            val iconBack = (AnimatorInflater.loadAnimator(
-                context,
-                if (postInfo.isSelected) R.animator.navigation_item_icon_flip_in else R.animator.navigation_item_icon_flip_out
-            ) as AnimatorSet).apply { setTarget(oldHolder.iconBack) }
+                val iconBack = (AnimatorInflater.loadAnimator(
+                    context,
+                    if (preInfo.new.isSelected) R.animator.navigation_item_icon_flip_in else R.animator.navigation_item_icon_flip_out
+                ) as AnimatorSet).apply { setTarget(oldHolder.iconBack) }
 
-            val animatorSet = (AnimatorSet()).apply {
-                playTogether(/*main,*/ iconFront, iconBack)
-                addListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animator: Animator) {}
-                    override fun onAnimationCancel(animator: Animator) {}
-                    override fun onAnimationRepeat(animator: Animator) {}
-                    override fun onAnimationEnd(animator: Animator) {
-                        dispatchAnimationFinished(oldHolder)
-                    }
-                })
+                val animatorSet = (AnimatorSet()).apply {
+                    playTogether(main, iconFront, iconBack)
+                    addListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animator: Animator) {}
+                        override fun onAnimationCancel(animator: Animator) {}
+                        override fun onAnimationRepeat(animator: Animator) {}
+                        override fun onAnimationEnd(animator: Animator) {
+                            dispatchAnimationFinished(oldHolder)
+                        }
+                    })
+                }
+                animatorSet.start()
+            } else {
+                logger.trace("Nothing to animate")
+                dispatchAnimationFinished(oldHolder)
             }
-            animatorSet.start()
 
             return true
         } else {
@@ -57,24 +63,8 @@ class NavigationItemAnimator(private val context: Context) : DefaultItemAnimator
         }
     }
 
-//    private fun selectionColor(isSelected: Boolean) =
-//        resources.getColor(
-//            if (isSelected) {
-//                R.color.navigation_item_selected_background
-//            } else {
-//                R.color.navigation_item_default_background
-//            }
-//        )
-
     override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean =
         true
-
-    override fun recordPostLayoutInformation(
-        state: RecyclerView.State,
-        viewHolder: RecyclerView.ViewHolder
-    ): ItemHolderInfo =
-        NavigationItemHolderInfo((viewHolder as NavigationItemViewHolder).navigationItem.isSelected)
-            .setFrom(viewHolder)
 
     override fun recordPreLayoutInformation(
         state: RecyclerView.State,
@@ -83,12 +73,12 @@ class NavigationItemAnimator(private val context: Context) : DefaultItemAnimator
         payloads: List<Any>
     ): ItemHolderInfo =
         if ((changeFlags and FLAG_CHANGED) != 0) {
-            NavigationItemHolderInfo((viewHolder as NavigationItemViewHolder).navigationItem.isSelected)
-                .setFrom(viewHolder)
+            val payload = payloads[0] as Pair<NavigationItem, NavigationItem>
+            NavigationItemHolderInfo(payload.first, payload.second)
         } else {
             super.recordPreLayoutInformation(state, viewHolder, changeFlags, payloads)
         }
 
-    private data class NavigationItemHolderInfo(val isSelected: Boolean) :
+    private data class NavigationItemHolderInfo(val old: NavigationItem, val new: NavigationItem) :
         RecyclerView.ItemAnimator.ItemHolderInfo()
 }
