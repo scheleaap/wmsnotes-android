@@ -38,28 +38,12 @@ internal class NavigationItemViewHolder(
     fun bind(navigationItem: NavigationItem) {
         logger.trace("Binding (old: ${if (this::navigationItem.isInitialized) this.navigationItem else null}, new: $navigationItem)")
         this.navigationItem = navigationItem
-        setText(navigationItem)
-        setIcon(navigationItem)
-        setBackgroundColor(navigationItem)
+        bindBackgroundColor(navigationItem)
+        bindIcon(navigationItem)
+        bindText(navigationItem)
     }
 
-    override fun onClick(view: View) {
-        when (view) {
-            iconBack, iconFront -> listener.onIconClick(navigationItem)
-            else -> listener.onItemClick(navigationItem)
-        }
-
-    }
-
-    override fun onLongClick(view: View): Boolean {
-        val consumed = listener.onItemLongClick(navigationItem)
-        if (consumed) {
-            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-        }
-        return consumed
-    }
-
-    private fun setBackgroundColor(navigationItem: NavigationItem) {
+    private fun bindBackgroundColor(navigationItem: NavigationItem) {
         main.setBackgroundColor(
             main.context.getColor(
                 if (navigationItem.isSelected) {
@@ -71,7 +55,7 @@ internal class NavigationItemViewHolder(
         )
     }
 
-    private fun setIcon(navigationItem: NavigationItem) {
+    private fun bindIcon(navigationItem: NavigationItem) {
         if (navigationItem.isSelected) {
             iconBack.alpha = 1f
             iconFront.alpha = 0f
@@ -99,7 +83,23 @@ internal class NavigationItemViewHolder(
         }
     }
 
-    private fun setText(navigationItem: NavigationItem) {
+    private fun bindText(navigationItem: NavigationItem) {
         title.text = navigationItem.title
+    }
+
+    override fun onClick(view: View) {
+        when (view) {
+            iconBack, iconFront -> listener.onIconClick(navigationItem)
+            else -> listener.onItemClick(navigationItem)
+        }
+
+    }
+
+    override fun onLongClick(view: View): Boolean {
+        val consumed = listener.onItemLongClick(navigationItem)
+        if (consumed) {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+        }
+        return consumed
     }
 }
