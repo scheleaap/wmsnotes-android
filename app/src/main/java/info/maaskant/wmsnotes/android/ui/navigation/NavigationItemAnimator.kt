@@ -3,7 +3,6 @@ package info.maaskant.wmsnotes.android.ui.navigation
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.content.Context
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
@@ -31,12 +30,12 @@ class NavigationItemAnimator(private val context: Context) : DefaultItemAnimator
 
             val iconFront = (AnimatorInflater.loadAnimator(
                 context,
-                if (postInfo.isSelected) R.animator.card_flip_out else R.animator.card_flip_in
+                if (postInfo.isSelected) R.animator.navigation_item_icon_flip_out else R.animator.navigation_item_icon_flip_in
             ) as AnimatorSet).apply { setTarget(oldHolder.iconFront) }
 
             val iconBack = (AnimatorInflater.loadAnimator(
                 context,
-                if (postInfo.isSelected) R.animator.card_flip_in else R.animator.card_flip_out
+                if (postInfo.isSelected) R.animator.navigation_item_icon_flip_in else R.animator.navigation_item_icon_flip_out
             ) as AnimatorSet).apply { setTarget(oldHolder.iconBack) }
 
             val animatorSet = (AnimatorSet()).apply {
