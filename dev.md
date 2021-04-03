@@ -2,6 +2,14 @@
 
 ## Signing and Deploying
 
+TODO: See
+https://www.raywenderlich.com/19407406-continuous-delivery-for-android-using-github-actions
+Steps:
+* Configure GitHub token
+
+
+
+
 The Travis CLI was installed as follows (on Ubuntu 16.04):
 ```sh
 sudo apt-get install ruby ruby-dev

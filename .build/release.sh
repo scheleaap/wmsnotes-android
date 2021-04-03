@@ -20,8 +20,6 @@ function create_changelogs_if_not_present() {
     create_changelog_if_not_present ${version_code} "en-US"
     create_changelog_if_not_present ${version_code} "nl-NL"
     local changelog_path="fastlane/metadata/android/*/changelogs"
-    # travis_add_and_commit "$changelog_path" "chore: Added default changelogs for version code ${version_code}."
-    # travis_push "$TRAVIS_BRANCH"
 }
 
 function get_version_code_from_gradle() {
@@ -35,11 +33,10 @@ function get_version_number_from_gradle() {
 function tag_git_with_version_number() {
     local version_number="$1"
 
-    if [[ "$version_number" != "" ]]; then
+    if [[ -n "$version_number" ]]; then
       echo "Tagging version $version_number"
       git tag -a "$version_number" -m"Version $version_number [ci skip]"
-      # travis_push $TRAVIS_BRANCH
-      travis_push "$version_number"
+      git push "$version_number"
     else
       >&2 echo "Version number not tagged!"
     fi
@@ -50,12 +47,23 @@ set -ex
 basedir=$(dirname $0)
 source $basedir/build-helpers.sh
 
-# travis_checkout_branch
 version_code=$(get_version_code_from_gradle)
 version_number=$(get_version_number_from_gradle)
+
+# Create changelogs
 create_changelogs_if_not_present ${version_code}
+
+# Decrypt and unpack secrets
+openssl aes-256-cbc -K $encrypted_3b9f0b9d36d1_key -iv $encrypted_3b9f0b9d36d1_iv -in secrets.tar.enc -out secrets.tar -d
+tar xvf secrets.tar
+
+# Create release
 ./gradlew clean bundleRelease
-if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-    bundle exec fastlane deploy version_code:${version_code}
-    tag_git_with_version_number ${version_number}
-fi
+
+# Upload to Google Play
+# TODO
+# bundle exec fastlane deploy version_code:${version_code}
+
+# Create a Git tag
+# TODO
+# tag_git_with_version_number ${version_number}

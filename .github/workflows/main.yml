@@ -10,6 +10,17 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: "1.8"
       - name: Compile, test and package
         run: ./gradlew clean compile test bundleRelease
+  release:
+    name: Release
+    runs-on: ubuntu-20.04
+    needs: compile-test-package
+    if: ${{ github.ref == 'refs/heads/master' }}
+    steps:
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: "2.7"
+          bundler-cache: true
+      - run: .build/release.sh
