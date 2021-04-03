@@ -1,0 +1,15 @@
+name: Main
+on: [push]
+jobs:
+  compile-test-package:
+    name: Compile, test, package
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Compile, test and package
+        run: ./gradlew clean compile test bundleRelease
