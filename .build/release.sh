@@ -54,7 +54,8 @@ version_number=$(get_version_number_from_gradle)
 create_changelogs_if_not_present ${version_code}
 
 # Decrypt and unpack secrets
-openssl aes-256-cbc -K $encrypted_3b9f0b9d36d1_key -iv $encrypted_3b9f0b9d36d1_iv -in secrets.tar.enc -out secrets.tar -d
+gpg --quiet --batch --yes --decrypt --passphrase="$SECRETS_FILE_PASSPHRASE" \
+  --output secrets.tar secrets.tar.gpg
 tar xvf secrets.tar
 
 # Create release

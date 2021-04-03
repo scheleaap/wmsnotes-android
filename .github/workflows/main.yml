@@ -23,4 +23,7 @@ jobs:
         with:
           ruby-version: "2.7"
           bundler-cache: true
-      - run: .build/release.sh
+      - name: Create a release
+        run: .build/release.sh
+        env:
+          SECRETS_FILE_PASSPHRASE: ${{ secrets.SECRETS_FILE_PASSPHRASE }}
