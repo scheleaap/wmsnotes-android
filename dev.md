@@ -1,6 +1,35 @@
 # Documentation
 
-## Signing and Deploying
+TODO: See
+https://www.raywenderlich.com/19407406-continuous-delivery-for-android-using-github-actions
+TODO: Search for "TODO" in the entire repository
+TODO: Delete secrets.tar.enc
+
+
+## Signing and Deploying (GitHub Actions)
+
+<-- Reference: https://docs.github.com/en/actions/reference/encrypted-secrets#limits-for-secrets -->
+
+1. Create the signing key:
+    ```sh
+    keytool -genkey -v -keystore scheleaap.jks -alias wmsnotes -keyalg RSA -keysize 2048 -validity 10000
+    ```
+1. Create a file containing all secrets:
+    ```sh
+    tar cvf secrets.tar scheleaap.jks keystore.properties google-services.json
+    travis login --com
+    travis encrypt-file --com --add secrets.tar
+    ```
+1. Encrypt the secrets file:
+    ```sh
+    gpg --symmetric --cipher-algo AES256 secrets.tar
+    ```
+    You will be asked to enter a passphrase.
+1. [Create a repository secret](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository) named `SECRETS_FILE_PASSPHRASE` containing the passphrase.
+
+
+## Singing and Deploying (Travis CI)
+
 
 The Travis CLI was installed as follows (on Ubuntu 16.04):
 ```sh
