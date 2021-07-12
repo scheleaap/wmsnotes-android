@@ -15,6 +15,7 @@ import info.maaskant.wmsnotes.model.Path
 import info.maaskant.wmsnotes.model.folder.CreateFolderCommand
 import info.maaskant.wmsnotes.model.folder.FolderCommandRequest
 import info.maaskant.wmsnotes.model.note.CreateNoteCommand
+import info.maaskant.wmsnotes.model.note.DeleteNoteCommand
 import info.maaskant.wmsnotes.model.note.Note
 import info.maaskant.wmsnotes.model.note.NoteCommandRequest
 import info.maaskant.wmsnotes.utilities.logger
@@ -97,6 +98,14 @@ class NavigationViewModel @Inject constructor(
         } catch (e: RuntimeException) {
             logger.warn("Could not create new note", e)
             null
+        }
+    }
+
+    fun deleteSelection() {
+        selectionSubject.value!!.forEach { aggId ->
+            if (aggId.startsWith("n-")) {
+                commandBus.requests.onNext(NoteCommandRequest.of(DeleteNoteCommand(aggId = aggId)))
+            }
         }
     }
 

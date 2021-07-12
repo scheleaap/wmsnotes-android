@@ -37,7 +37,10 @@
     <!-- NavigationFragment -->
     <string name="navigation_create_note">Create Note</string>
     <string name="navigation_create_folder">Create Folder…</string>
+    <string name="navigation_delete">Delete</string>
     <string name="navigation_item_icon">Icon</string>
+    <string name="navigation_move_to_folder">Move To Folder…</string>
+    <string name="navigation_rename_folder">Rename…</string>
     <string name="create_folder_dialog_title">Create Folder</string>
     <string name="create_folder_dialog_error_title_must_not_be_empty">The folder name must not be empty</string>
     <string name="create_folder_dialog_error_title_must_not_contain_slash">Illegal character: \'/\'</string>

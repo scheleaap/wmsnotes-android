@@ -5,6 +5,14 @@
         android:id="@+id/action_create_folder"
         android:icon="@drawable/ic_create_new_folder_white_24dp"
         android:title="@string/navigation_create_folder"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
+
+    <!--
+    <item
+        android:id="@+id/action_rename_folder"
+        android:icon="@drawable/ic_drive_file_rename_outline_white_24"
+        android:title="@string/navigation_rename_folder"
+        app:showAsAction="never" />
+    -->
 
 </menu>

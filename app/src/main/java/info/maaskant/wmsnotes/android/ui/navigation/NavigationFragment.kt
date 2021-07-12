@@ -35,8 +35,7 @@ import io.sellmair.disposer.onStop
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class NavigationFragment @Inject constructor(
-) : Fragment(), OnBackPressedListener, NavigationListAdapterListener {
+class NavigationFragment @Inject constructor() : Fragment(), OnBackPressedListener {
     private val logger by logger()
 
     private val viewModel: NavigationViewModel by viewModels()
@@ -49,7 +48,7 @@ class NavigationFragment @Inject constructor(
 
     private lateinit var inflater: LayoutInflater
 
-    private var actionMode:ActionMode? = null
+    private var actionMode: ActionMode? = null
     private var foldersByPath: Map<Path, FolderContainer> = mapOf()
     private var folderDisposables: Map<Path, Disposable> = mapOf()
 
@@ -60,7 +59,7 @@ class NavigationFragment @Inject constructor(
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.navigation_menu, menu)
+        inflater.inflate(R.menu.navigation_main_menu, menu)
     }
 
     override fun onCreateView(
@@ -79,25 +78,9 @@ class NavigationFragment @Inject constructor(
 
         viewModel.isSelectionModeEnabled()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onNext = {isEnabled ->
+            .subscribeBy(onNext = { isEnabled ->
                 if (isEnabled && actionMode == null) {
-                    actionMode = activity?.startActionMode(object : ActionMode.Callback {
-                        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean =
-                            true
-
-                        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean =
-                            false
-
-                        override fun onActionItemClicked(
-                            mode: ActionMode,
-                            item: MenuItem
-                        ): Boolean =
-                            false
-
-                        override fun onDestroyActionMode(mode: ActionMode) {
-                            viewModel.clearSelection()
-                        }
-                    })
+                    actionMode = activity?.startActionMode(actionModeCallback)
                 } else if (!isEnabled) {
                     actionMode?.finish()
                     actionMode = null
@@ -193,7 +176,7 @@ class NavigationFragment @Inject constructor(
 
     private fun createAndAddFolder(path: Path) {
         logger.trace("Creating and adding folder $path")
-        val listAdapter = NavigationListAdapter(this)
+        val listAdapter = NavigationListAdapter(navigationListAdapterListener)
         val view = inflater.inflate(R.layout.navigation_folder, folderViewContainer, false).apply {
             visibility = GONE
             findViewById<RecyclerView>(R.id.node_list_view).apply {
@@ -213,25 +196,6 @@ class NavigationFragment @Inject constructor(
             createAndAddFolder(path)
         }
         ensureOnlyOneChildIsVisible(folderViewContainer, foldersByPath.getValue(path).view)
-    }
-
-    override fun onIconClick(navigationItem: NavigationItem) {
-        viewModel.toggleSelection(navigationItem)
-    }
-
-    override fun onItemClick(navigationItem: NavigationItem) {
-        if (viewModel.isSelectionModeEnabled().blockingFirst()) {
-            viewModel.toggleSelection(navigationItem)
-        } else {
-            when (navigationItem) {
-                is Folder -> viewModel.navigateTo(navigationItem.path)
-                is Note -> openNote(navigationItem.id)
-            }
-        }
-    }
-
-    override fun onItemLongClick(navigationItem: NavigationItem): Boolean {
-        return viewModel.toggleSelection(navigationItem)
     }
 
     private fun openNote(aggId: String) {
@@ -273,6 +237,57 @@ class NavigationFragment @Inject constructor(
             stack.lastOrNull()?.elements?.lastOrNull() ?: "WMS Notes"
         removeFoldersNotInStack(stack)
         ensureFolderExistsAndIsVisible(stack.last())
+    }
+
+    private val actionModeCallback: ActionMode.Callback by lazy {
+        object : ActionMode.Callback {
+            override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                mode.menuInflater.inflate(R.menu.navigation_selection_menu, menu)
+                return true
+            }
+
+            override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean =
+                false
+
+            override fun onActionItemClicked(
+                mode: ActionMode,
+                item: MenuItem
+            ): Boolean =
+                when (item.itemId) {
+                    R.id.action_delete_selection -> {
+                        viewModel.deleteSelection()
+                        true
+                    }
+                    else -> false
+                }
+
+            override fun onDestroyActionMode(mode: ActionMode) {
+                viewModel.clearSelection()
+            }
+        }
+    }
+
+    private val navigationListAdapterListener: NavigationListAdapterListener by lazy {
+        object : NavigationListAdapterListener {
+            override fun onIconClick(navigationItem: NavigationItem) {
+                viewModel.toggleSelection(navigationItem)
+            }
+
+            override fun onItemClick(navigationItem: NavigationItem) {
+                if (viewModel.isSelectionModeEnabled().blockingFirst()) {
+                    viewModel.toggleSelection(navigationItem)
+                } else {
+                    when (navigationItem) {
+                        is Folder -> viewModel.navigateTo(navigationItem.path)
+                        is Note -> openNote(navigationItem.id)
+                    }
+                }
+            }
+
+            override fun onItemLongClick(navigationItem: NavigationItem): Boolean {
+                return viewModel.toggleSelection(navigationItem)
+            }
+        }
     }
 
     companion object {

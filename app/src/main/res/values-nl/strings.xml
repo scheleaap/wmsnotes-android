@@ -23,4 +23,7 @@
     <string name="pref_synchronization_enabled_title">Synchronisatie inschakelen</string>
     <string name="pref_server_hostname_summary">De hostname of het IP-adres van de server om mee te synchroniseren</string>
     <string name="navigation_create_note">Nieuwe notitie</string>
+    <string name="navigation_move_to_folder">Verplaats naar map...</string>
+    <string name="navigation_delete">Verwijderen</string>
+    <string name="navigation_rename_folder">Hernoemen…</string>
 </resources>
